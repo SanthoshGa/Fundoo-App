@@ -1,0 +1,69 @@
+<resources>
+    <string name="app_name">Fundoo</string>
+    <string name="password">password</string>
+    <string name="email">email</string>
+    <string name="login">Login</string>
+    <string name="not_registered">Not Registered?</string>
+    <string name="emailId">emailId</string>
+    <string name="username">username</string>
+    <string name="register">Register</string>
+    <string name="confirm_password">confirm password</string>
+    <string name="already_registered">Already Registered</string>
+    <string name="open">Open</string>
+    <string name="close">Close</string>
+    <string name="title">title</string>
+    <string name="description">description</string>
+    <string name="save">Save</string>
+    <string name="take_note">Take Note....</string>
+
+    //__Color Strings__
+    <string name="none">None</string>
+    <string name="white">white</string>
+    <string name="black">black</string>
+    <string name="green">green</string>
+    <string name="yellow">yellow</string>
+    <string name="pink">pink</string>
+    <string name="silver">silver</string>
+    <string name="olive">olive</string>
+    <string name="skyBlue">skyBlue</string>
+    <string name="purple">purple</string>
+    <string name="colorDefault">white</string>
+
+
+    <string name="none_hexCode">#ffffff</string>
+    <string name="white_hexCode">#ffffff</string>
+    <string name="black_hexCode">black</string>
+    <string name="green_hexCode">#9ACD32</string>
+    <string name="yellow_hexCode">#FFFF00</string>
+    <string name="pink_hexCode">#FFC0CB</string>
+    <string name="silver_hexCode">#C0C0C0</string>
+    <string name="olive_hexCode">#808000</string>
+    <string name="skyBlue_hexCode">#87CEEB</string>
+    <string name="purple_hexCode">#800080</string>
+    <string name="colorDefault_hexCode">#ffffff</string>
+
+
+    <string name="signOut">SignOut</string>
+    <string name="search">Search</string>
+    <string name="notes">Notes</string>
+    <string name="archive">Archive</string>
+    <string name="pinned">Pinned</string>
+    <string name="reminder">Reminder</string>
+    <string name="create_new_label">Create new label</string>
+    <string name="reminders">Reminders</string>
+    <string name="archives">Archives</string>
+    <string name="trashed">Trashed</string>
+    <string name="settings">Settings</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="name">Name</string>
+    <string name="select_date">SELECT DATE</string>
+    <string name="select_time">SELECT_TIME</string>
+    <string name="signin_with_google">SignIn with Google</string>
+
+    <string name="facebook_app_id">2459088504324662</string>
+    <string name="fb_login_protocol_scheme">fb2459088504324662</string>
+
+
+</resources>

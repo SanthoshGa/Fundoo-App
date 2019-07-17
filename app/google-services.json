@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "190710932121",
+    "firebase_url": "https://potent-catwalk-245714.firebaseio.com",
+    "project_id": "potent-catwalk-245714",
+    "storage_bucket": "potent-catwalk-245714.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:190710932121:android:0c56db635af6b496",
+        "android_client_info": {
+          "package_name": "com.bridgelabz.fundoo"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "190710932121-87l3ceig2ej86mstdioiabui9o3urpod.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.bridgelabz.fundoo",
+            "certificate_hash": "b03774a615ec2204f608701c3fff97c28fd0ddde"
+          }
+        },
+        {
+          "client_id": "190710932121-jvl9eg26k2ia2htv02rnkbqv74go1lgk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBatjfC-H4GWJsgW4SR-vHOZQmbfAEe2Cw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "190710932121-jvl9eg26k2ia2htv02rnkbqv74go1lgk.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

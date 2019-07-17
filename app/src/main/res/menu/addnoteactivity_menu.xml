@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/action_archive"
+        android:title="@string/archive"
+        android:icon="@drawable/archive"
+        app:showAsAction="ifRoom|collapseActionView" />
+    <item
+        android:id="@+id/action_reminder"
+        android:title="@string/reminder"
+        android:icon="@drawable/reminder"
+        app:showAsAction="ifRoom|collapseActionView"/>
+    <item
+        android:id="@+id/action_pinned"
+        android:icon="@drawable/pinned"
+        android:title="@string/pinned"
+        app:showAsAction="ifRoom|collapseActionView" />
+
+</menu>
