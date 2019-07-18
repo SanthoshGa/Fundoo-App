@@ -22,12 +22,14 @@ import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 
 public class RegisterActivity extends AppCompatActivity {
 
-    EditText mTextEmail;
-    EditText mTextUsername;
-    EditText mTextPassword;
-    EditText mTextConfirmPassword;
-    Button mButtonRegister;
-    TextView mTextViewLogin;
+    private EditText mTextEmail;
+    private EditText mTextUsername;
+    private EditText mTextPassword;
+    private EditText mTextConfirmPassword;
+    private EditText mTextFirstName;
+    private EditText mTextLastName;
+    private Button mButtonRegister;
+    private TextView mTextViewLogin;
     private UserViewModel userViewModel;
     private FirebaseAuth mAuth;
 
@@ -51,6 +53,8 @@ public class RegisterActivity extends AppCompatActivity {
         mTextUsername = findViewById(R.id.et_username);
         mTextPassword = findViewById(R.id.et_password);
         mTextConfirmPassword = findViewById(R.id.et_confirmpassword);
+        mTextFirstName = findViewById(R.id.et_firstName);
+        mTextLastName = findViewById(R.id.et_lastName);
         mButtonRegister = findViewById(R.id.btn_register);
         mTextViewLogin = findViewById(R.id.tv_login);
 
@@ -72,6 +76,8 @@ public class RegisterActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
+                String firstName = mTextFirstName.getText().toString().trim();
+                String lastName = mTextLastName.getText().toString().trim();
                 String email = mTextEmail.getText().toString().trim();
                 String username = mTextUsername.getText().toString().trim();
                 String password = mTextPassword.getText().toString().trim();
@@ -103,7 +109,7 @@ public class RegisterActivity extends AppCompatActivity {
 
                 if (ValidationHelper.validateEmail(email)) {
                     if (ValidationHelper.validatePassword(password)) {
-                        processSignUp(email, username, password, confirmPassword);
+                        processSignUp(firstName, lastName, email, username, password, confirmPassword);
 
                     } else {
                         makeToast("Enter valid password ");
@@ -119,10 +125,10 @@ public class RegisterActivity extends AppCompatActivity {
         });
     }
 
-    private void processSignUp(String email, String username, String password, String confirmPassword) {
+    private void processSignUp(String firstName, String lastName, String email, String username, String password, String confirmPassword) {
         if (password.equals(confirmPassword)) {
             userViewModel = new UserViewModel(this);
-            boolean isSignedUp = userViewModel.addUser(username, password, email);
+            boolean isSignedUp = userViewModel.addUser(firstName, lastName, username, password, email);
             if (isSignedUp) {
                 Toast.makeText(RegisterActivity.this, "you are registered", Toast.LENGTH_SHORT).show();
                 Intent moveToLogin = new Intent(RegisterActivity.this, LoginActivity.class);
@@ -134,7 +140,6 @@ public class RegisterActivity extends AppCompatActivity {
             Toast.makeText(RegisterActivity.this, "password not matching", Toast.LENGTH_SHORT).show();
 
         }
-
 
     }
 

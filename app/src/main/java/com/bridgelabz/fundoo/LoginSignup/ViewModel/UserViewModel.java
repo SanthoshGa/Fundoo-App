@@ -11,8 +11,8 @@ public class UserViewModel {
         userDbManager = new UserDatabaseManager(context);
     }
 
-    public boolean addUser(String username, String password, String email) {
-        return userDbManager.addUser(username,password, email);
+    public boolean addUser(String username, String password, String email, String firstName, String lastName) {
+        return userDbManager.addUser(username,password, email, firstName, lastName);
     }
 
     public boolean checkUser(String email, String password) {

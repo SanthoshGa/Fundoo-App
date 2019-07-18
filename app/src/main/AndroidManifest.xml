@@ -13,16 +13,18 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".Dashboard.View.RetrofitActivity">
+        </activity>
+        <activity android:name=".Dashboard.View.AddNoteActivity" />
+        <activity android:name=".Dashboard.View.DashboardActivity">
+        </activity>
+        <activity android:name=".LoginSignup.View.RegisterActivity">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Dashboard.View.AddNoteActivity" />
-        <activity android:name=".Dashboard.View.DashboardActivity">
-        </activity>
-        <activity android:name=".LoginSignup.View.RegisterActivity"/>
         <activity android:name=".LoginSignup.View.LoginActivity">
         </activity>
 

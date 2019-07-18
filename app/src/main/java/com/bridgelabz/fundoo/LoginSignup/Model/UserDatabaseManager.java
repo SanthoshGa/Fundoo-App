@@ -8,7 +8,9 @@ import android.util.Log;
 
 import com.bridgelabz.fundoo.DatabaseHelpers.SQLiteDatabaseHelper;
 
+import static com.bridgelabz.fundoo.DatabaseHelpers.SQLiteDatabaseHelper.USER_TABLE_COL_FIRST_NAME;
 import static com.bridgelabz.fundoo.DatabaseHelpers.SQLiteDatabaseHelper.USER_TABLE_COL_ID;
+import static com.bridgelabz.fundoo.DatabaseHelpers.SQLiteDatabaseHelper.USER_TABLE_COL_LAST_NAME;
 import static com.bridgelabz.fundoo.DatabaseHelpers.SQLiteDatabaseHelper.USER_TABLE_COL_USERNAME;
 import static com.bridgelabz.fundoo.DatabaseHelpers.SQLiteDatabaseHelper.USER_TABLE_COL_PASSWORD;
 import static com.bridgelabz.fundoo.DatabaseHelpers.SQLiteDatabaseHelper.USER_TABLE_COL_EMAIL;
@@ -21,12 +23,14 @@ public class UserDatabaseManager {
         databaseHelper = SQLiteDatabaseHelper.getDatabaseHelper(context);
     }
 
-    public boolean addUser(String username, String password, String email) {
+    public boolean addUser(String username, String password, String email, String firstName, String lastName) {
         SQLiteDatabase db = databaseHelper.openDb();
         ContentValues contentValues = new ContentValues();
         contentValues.put(USER_TABLE_COL_USERNAME, username);
         contentValues.put(USER_TABLE_COL_PASSWORD, password);
         contentValues.put(USER_TABLE_COL_EMAIL, email);
+        contentValues.put(USER_TABLE_COL_FIRST_NAME, firstName);
+        contentValues.put(USER_TABLE_COL_LAST_NAME, lastName);
 
         long res = db.insert(USER_TABLE_NAME, null, contentValues);
         db.close();

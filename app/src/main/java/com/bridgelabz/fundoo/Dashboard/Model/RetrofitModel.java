@@ -37,6 +37,8 @@ public class RetrofitModel {
     @SerializedName("password")
     private String password;
 
+    @SerializedName("ttl")
+    private String ttl;
 
     public String getPassword() {
         return password;
@@ -159,4 +161,11 @@ public class RetrofitModel {
     }
 
 
+    public String getTtl() {
+        return ttl;
+    }
+
+    public void setTtl(String ttl) {
+        this.ttl = ttl;
+    }
 }

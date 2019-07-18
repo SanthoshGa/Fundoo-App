@@ -34,14 +34,14 @@ public class RetrofitActivity extends AppCompatActivity {
 
         listView = findViewById(R.id.listViewData);
 
-//        getUsers();
-//        createUser();
+        getUsers();
+        createUser();
         checkUser();
     }
 
 
 
-    // get Users
+    // GET ALL LIST OF USERS
     private void getUsers() {
 
         Retrofit retrofit = new Retrofit.Builder().baseUrl(BASE_URL)
@@ -107,20 +107,24 @@ public class RetrofitActivity extends AppCompatActivity {
         });
     }
 
+
+    // CHECK EXISTING USER
     public void checkUser(){
         Retrofit retrofit = new Retrofit.Builder().baseUrl(BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create()).build();
 
         RetrofitLoginModel loginModel = new RetrofitLoginModel("kgf@gmail.com", "kgf@123");
         Api api = retrofit.create(Api.class);
-        Call<RetrofitLoginModel> call = api.logInUser(loginModel);
-        call.enqueue(new Callback<RetrofitLoginModel>() {
+        Call<RetrofitModel> call = api.logInUser(loginModel);
+        call.enqueue(new Callback<RetrofitModel>() {
             @Override
-            public void onResponse(Call<RetrofitLoginModel> call, Response<RetrofitLoginModel> response) {
-                RetrofitLoginModel  loginModel1 = response.body();
+            public void onResponse(Call<RetrofitModel> call, Response<RetrofitModel> response) {
+                RetrofitModel  loginModel1 = response.body();
                 if(response.isSuccessful() && loginModel1!= null){
                     Toast.makeText(RetrofitActivity.this, "response is"
                             + loginModel1.toString() , Toast.LENGTH_SHORT).show();
+                    Log.e(TAG, "response is:" + loginModel1.toString());
+
                 }
 
                 else{
@@ -129,14 +133,12 @@ public class RetrofitActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<RetrofitLoginModel> call, Throwable t) {
-                Log.e(TAG, "response is null");
+            public void onFailure(Call<RetrofitModel> call, Throwable t) {
+                Log.e(TAG, t.getLocalizedMessage());
 
             }
         });
 
     }
-
-
-    }
+}
 

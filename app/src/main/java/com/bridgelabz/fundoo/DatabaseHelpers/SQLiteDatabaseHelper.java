@@ -18,6 +18,9 @@ public class SQLiteDatabaseHelper extends SQLiteOpenHelper {
     public static final String USER_TABLE_COL_USERNAME = "username";
     public static final String USER_TABLE_COL_PASSWORD = "password";
     public static final String USER_TABLE_COL_EMAIL = "email";
+    public static final String USER_TABLE_COL_FIRST_NAME = "firstName";
+    public static final String USER_TABLE_COL_LAST_NAME = "lastName";
+    public static final String USER_TABLE_COL_PHONE_NUMBER = "phoneNumber";
 
     //NOTE TABLE COLUMNS
     public static final String NOTE_TABLE_NAME = "NOTE_TABLE";
@@ -43,8 +46,10 @@ public class SQLiteDatabaseHelper extends SQLiteOpenHelper {
     private static final String CREATE_USER_TABLE_QUERY = "CREATE TABLE " + USER_TABLE_NAME +
             "(" + USER_TABLE_COL_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
             USER_TABLE_COL_USERNAME + " TEXT, " +
-            USER_TABLE_COL_PASSWORD + " TEXT," +
-            USER_TABLE_COL_EMAIL + " TEXT " + ")";
+            USER_TABLE_COL_PASSWORD + " TEXT, " +
+            USER_TABLE_COL_EMAIL + " TEXT, " +
+            USER_TABLE_COL_FIRST_NAME + "TEXT, " +
+            USER_TABLE_COL_LAST_NAME + "TEXT" + ")";
 
 
     //NOTE TABLE CREATION QUERY

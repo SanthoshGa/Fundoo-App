@@ -19,7 +19,7 @@ public interface Api {
     @POST("user/userSignUp")
     Call<RetrofitModel> signUpUser(@Body RetrofitModel user);
 
-    @POST("user/userLogIn")
-    Call<RetrofitLoginModel> logInUser(@Body RetrofitLoginModel model);
+    @POST("user/login")
+    Call<RetrofitModel> logInUser(@Body RetrofitLoginModel model);
 
 }
