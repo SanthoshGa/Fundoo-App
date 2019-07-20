@@ -1,7 +1,7 @@
 package com.bridgelabz.fundoo.Utility;
 
 import com.bridgelabz.fundoo.Dashboard.Model.RetrofitLoginModel;
-import com.bridgelabz.fundoo.Dashboard.Model.RetrofitModel;
+import com.bridgelabz.fundoo.Dashboard.Model.UserModel;
 
 import java.util.List;
 
@@ -10,16 +10,14 @@ import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
 
-public interface Api {
-    String BASE_URL = "http://34.213.106.173/api/";
+public interface UserRestApiService {
 
     @GET("user")
-    Call<List<RetrofitModel>> getUsers();
+    Call<List<UserModel>> getUsers();
 
     @POST("user/userSignUp")
-    Call<RetrofitModel> signUpUser(@Body RetrofitModel user);
+    Call<UserModel> signUpUser(@Body UserModel user);
 
     @POST("user/login")
-    Call<RetrofitModel> logInUser(@Body RetrofitLoginModel model);
-
+    Call<UserModel> logInUser(@Body RetrofitLoginModel model);
 }

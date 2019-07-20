@@ -44,7 +44,7 @@ public class Label {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(" Label Id: ").append(labelId).append("\n")
                 .append(" Label Name: " ).append(labelName).append("\n")
-                .append("RetrofitModel Id: ").append(userId).append("\n");
+                .append("UserModel Id: ").append(userId).append("\n");
         return stringBuilder.toString();
     }
 }

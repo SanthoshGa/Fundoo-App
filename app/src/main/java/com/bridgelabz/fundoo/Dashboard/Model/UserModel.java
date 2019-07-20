@@ -2,7 +2,7 @@ package com.bridgelabz.fundoo.Dashboard.Model;
 
 import com.google.gson.annotations.SerializedName;
 
-public class RetrofitModel {
+public class UserModel {
 
     @SerializedName("firstName")
     private String firstName;
@@ -48,9 +48,9 @@ public class RetrofitModel {
         this.password = password;
     }
 
-    public RetrofitModel(String firstName, String lastName, String phoneNumber, String imageUrl,
-                         String service, String role, String emailId, String userName, String id,
-                         String userId, String password) {
+    public UserModel(String firstName, String lastName, String phoneNumber, String imageUrl,
+                     String service, String role, String emailId, String userName, String id,
+                     String userId, String password) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.phoneNumber = phoneNumber;

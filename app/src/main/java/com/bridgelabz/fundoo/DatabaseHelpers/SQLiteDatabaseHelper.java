@@ -10,16 +10,18 @@ public class SQLiteDatabaseHelper extends SQLiteOpenHelper {
     private SQLiteDatabase sqLiteDatabase;
 
     private static final String DATABASE_NAME = "Application.db";
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
 
     //USER TABLE COLUMNS
     public static final String USER_TABLE_NAME = "USER_TABLE";
     public static final String USER_TABLE_COL_ID = "id";
-    public static final String USER_TABLE_COL_USERNAME = "username";
-    public static final String USER_TABLE_COL_PASSWORD = "password";
-    public static final String USER_TABLE_COL_EMAIL = "email";
     public static final String USER_TABLE_COL_FIRST_NAME = "firstName";
     public static final String USER_TABLE_COL_LAST_NAME = "lastName";
+    public static final String USER_TABLE_COL_EMAIL = "email";
+    public static final String USER_TABLE_COL_USERNAME = "username";
+    public static final String USER_TABLE_COL_PASSWORD = "password";
+
+
     public static final String USER_TABLE_COL_PHONE_NUMBER = "phoneNumber";
 
     //NOTE TABLE COLUMNS
@@ -45,11 +47,11 @@ public class SQLiteDatabaseHelper extends SQLiteOpenHelper {
     //USER TABLE CREATION QUERY
     private static final String CREATE_USER_TABLE_QUERY = "CREATE TABLE " + USER_TABLE_NAME +
             "(" + USER_TABLE_COL_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-            USER_TABLE_COL_USERNAME + " TEXT, " +
-            USER_TABLE_COL_PASSWORD + " TEXT, " +
+            USER_TABLE_COL_FIRST_NAME + " TEXT, " +
+            USER_TABLE_COL_LAST_NAME + " TEXT, " +
             USER_TABLE_COL_EMAIL + " TEXT, " +
-            USER_TABLE_COL_FIRST_NAME + "TEXT, " +
-            USER_TABLE_COL_LAST_NAME + "TEXT" + ")";
+            USER_TABLE_COL_USERNAME + " TEXT, " +
+            USER_TABLE_COL_PASSWORD + " TEXT " + ")";
 
 
     //NOTE TABLE CREATION QUERY
@@ -59,7 +61,7 @@ public class SQLiteDatabaseHelper extends SQLiteOpenHelper {
             NOTE_TABLE_COL_DESCRIPTION + " TEXT, " +
             NOTE_TABLE_COL_USER_ID + " TEXT, " +
             NOTE_TABLE_COL_COLOR + " TEXT, " +
-            NOTE_TABLE_COL_ARCHIVE + " INTEGER , "  +
+            NOTE_TABLE_COL_ARCHIVE + " INTEGER, " +
             NOTE_TABLE_COL_REMINDER + " TEXT, " +
             NOTE_TABLE_COL_PINNED + " INTEGER, " +
             NOTE_TABLE_COL_TRASHED + " INTEGER " + ")";
@@ -69,8 +71,8 @@ public class SQLiteDatabaseHelper extends SQLiteOpenHelper {
             "(" + LABEL_TABLE_COL_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
             LABEL_TABLE_COL_NAME + " TEXT, " +
             LABEL_TABLE_COL_USER_ID + " INTEGER, " +
-            "FOREIGN KEY(" + LABEL_TABLE_COL_USER_ID +") REFERENCES " +
-            USER_TABLE_NAME + "(" + USER_TABLE_COL_ID +  "))";
+            "FOREIGN KEY(" + LABEL_TABLE_COL_USER_ID + ") REFERENCES " +
+            USER_TABLE_NAME + "(" + USER_TABLE_COL_ID + "))";
 
 
     private static SQLiteDatabaseHelper databaseHelper;
@@ -116,7 +118,11 @@ public class SQLiteDatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(" DROP TABLE IF EXISTS " + USER_TABLE_NAME);
         db.execSQL(" DROP TABLE IF EXISTS " + NOTE_TABLE_NAME);
         db.execSQL("DROP TABLE IF EXISTS " + LABEL_TABLE_NAME);
-        onCreate(db);
+//        onCreate(db);
+//        if(oldVersion == 1 && newVersion == 2){
+//            db.execSQL(CREATE_USER_TABLE_QUERY);
+//        }
+
 
     }
 }

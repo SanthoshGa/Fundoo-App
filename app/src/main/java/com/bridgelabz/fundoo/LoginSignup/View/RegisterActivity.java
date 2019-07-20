@@ -2,23 +2,21 @@ package com.bridgelabz.fundoo.LoginSignup.View;
 
 import android.content.Intent;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.bridgelabz.fundoo.Dashboard.Model.RestApiUserDataManager;
+import com.bridgelabz.fundoo.Dashboard.Model.UserModel;
+import com.bridgelabz.fundoo.LoginSignup.Model.User;
 import com.bridgelabz.fundoo.LoginSignup.ViewModel.UserViewModel;
 import com.bridgelabz.fundoo.R;
+import com.bridgelabz.fundoo.Utility.HttpCodeUtil.HttpResponseCode;
 import com.bridgelabz.fundoo.Utility.ValidationHelper;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -31,15 +29,15 @@ public class RegisterActivity extends AppCompatActivity {
     private Button mButtonRegister;
     private TextView mTextViewLogin;
     private UserViewModel userViewModel;
-    private FirebaseAuth mAuth;
+    private  User user;
+
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
-        // Initialize Firebase Auth
-        mAuth = FirebaseAuth.getInstance();
+
 
         findViews();
         onClickLogin();
@@ -83,33 +81,14 @@ public class RegisterActivity extends AppCompatActivity {
                 String password = mTextPassword.getText().toString().trim();
                 String confirmPassword = mTextPassword.getText().toString().trim();
 
-                mAuth.createUserWithEmailAndPassword(email, password)
-                        .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if(task.isSuccessful()){
-                            Toast.makeText(RegisterActivity.this, "User Registered Successfully",
-                                    Toast.LENGTH_SHORT).show();
-                        }
-                        else{
-                            if(task.getException() instanceof FirebaseAuthUserCollisionException){
-                                Toast.makeText(RegisterActivity.this, "You are already registered",
-                                        Toast.LENGTH_SHORT).show();
+                user = new User(firstName, lastName, email, username, password);
 
-                            }
-                            else{
-                                Toast.makeText(RegisterActivity.this, task.getException().getMessage(),
-                                        Toast.LENGTH_SHORT).show();
-                            }
-                        }
-
-
-                    }
-                });
+//                FirebaseAuthManager firebaseAuthManager = new FirebaseAuthManager();
+//                firebaseAuthManager.doSignUpWithFirebase(email, password);
 
                 if (ValidationHelper.validateEmail(email)) {
-                    if (ValidationHelper.validatePassword(password)) {
-                        processSignUp(firstName, lastName, email, username, password, confirmPassword);
+                    if (ValidationHelper.validatePassword(password) && password.equals(confirmPassword)) {
+                        processSignUp(user);
 
                     } else {
                         makeToast("Enter valid password ");
@@ -125,10 +104,28 @@ public class RegisterActivity extends AppCompatActivity {
         });
     }
 
-    private void processSignUp(String firstName, String lastName, String email, String username, String password, String confirmPassword) {
-        if (password.equals(confirmPassword)) {
+    private void processSignUp(User user) {
             userViewModel = new UserViewModel(this);
-            boolean isSignedUp = userViewModel.addUser(firstName, lastName, username, password, email);
+
+            RestApiUserDataManager apiUserDataManager = new RestApiUserDataManager();
+            UserModel userModel = new UserModel("aaaa", "bbbb",
+                    "123456789", "", "advance", "user",
+                    "cccc@gmail.com", "dddd", "", "", "eeee@123");
+            apiUserDataManager.createUser(userModel, new RestApiUserDataManager.RetroFitUserCallback() {
+                @Override
+                public void onResponse(UserModel userModel, HttpResponseCode httpResponseCode) {
+
+
+                }
+
+                @Override
+                public void onFailure(Throwable throwable) {
+
+                }
+
+            });
+
+            boolean isSignedUp = userViewModel.addUser(user);
             if (isSignedUp) {
                 Toast.makeText(RegisterActivity.this, "you are registered", Toast.LENGTH_SHORT).show();
                 Intent moveToLogin = new Intent(RegisterActivity.this, LoginActivity.class);
@@ -136,11 +133,6 @@ public class RegisterActivity extends AppCompatActivity {
             } else {
                 Toast.makeText(RegisterActivity.this, "Registration Error", Toast.LENGTH_SHORT).show();
             }
-        } else {
-            Toast.makeText(RegisterActivity.this, "password not matching", Toast.LENGTH_SHORT).show();
-
-        }
-
     }
 
     private void makeToast(String message) {

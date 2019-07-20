@@ -23,14 +23,15 @@ public class UserDatabaseManager {
         databaseHelper = SQLiteDatabaseHelper.getDatabaseHelper(context);
     }
 
-    public boolean addUser(String username, String password, String email, String firstName, String lastName) {
+    public boolean addUser(User user) {
         SQLiteDatabase db = databaseHelper.openDb();
         ContentValues contentValues = new ContentValues();
-        contentValues.put(USER_TABLE_COL_USERNAME, username);
-        contentValues.put(USER_TABLE_COL_PASSWORD, password);
-        contentValues.put(USER_TABLE_COL_EMAIL, email);
-        contentValues.put(USER_TABLE_COL_FIRST_NAME, firstName);
-        contentValues.put(USER_TABLE_COL_LAST_NAME, lastName);
+        contentValues.put(USER_TABLE_COL_FIRST_NAME, user.getFirstName());
+        contentValues.put(USER_TABLE_COL_LAST_NAME, user.getLastName());
+        contentValues.put(USER_TABLE_COL_USERNAME, user.getUsername());
+        contentValues.put(USER_TABLE_COL_EMAIL, user.getEmailId());
+        contentValues.put(USER_TABLE_COL_PASSWORD, user.getPassword());
+
 
         long res = db.insert(USER_TABLE_NAME, null, contentValues);
         db.close();

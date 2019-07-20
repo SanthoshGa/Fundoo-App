@@ -2,6 +2,7 @@ package com.bridgelabz.fundoo.LoginSignup.ViewModel;
 
 import android.content.Context;
 
+import com.bridgelabz.fundoo.LoginSignup.Model.User;
 import com.bridgelabz.fundoo.LoginSignup.Model.UserDatabaseManager;
 
 public class UserViewModel {
@@ -11,8 +12,8 @@ public class UserViewModel {
         userDbManager = new UserDatabaseManager(context);
     }
 
-    public boolean addUser(String username, String password, String email, String firstName, String lastName) {
-        return userDbManager.addUser(username,password, email, firstName, lastName);
+    public boolean addUser(User user) {
+        return userDbManager.addUser(user);
     }
 
     public boolean checkUser(String email, String password) {

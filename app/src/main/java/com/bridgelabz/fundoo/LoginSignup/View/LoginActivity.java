@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.bridgelabz.fundoo.Dashboard.Model.FirebaseAuthManager;
 import com.bridgelabz.fundoo.Dashboard.View.DashboardActivity;
 import com.bridgelabz.fundoo.LoginSignup.ViewModel.UserViewModel;
 import com.bridgelabz.fundoo.R;
@@ -55,14 +56,14 @@ public class LoginActivity extends AppCompatActivity implements  GoogleApiClient
     private GoogleApiClient googleApiClient;
     private LoginButton loginButton;
     private CallbackManager callbackManager;
-    private FirebaseAuth mAuth;
     public static final int  REQUEST_CODE = 9001;
+    FirebaseAuthManager firebaseAuthManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        mAuth = FirebaseAuth.getInstance();
+
 
         findViews();
         onClickRegister();
@@ -140,24 +141,28 @@ public class LoginActivity extends AppCompatActivity implements  GoogleApiClient
                 String password = mTextPassword.getText().toString().trim();
                 boolean res = userViewModel.checkUser(email, password);
 
-                mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if(task.isSuccessful()){
-                            Toast.makeText(LoginActivity.this, "Successfully Logged in", Toast.LENGTH_SHORT).show();
-                            Intent dashboardIntent = new Intent(LoginActivity.this, DashboardActivity.class);
-                            dashboardIntent.putExtra("email", email);
+//                mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+//                    @Override
+//                    public void onComplete(@NonNull Task<AuthResult> task) {
+//                        if(task.isSuccessful()){
+//                            Toast.makeText(LoginActivity.this, "Successfully Logged in", Toast.LENGTH_SHORT).show();
+//                            Intent dashboardIntent = new Intent(LoginActivity.this, DashboardActivity.class);
+//                            dashboardIntent.putExtra("email", email);
+//
+//                            startActivity(dashboardIntent);
+//                            finish();
+//
+//                        }
+//                        else{
+//                            Toast.makeText(LoginActivity.this, "failed", Toast.LENGTH_SHORT).show();
+//                        }
+//
+//                    }
+//                });
 
-                            startActivity(dashboardIntent);
-                            finish();
+                firebaseAuthManager = new FirebaseAuthManager();
+                firebaseAuthManager.doSignInWithFirebase(email, password);
 
-                        }
-                        else{
-                            Toast.makeText(LoginActivity.this, "failed", Toast.LENGTH_SHORT).show();
-                        }
-
-                    }
-                });
 
                 if(res)
                 {

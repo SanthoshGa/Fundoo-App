@@ -8,9 +8,9 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bridgelabz.fundoo.Dashboard.Model.RetrofitLoginModel;
-import com.bridgelabz.fundoo.Dashboard.Model.RetrofitModel;
+import com.bridgelabz.fundoo.Dashboard.Model.UserModel;
 import com.bridgelabz.fundoo.R;
-import com.bridgelabz.fundoo.Utility.Api;
+import com.bridgelabz.fundoo.Utility.UserRestApiService;
 
 import java.util.List;
 
@@ -20,11 +20,11 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-import static com.bridgelabz.fundoo.Utility.Api.BASE_URL;
+import static com.bridgelabz.fundoo.Utility.UserRestApiService.BASE_URL;
 
-public class RetrofitActivity extends AppCompatActivity {
+public class TestActivity extends AppCompatActivity {
 
-    private static final String TAG = "RetrofitActivity";
+    private static final String TAG = "TestActivity";
     ListView listView;
 
     @Override
@@ -47,15 +47,15 @@ public class RetrofitActivity extends AppCompatActivity {
         Retrofit retrofit = new Retrofit.Builder().baseUrl(BASE_URL)
                             .addConverterFactory(GsonConverterFactory.create()).build();
 
-        Api api = retrofit.create(Api.class);
-        Call<List<RetrofitModel>> call = api.getUsers();
-        call.enqueue(new Callback<List<RetrofitModel>>() {
+        UserRestApiService userRestApiService = retrofit.create(UserRestApiService.class);
+        Call<List<UserModel>> call = userRestApiService.getUsers();
+        call.enqueue(new Callback<List<UserModel>>() {
             @Override
-            public void onResponse(Call<List<RetrofitModel>> call, Response<List<RetrofitModel>> response) {
-                List<RetrofitModel> userList = response.body();
+            public void onResponse(Call<List<UserModel>> call, Response<List<UserModel>> response) {
+                List<UserModel> userList = response.body();
 
-                for(RetrofitModel retrofitModel : userList) {
-                    System.out.println(retrofitModel);
+                for(UserModel userModel : userList) {
+                    System.out.println(userModel);
                 }
                 Log.e(TAG, "onResponse: " + response.code() );
                 String[] users = new String[userList.size()];
@@ -64,13 +64,13 @@ public class RetrofitActivity extends AppCompatActivity {
                     users[i] = userList.get(i).getEmailId();
 //                    System.out.println(users[i]);
                 }
-//                listView.setAdapter(new ArrayAdapter<>(RetrofitActivity.this,
+//                listView.setAdapter(new ArrayAdapter<>(TestActivity.this,
 //                        android.R.layout.simple_list_item_1, users));
             }
 
             @Override
-            public void onFailure(Call<List<RetrofitModel>> call, Throwable t) {
-                Toast.makeText(RetrofitActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
+            public void onFailure(Call<List<UserModel>> call, Throwable t) {
+                Toast.makeText(TestActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
 
             }
         });
@@ -81,18 +81,18 @@ public class RetrofitActivity extends AppCompatActivity {
         Retrofit retrofit = new Retrofit.Builder().baseUrl(BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create()).build();
 
-        final RetrofitModel model = new RetrofitModel("abcd", "kgf",
+        final UserModel model = new UserModel("abcd", "kgf",
                "121212121", "", "advance", "user",
                "kgf@gmail.com", "", "", "", "kgf@123");
 
-        Api api = retrofit.create(Api.class);
-        Call<RetrofitModel> call = api.signUpUser(model);
-        call.enqueue(new Callback<RetrofitModel>() {
+        UserRestApiService userRestApiService = retrofit.create(UserRestApiService.class);
+        Call<UserModel> call = userRestApiService.signUpUser(model);
+        call.enqueue(new Callback<UserModel>() {
             @Override
-            public void onResponse(Call<RetrofitModel> call, Response<RetrofitModel> response) {
-                RetrofitModel model1 = response.body();
+            public void onResponse(Call<UserModel> call, Response<UserModel> response) {
+                UserModel model1 = response.body();
                 if(response.isSuccessful() && model1 != null){
-                    Toast.makeText(RetrofitActivity.this, "response is"
+                    Toast.makeText(TestActivity.this, "response is"
                             + model1.toString() , Toast.LENGTH_SHORT).show();
                 }
 
@@ -101,7 +101,7 @@ public class RetrofitActivity extends AppCompatActivity {
                 }
             }
             @Override
-            public void onFailure(Call<RetrofitModel> call, Throwable t) {
+            public void onFailure(Call<UserModel> call, Throwable t) {
                Log.e(TAG, "response is null");
             }
         });
@@ -114,14 +114,14 @@ public class RetrofitActivity extends AppCompatActivity {
                 .addConverterFactory(GsonConverterFactory.create()).build();
 
         RetrofitLoginModel loginModel = new RetrofitLoginModel("kgf@gmail.com", "kgf@123");
-        Api api = retrofit.create(Api.class);
-        Call<RetrofitModel> call = api.logInUser(loginModel);
-        call.enqueue(new Callback<RetrofitModel>() {
+        UserRestApiService userRestApiService = retrofit.create(UserRestApiService.class);
+        Call<UserModel> call = userRestApiService.logInUser(loginModel);
+        call.enqueue(new Callback<UserModel>() {
             @Override
-            public void onResponse(Call<RetrofitModel> call, Response<RetrofitModel> response) {
-                RetrofitModel  loginModel1 = response.body();
+            public void onResponse(Call<UserModel> call, Response<UserModel> response) {
+                UserModel loginModel1 = response.body();
                 if(response.isSuccessful() && loginModel1!= null){
-                    Toast.makeText(RetrofitActivity.this, "response is"
+                    Toast.makeText(TestActivity.this, "response is"
                             + loginModel1.toString() , Toast.LENGTH_SHORT).show();
                     Log.e(TAG, "response is:" + loginModel1.toString());
 
@@ -133,7 +133,7 @@ public class RetrofitActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<RetrofitModel> call, Throwable t) {
+            public void onFailure(Call<UserModel> call, Throwable t) {
                 Log.e(TAG, t.getLocalizedMessage());
 
             }
