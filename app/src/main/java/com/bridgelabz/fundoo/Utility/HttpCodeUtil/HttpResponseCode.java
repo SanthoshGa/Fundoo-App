@@ -8,7 +8,7 @@ public enum HttpResponseCode {
     int errorCode;
     String localizedDescription;
 
-    public int getErrorCode() {
+    public int getHttpCode() {
         return errorCode;
     }
 

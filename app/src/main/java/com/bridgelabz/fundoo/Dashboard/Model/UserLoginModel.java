@@ -2,7 +2,7 @@ package com.bridgelabz.fundoo.Dashboard.Model;
 
 import com.google.gson.annotations.SerializedName;
 
-public class RetrofitLoginModel {
+public class UserLoginModel {
 
     @SerializedName("email")
     private String email;
@@ -10,7 +10,7 @@ public class RetrofitLoginModel {
     @SerializedName("password")
     private String password;
 
-    public RetrofitLoginModel(String email, String password) {
+    public UserLoginModel(String email, String password) {
         this.email = email;
         this.password = password;
     }

@@ -1,6 +1,7 @@
 package com.bridgelabz.fundoo.Utility;
 
-import com.bridgelabz.fundoo.Dashboard.Model.RetrofitLoginModel;
+import com.bridgelabz.fundoo.Dashboard.Model.ResponseData;
+import com.bridgelabz.fundoo.Dashboard.Model.UserLoginModel;
 import com.bridgelabz.fundoo.Dashboard.Model.UserModel;
 
 import java.util.List;
@@ -16,8 +17,8 @@ public interface UserRestApiService {
     Call<List<UserModel>> getUsers();
 
     @POST("user/userSignUp")
-    Call<UserModel> signUpUser(@Body UserModel user);
+    Call<ResponseData> signUpUser(@Body UserModel user);
 
     @POST("user/login")
-    Call<UserModel> logInUser(@Body RetrofitLoginModel model);
+    Call<UserModel> logInUser(@Body UserLoginModel model);
 }

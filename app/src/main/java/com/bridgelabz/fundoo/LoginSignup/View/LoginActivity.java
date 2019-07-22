@@ -160,8 +160,8 @@ public class LoginActivity extends AppCompatActivity implements  GoogleApiClient
 //                    }
 //                });
 
-                firebaseAuthManager = new FirebaseAuthManager();
-                firebaseAuthManager.doSignInWithFirebase(email, password);
+//                firebaseAuthManager = new FirebaseAuthManager();
+//                firebaseAuthManager.doSignInWithFirebase(email, password);
 
 
                 if(res)

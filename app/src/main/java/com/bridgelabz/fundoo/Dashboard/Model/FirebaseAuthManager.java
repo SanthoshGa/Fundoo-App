@@ -30,6 +30,7 @@ public class FirebaseAuthManager {
 //
 //    }
     public void doSignInWithFirebase(String email, String password){
+        mFirebaseAuth = FirebaseAuth.getInstance();
         mFirebaseAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
