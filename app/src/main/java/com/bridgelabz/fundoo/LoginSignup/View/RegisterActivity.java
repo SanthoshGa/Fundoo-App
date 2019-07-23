@@ -114,7 +114,7 @@ public class RegisterActivity extends AppCompatActivity {
 
         RestApiUserDataManager apiUserDataManager = new RestApiUserDataManager();
 
-//        apiUserDataManager.createUser(userModel, new RestApiUserDataManager.RetroFitUserCallback() {
+//        apiUserDataManager.createUser(userModel, new RestApiUserDataManager.SignUpCallback() {
 //            @Override
 //            public void onResponse(UserModel userModel, HttpResponseCode httpResponseCode) {
 //
@@ -134,16 +134,18 @@ public class RegisterActivity extends AppCompatActivity {
 //
 //        });
 
-        apiUserDataManager.createUser(userModel, new RestApiUserDataManager.RetroFitUserCallback() {
+        apiUserDataManager.createUser(userModel, new RestApiUserDataManager.SignUpCallback() {
             @Override
             public void onResponse(ResponseData responseData, ResponseError responseError) {
-                Log.e(TAG, responseError.getStatusCode() + responseError.getMessage());
+
+
+//                Log.e(TAG, responseError.getStatusCode() + responseError.getMessage());
             }
 
             @Override
             public void onFailure(Throwable throwable) {
 
-                if(throwable != null){
+                if (throwable != null) {
                     Log.e(TAG, throwable.getLocalizedMessage() + "This is throwable");
                 } else {
                     Log.e(TAG, "throwable is null");
@@ -161,8 +163,6 @@ public class RegisterActivity extends AppCompatActivity {
 //                    "success": false
 //        }
 //        }
-
-
 
 
 //        boolean isSignedUp = userViewModel.addUser(user);

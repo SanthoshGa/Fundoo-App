@@ -7,7 +7,7 @@
     android:layout_gravity="center_horizontal"
     android:gravity="center_horizontal"
     android:orientation="vertical"
-    tools:context=".LoginSignup.View.LoginActivity">
+    tools:details=".LoginSignup.View.LoginActivity">
 
     <ImageView
         android:layout_width="wrap_content"

@@ -13,14 +13,20 @@ public class ResponseError {
     @SerializedName("message")
     private String message;
 
-    @SerializedName("context")
-    private String context;
+    @SerializedName("details")
+    private String details;
+
+    @SerializedName("stack")
+    private String stack;
+
+    @SerializedName("code")
+    private String code;
 
     public ResponseError(String statusCode, String name, String message, String context) {
         this.statusCode = statusCode;
         this.name = name;
         this.message = message;
-        this.context = context;
+        this.details = context;
     }
 
     public String getStatusCode() {
@@ -47,12 +53,12 @@ public class ResponseError {
         this.message = message;
     }
 
-    public String getContext() {
-        return context;
+    public String getDetails() {
+        return details;
     }
 
-    public void setContext(String context) {
-        this.context = context;
+    public void setDetails(String details) {
+        this.details = details;
     }
 
 //    public String toString() {

@@ -5,7 +5,7 @@
     android:id="@+id/root_add_label"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Dashboard.View.AddLabelFragment">
+    tools:details=".Dashboard.View.AddLabelFragment">
 
     <EditText
         android:id="@+id/et_labelName"

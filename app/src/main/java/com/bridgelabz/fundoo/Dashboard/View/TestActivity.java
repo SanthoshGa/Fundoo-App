@@ -10,7 +10,7 @@
 //import com.bridgelabz.fundoo.Dashboard.Model.UserLoginModel;
 //import com.bridgelabz.fundoo.Dashboard.Model.UserModel;
 //import com.bridgelabz.fundoo.R;
-//import com.bridgelabz.fundoo.Utility.UserRestApiService;
+//import com.bridgelabz.fundoo.LoginSignup.Model.RestApiService.UserRestApiService;
 //
 //import java.util.List;
 //
@@ -20,7 +20,7 @@
 //import retrofit2.Retrofit;
 //import retrofit2.converter.gson.GsonConverterFactory;
 //
-//import static com.bridgelabz.fundoo.Utility.UserRestApiService.BASE_URL;
+//import static com.bridgelabz.fundoo.LoginSignup.Model.RestApiService.UserRestApiService.BASE_URL;
 //
 //public class TestActivity extends AppCompatActivity {
 //

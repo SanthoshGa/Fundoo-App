@@ -3,8 +3,8 @@ package com.bridgelabz.fundoo.Dashboard.Model;
 
 import android.util.Log;
 
+import com.bridgelabz.fundoo.LoginSignup.Model.RestApiService.UserRestApiService;
 import com.bridgelabz.fundoo.Utility.RetrofitRestApiConnection;
-import com.bridgelabz.fundoo.Utility.UserRestApiService;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -24,33 +24,38 @@ public class RestApiUserDataManager {
 
 
     // create user
-    public void createUser(UserModel userModel, final RetroFitUserCallback userCallback) {
+    public void createUser(UserModel userModel, final SignUpCallback userCallback) {
         Retrofit retrofit = RetrofitRestApiConnection.openRetrofitConnection();
 
         UserRestApiService apiService = retrofit.create(UserRestApiService.class);
-        Call<ResponseData> responseDataCall = apiService.signUpUser(userModel);
-        responseDataCall.enqueue(new Callback<ResponseData>() {
+        Call<Map<String, ResponseData>> responseDataCall = apiService.signUpUser(userModel);
+        responseDataCall.enqueue(new Callback<Map<String, ResponseData>>() {
             @Override
-            public void onResponse(Call<ResponseData> call, Response<ResponseData> response) {
+            public void onResponse(Call<Map<String, ResponseData>> call, Response<Map<String,
+                    ResponseData>> response) {
                 if (response.isSuccessful()) {
-                    ResponseData responseData = response.body();
-                    System.out.println(responseData.getSuccess() + " " + responseData.getMessage());
+                    ResponseData responseData = response.body().get("data");
+//                    Log.e(TAG,  (response.body().get("data") == null) + "");
+                    Log.e(TAG, response.body().get("data") + "");
+
+//                    System.out.println(responseData.getSuccess() + " " + responseData.getMessage());
                 } else {
 
                     Gson gson = new Gson();
-                    Type type = new TypeToken<Map<String, Map<String, Object>>>() {
+                    Type type = new TypeToken<Map<String, ResponseError>>() {
                     }.getType();
+
                     try {
                         Log.e(TAG, response.errorBody().string());
-                        Map<String, Map<String, Object>> jsonMap =  gson.fromJson(response.errorBody()
+                        Map<String, ResponseError> jsonMap = gson.fromJson(response.errorBody()
                                 .string(), type);
-                        ResponseError responseError = new ResponseError(jsonMap.get
-                                ("error").get("statusCode").toString(), jsonMap.get
-                                ("error").get("name").toString(), jsonMap.get
-                                ("error").get("message").toString(), jsonMap.get
-                                ("error").get("context").toString());
-                        System.out.println(responseError.getStatusCode() + " " +
-                                responseError.getMessage());
+
+//                        ResponseError responseError = new ResponseError(jsonMap.get
+//                                ("error").get("statusCode").toString(), null, jsonMap.get
+//                                ("error").get("message").toString(), null);
+//                        System.out.println(responseError.getStatusCode() + " " +
+//                                responseError.getMessage());
+                        System.out.println(jsonMap.toString());
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -60,10 +65,47 @@ public class RestApiUserDataManager {
             }
 
             @Override
-            public void onFailure(Call<ResponseData> call, Throwable t) {
+            public void onFailure(Call<Map<String, ResponseData>> call, Throwable t) {
 
             }
         });
+
+//        responseDataCall.enqueue(new Callback<ResponseData>() {
+//            @Override
+//            public void onResponse(Call<ResponseData> call, Response<ResponseData> response) {
+//                if (response.isSuccessful()) {
+//                    ResponseData responseData = response.body();
+//                    Log.e(TAG, response.body().getSuccess() + "");
+//                    System.out.println(responseData.getSuccess() + " " + responseData.getMessage());
+//                } else {
+//
+//                    Gson gson = new Gson();
+//                    Type type = new TypeToken<Map<String, Map<String, Object>>>() {
+//                    }.getType();
+//                    try {
+//                        Log.e(TAG, response.errorBody().string());
+//                        Map<String, Map<String, Object>> jsonMap =  gson.fromJson(response.errorBody()
+//                                .string(), type);
+//
+////                        ResponseError responseError = new ResponseError(jsonMap.get
+////                                ("error").get("statusCode").toString(), null, jsonMap.get
+////                                ("error").get("message").toString(), null);
+////                        System.out.println(responseError.getStatusCode() + " " +
+////                                responseError.getMessage());
+//                        System.out.println(jsonMap.toString());
+//                    } catch (IOException e) {
+//                        e.printStackTrace();
+//                    }
+//
+//
+//                }
+//            }
+//
+//            @Override
+//            public void onFailure(Call<ResponseData> call, Throwable t) {
+//
+//            }
+//        });
 
 
 //        Call<Map<String, Map<String, Object>>> call = apiService.signUpUser(userModel);
@@ -107,32 +149,90 @@ public class RestApiUserDataManager {
 
 
     // checkUser
-    public void checkUser(UserLoginModel loginModel, final RetroFitUserCallback userCallback) {
+    public void checkUser(UserLoginModel loginModel, final SignInCallback signInCallback) {
         Retrofit retrofit = RetrofitRestApiConnection.openRetrofitConnection();
 
         UserRestApiService apiService = retrofit.create(UserRestApiService.class);
-
-        Call<UserModel> call = apiService.logInUser(loginModel);
-        call.enqueue(new Callback<UserModel>() {
+        Call<UserModel> responseDataCall = apiService.logInUser(loginModel);
+        responseDataCall.enqueue(new Callback<UserModel>() {
             @Override
             public void onResponse(Call<UserModel> call, Response<UserModel> response) {
-                UserModel loginModel1 = response.body();
-                if (response.isSuccessful()) {
-                    Log.e(TAG, "Response is:" + loginModel1.toString());
-                }
+                if(response.isSuccessful()){
+                    UserModel userModel = response.body();
+                    Log.e(TAG, " Response :" +  response.body() + "");
+                    signInCallback.onResponse(userModel, null);
+                } else {
 
+                    try {
+                        Log.e(TAG, "ERROR Response :" + response.errorBody().string() + "");
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
             }
 
             @Override
-            public void onFailure(Call<UserModel> call, Throwable t) {
+            public void onFailure(Call<UserModel> call, Throwable throwable) {
+
+                Log.e(TAG, throwable.getLocalizedMessage());
 
             }
         });
+
+//        responseDataCall.enqueue(new Callback<UserModel>() {
+//            @Override
+//            public void onResponse(Call<UserModel> call, Response<UserModel> response) {
+//
+//                if (response.isSuccessful()) {
+//                    UserModel userModel = response.body();
+//                    Log.e(TAG, response.body() + "");
+//                } else {
+//                    Log.e(TAG, response.errorBody().toString());
+//                }
+//            }
+//
+//            @Override
+//            public void onFailure(Call<Map<String, UserModel>> call, Throwable t) {
+//
+//
+//            }
+//        });
+//        Call<Map<String, ResponseData>> responseDataCall = apiService.logInUser(loginModel);
+//
+//        responseDataCall.enqueue(new Callback<Map<String, ResponseData>>() {
+//            @Override
+//            public void onResponse(Call<Map<String, ResponseData>> call, Response<Map<String,
+//                    ResponseData>> response) {
+//                if(response.isSuccessful()){
+//                    ResponseData responseData = response.body().get("data");
+//                    Log.e(TAG, response.body().get("data") + "");
+//
+//                }
+//                else{
+//
+//                    Log.e(TAG, response.errorBody().toString());
+//                }
+//
+//            }
+//
+//            @Override
+//            public void onFailure(Call<Map<String, ResponseData>> call, Throwable t) {
+//
+//            }
+//        });
+
+
     }
 
 
-    public interface RetroFitUserCallback {
+    public interface SignUpCallback {
         void onResponse(ResponseData responseData, ResponseError responseError);
+
+        void onFailure(Throwable throwable);
+    }
+
+    public interface SignInCallback {
+        void onResponse(UserModel userModel, ResponseError responseError);
 
         void onFailure(Throwable throwable);
     }

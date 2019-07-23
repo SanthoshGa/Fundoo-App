@@ -14,10 +14,14 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bridgelabz.fundoo.Dashboard.Model.FirebaseAuthManager;
+import com.bridgelabz.fundoo.Dashboard.Model.ResponseData;
+import com.bridgelabz.fundoo.Dashboard.Model.ResponseError;
+import com.bridgelabz.fundoo.Dashboard.Model.RestApiUserDataManager;
+import com.bridgelabz.fundoo.Dashboard.Model.UserLoginModel;
+import com.bridgelabz.fundoo.Dashboard.Model.UserModel;
 import com.bridgelabz.fundoo.Dashboard.View.DashboardActivity;
 import com.bridgelabz.fundoo.LoginSignup.ViewModel.UserViewModel;
 import com.bridgelabz.fundoo.R;
-import com.bumptech.glide.Glide;
 import com.facebook.AccessToken;
 import com.facebook.AccessTokenTracker;
 import com.facebook.CallbackManager;
@@ -34,17 +38,13 @@ import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Arrays;
 
-public class LoginActivity extends AppCompatActivity implements  GoogleApiClient.OnConnectionFailedListener {
+public class LoginActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
 
     private static final String TAG = "LoginActivity.class";
     private EditText mTextEmail;
@@ -56,7 +56,7 @@ public class LoginActivity extends AppCompatActivity implements  GoogleApiClient
     private GoogleApiClient googleApiClient;
     private LoginButton loginButton;
     private CallbackManager callbackManager;
-    public static final int  REQUEST_CODE = 9001;
+    public static final int REQUEST_CODE = 9001;
     FirebaseAuthManager firebaseAuthManager;
 
     @Override
@@ -75,7 +75,7 @@ public class LoginActivity extends AppCompatActivity implements  GoogleApiClient
                 (GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestEmail().requestProfile().build();
         googleApiClient = new GoogleApiClient.Builder(this).enableAutoManage
-                (this,this).addApi(Auth.GOOGLE_SIGN_IN_API,
+                (this, this).addApi(Auth.GOOGLE_SIGN_IN_API,
                 googleSignInOptions).build();
         callbackManager = CallbackManager.Factory.create();
 
@@ -124,22 +124,139 @@ public class LoginActivity extends AppCompatActivity implements  GoogleApiClient
         mSignIn.setSize(SignInButton.SIZE_STANDARD);
         loginButton = findViewById(R.id.fb_login_btn);
     }
-    private void onClickRegister(){
+
+    private void onClickRegister() {
         mTextRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent registerIntent = new Intent(LoginActivity.this, RegisterActivity.class );
+                Intent registerIntent = new Intent(LoginActivity.this, RegisterActivity.class);
                 startActivity(registerIntent);
             }
         });
     }
-    private void onClickLogin(){
+
+    private void onClickLogin() {
         mButtonLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 final String email = mTextEmail.getText().toString().trim();
                 String password = mTextPassword.getText().toString().trim();
-                boolean res = userViewModel.checkUser(email, password);
+//                boolean res = userViewModel.checkUser(email, password);
+                Log.e(TAG, "onClick: login button click");
+
+                UserLoginModel loginModel = new UserLoginModel(email, password);
+
+                RestApiUserDataManager apiUserDataManager = new RestApiUserDataManager();
+
+                apiUserDataManager.checkUser(loginModel, new RestApiUserDataManager.SignInCallback() {
+                    @Override
+                    public void onResponse(UserModel userModel, ResponseError responseError) {
+                        Log.e(TAG, "onResponse: " + userModel.toString());
+
+                    }
+
+                    @Override
+                    public void onFailure(Throwable throwable) {
+
+                    }
+                });
+            }
+        });
+    }
+
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
+    }
+
+    private void signIn() {
+
+        Intent intent = Auth.GoogleSignInApi.getSignInIntent(googleApiClient);
+        startActivityForResult(intent, REQUEST_CODE);
+
+    }
+
+    private void handleResult(GoogleSignInResult result) {
+
+        if (result.isSuccess()) {
+            GoogleSignInAccount account = result.getSignInAccount();
+            if (account != null) {
+                String email = account.getEmail();
+                String imageUrl = account.getPhotoUrl().toString();
+                Log.e(TAG, account.getDisplayName() + "\n" + account.getEmail() + "\n"
+                        + account.getId() + "\n" + imageUrl + "\n");
+//            mTextEmail.setText(email);
+                Toast.makeText(this, "Login successful!", Toast.LENGTH_SHORT).show();
+                Intent dIntent = new Intent(LoginActivity.this, DashboardActivity.class);
+                dIntent.putExtra("email", email);
+                dIntent.putExtra("imageUrl", imageUrl);
+                startActivity(dIntent);
+            } else {
+                Log.e(TAG, "Google Sign In Account is null");
+            }
+
+//            updateUI(true);
+        } else {
+//            updateUI(false);
+            Toast.makeText(this, "Login failed!", Toast.LENGTH_SHORT).show();
+        }
+
+    }
+
+    private void updateUI(boolean isLogin) {
+
+        if (isLogin) {
+
+        } else {
+
+        }
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        callbackManager.onActivityResult(requestCode, resultCode, data);
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == REQUEST_CODE) {
+            GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
+            handleResult(result);
+
+        }
+    }
+
+    AccessTokenTracker tokenTracker = new AccessTokenTracker() {
+        @Override
+        protected void onCurrentAccessTokenChanged(AccessToken oldAccessToken, AccessToken currentAccessToken) {
+
+        }
+    };
+
+    public void loaduserProfile(AccessToken newAccessToken) {
+        GraphRequest request = GraphRequest.newMeRequest(newAccessToken, new GraphRequest.GraphJSONObjectCallback() {
+            @Override
+            public void onCompleted(JSONObject object, GraphResponse response) {
+
+                try {
+                    String first_name = object.getString("first_name");
+                    String last_name = object.getString("last_name");
+                    String email = object.getString("email");
+                    String id = object.getString("id");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        });
+        Bundle parameters = new Bundle();
+        parameters.putString("fields", "first_name, last_name, email, id");
+        request.setParameters(parameters);
+        request.executeAsync();
+
+    }
+}
+
 
 //                mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
 //                    @Override
@@ -164,109 +281,15 @@ public class LoginActivity extends AppCompatActivity implements  GoogleApiClient
 //                firebaseAuthManager.doSignInWithFirebase(email, password);
 
 
-                if(res)
-                {
-                    Toast.makeText(LoginActivity.this, "Successfully Logged in", Toast.LENGTH_SHORT).show();
-                    Intent dashboardIntent = new Intent(LoginActivity.this, DashboardActivity.class);
-                    dashboardIntent.putExtra("email", email);
-                    startActivity(dashboardIntent);
-                    finish();
-                }
-                else{
-                    Toast.makeText(LoginActivity.this, "login error", Toast.LENGTH_SHORT).show();
-
-                }
-
-            }
-        });
-    }
-
-
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-
-    }
-
-    private void signIn(){
-
-        Intent intent = Auth.GoogleSignInApi.getSignInIntent(googleApiClient);
-        startActivityForResult(intent, REQUEST_CODE);
-
-    }
-    private void handleResult(GoogleSignInResult result){
-
-        if(result.isSuccess()){
-            GoogleSignInAccount account = result.getSignInAccount();
-            if (account != null) {
-                String email = account.getEmail();
-                String imageUrl = account.getPhotoUrl().toString();
-                Log.e(TAG, account.getDisplayName() + "\n" + account.getEmail() + "\n"
-                        + account.getId() + "\n" + imageUrl + "\n");
-//            mTextEmail.setText(email);
-                Toast.makeText(this, "Login successful!", Toast.LENGTH_SHORT).show();
-                Intent dIntent = new Intent(LoginActivity.this, DashboardActivity.class);
-                dIntent.putExtra("email", email );
-                dIntent.putExtra("imageUrl", imageUrl);
-                startActivity(dIntent);
-            } else {
-                Log.e(TAG, "Google Sign In Account is null");
-            }
-
-//            updateUI(true);
-        }
-        else{
-//            updateUI(false);
-            Toast.makeText(this, "Login failed!", Toast.LENGTH_SHORT).show();
-        }
-
-    }
-    private void updateUI(boolean isLogin){
-
-        if(isLogin){
-
-        } else {
-
-        }
-
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        callbackManager.onActivityResult(requestCode, resultCode, data);
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if(requestCode == REQUEST_CODE){
-            GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
-            handleResult(result);
-
-        }
-    }
-    AccessTokenTracker tokenTracker = new AccessTokenTracker() {
-        @Override
-        protected void onCurrentAccessTokenChanged(AccessToken oldAccessToken, AccessToken currentAccessToken) {
-
-        }
-    };
-    public void loaduserProfile(AccessToken newAccessToken){
-        GraphRequest request = GraphRequest.newMeRequest(newAccessToken, new GraphRequest.GraphJSONObjectCallback() {
-            @Override
-            public void onCompleted(JSONObject object, GraphResponse response) {
-
-                try {
-                    String first_name = object.getString("first_name");
-                    String last_name = object.getString("last_name");
-                    String email = object.getString("email");
-                    String id = object.getString("id");
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
-            }
-        });
-        Bundle parameters = new Bundle();
-        parameters.putString("fields", "first_name, last_name, email, id");
-        request.setParameters(parameters);
-        request.executeAsync();
-
-    }
-}
+//                if(res)
+//                {
+//                    Toast.makeText(LoginActivity.this, "Successfully Logged in", Toast.LENGTH_SHORT).show();
+//                    Intent dashboardIntent = new Intent(LoginActivity.this, DashboardActivity.class);
+//                    dashboardIntent.putExtra("email", email);
+//                    startActivity(dashboardIntent);
+//                    finish();
+//                }
+//                else{
+//                    Toast.makeText(LoginActivity.this, "login error", Toast.LENGTH_SHORT).show();
+//
+//                }
