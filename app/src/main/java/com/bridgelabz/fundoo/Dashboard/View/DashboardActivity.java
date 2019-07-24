@@ -4,6 +4,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 
+import com.bridgelabz.fundoo.ObserverPattern.Observable;
+import com.bridgelabz.fundoo.ObserverPattern.ObservableNotes;
+import com.bridgelabz.fundoo.ObserverPattern.Observer;
 import com.bumptech.glide.Glide;
 import com.google.android.material.navigation.NavigationView;
 import androidx.fragment.app.Fragment;
@@ -34,20 +37,23 @@ import com.bridgelabz.fundoo.Dashboard.ViewModel.NoteViewModel;
 import com.bridgelabz.fundoo.LoginSignup.View.LoginActivity;
 import com.bridgelabz.fundoo.R;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class DashboardActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
+public class DashboardActivity extends AppCompatActivity implements
+        NavigationView.OnNavigationItemSelectedListener, Observer {
 
     private static final String TAG = "DashboardActivity";
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mToggle;
     TextView mTextTakeNote;
     RecyclerView mRecyclerView;
-    private List<Note> noteList;
+    private List<Note> noteList = new ArrayList<>();
     NoteViewModel noteViewModel;
     NotesAdapter notesAdapter;
     NavigationView navigationView;
+    Observable<List<Note>> observableNotes = new ObservableNotes(noteList);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,10 +62,15 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         noteViewModel = new NoteViewModel(this);
         prepareRecyclerView();
+        registerObserverForNotes();
         setNavigationViewListener();
         setUpDrawer();
         setUpNavigationView();
         setOnClickTakeNote();
+    }
+
+    private void registerObserverForNotes() {
+        observableNotes.registerObserver(this);
     }
 
     private void setUpDrawer() {
@@ -75,7 +86,9 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
 
 
     private void prepareRecyclerView() {
-        noteList = noteViewModel.getAllNoteData();
+        observableNotes = noteViewModel.fetchAllNotes();
+        noteList = ((ObservableNotes)observableNotes).getListOfNotes();
+//        noteList = noteViewModel.getAllNoteData();
         mRecyclerView = findViewById(R.id.recycleView);
         mRecyclerView.setHasFixedSize(true);
 
@@ -285,4 +298,15 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
 
     }
 
+    @Override
+    public void update(Observable observable) {
+        this.noteList = ((ObservableNotes)observable).getListOfNotes();
+        notesAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        observableNotes.unregisterObserver(this);
+    }
 }

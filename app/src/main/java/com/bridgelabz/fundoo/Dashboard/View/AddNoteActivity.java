@@ -222,6 +222,7 @@ public class AddNoteActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     protected void addNoteToDb(Note note) {
+        //TODO :
         boolean isNoteAdd = noteViewModel.addNote(note);
         if (isNoteAdd) {
             Toast.makeText(AddNoteActivity.this, " Note is Successfully Saved",

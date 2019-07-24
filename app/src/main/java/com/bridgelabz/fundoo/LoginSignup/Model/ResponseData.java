@@ -1,4 +1,4 @@
-package com.bridgelabz.fundoo.Dashboard.Model;
+package com.bridgelabz.fundoo.LoginSignup.Model;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -9,6 +9,9 @@ public class ResponseData {
 
     @SerializedName("message")
     private String message;
+
+    @SerializedName("details")
+    private String details;
 
     public ResponseData(boolean success, String message) {
         this.success = success;

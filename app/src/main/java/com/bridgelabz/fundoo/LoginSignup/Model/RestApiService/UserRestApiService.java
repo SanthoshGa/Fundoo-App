@@ -1,8 +1,8 @@
 package com.bridgelabz.fundoo.LoginSignup.Model.RestApiService;
 
-import com.bridgelabz.fundoo.Dashboard.Model.ResponseData;
-import com.bridgelabz.fundoo.Dashboard.Model.UserLoginModel;
-import com.bridgelabz.fundoo.Dashboard.Model.UserModel;
+import com.bridgelabz.fundoo.LoginSignup.Model.ResponseData;
+import com.bridgelabz.fundoo.LoginSignup.Model.UserLoginModel;
+import com.bridgelabz.fundoo.LoginSignup.Model.UserModel;
 
 import java.util.List;
 import java.util.Map;

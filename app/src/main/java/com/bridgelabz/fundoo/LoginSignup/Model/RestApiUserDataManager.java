@@ -1,15 +1,12 @@
-package com.bridgelabz.fundoo.Dashboard.Model;
+package com.bridgelabz.fundoo.LoginSignup.Model;
 
 
 import android.util.Log;
 
 import com.bridgelabz.fundoo.LoginSignup.Model.RestApiService.UserRestApiService;
 import com.bridgelabz.fundoo.Utility.RetrofitRestApiConnection;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
 import java.io.IOException;
-import java.lang.reflect.Type;
 import java.util.Map;
 
 import retrofit2.Call;
@@ -24,7 +21,7 @@ public class RestApiUserDataManager {
 
 
     // create user
-    public void createUser(UserModel userModel, final SignUpCallback userCallback) {
+    public void createUser(UserModel userModel, final SignUpCallback signUpCallback) {
         Retrofit retrofit = RetrofitRestApiConnection.openRetrofitConnection();
 
         UserRestApiService apiService = retrofit.create(UserRestApiService.class);
@@ -35,30 +32,33 @@ public class RestApiUserDataManager {
                     ResponseData>> response) {
                 if (response.isSuccessful()) {
                     ResponseData responseData = response.body().get("data");
-//                    Log.e(TAG,  (response.body().get("data") == null) + "");
+//
+                    signUpCallback.onResponse(responseData, null);
                     Log.e(TAG, response.body().get("data") + "");
 
 //                    System.out.println(responseData.getSuccess() + " " + responseData.getMessage());
                 } else {
+//                    ResponseBody responseErrorBody = response.errorBody();
 
-                    Gson gson = new Gson();
-                    Type type = new TypeToken<Map<String, ResponseError>>() {
-                    }.getType();
 
-                    try {
-                        Log.e(TAG, response.errorBody().string());
-                        Map<String, ResponseError> jsonMap = gson.fromJson(response.errorBody()
-                                .string(), type);
+//                    Gson gson = new Gson();
+//                    Type type = new TypeToken<Map<String, ResponseError>>() {
+//                    }.getType();
 
-//                        ResponseError responseError = new ResponseError(jsonMap.get
-//                                ("error").get("statusCode").toString(), null, jsonMap.get
-//                                ("error").get("message").toString(), null);
-//                        System.out.println(responseError.getStatusCode() + " " +
-//                                responseError.getMessage());
-                        System.out.println(jsonMap.toString());
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+//                    try {
+//                        Log.e(TAG, response.errorBody().string());
+//                        Map<String, ResponseError> jsonMap = gson.fromJson(response.errorBody()
+//                                .string(), type);
+//
+////                        ResponseError responseError = new ResponseError(jsonMap.get
+////                                ("error").get("statusCode").toString(), null, jsonMap.get
+////                                ("error").get("message").toString(), null);
+////                        System.out.println(responseError.getStatusCode() + " " +
+////                                responseError.getMessage());
+//                        System.out.println(jsonMap.toString());
+//                    } catch (IOException e) {
+//                        e.printStackTrace();
+//                    }
 
 
                 }
@@ -175,7 +175,7 @@ public class RestApiUserDataManager {
             public void onFailure(Call<UserModel> call, Throwable throwable) {
 
                 Log.e(TAG, throwable.getLocalizedMessage());
-
+                signInCallback.onFailure(throwable);
             }
         });
 

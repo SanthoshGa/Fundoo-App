@@ -7,8 +7,8 @@
 //
 //import androidx.appcompat.app.AppCompatActivity;
 //
-//import com.bridgelabz.fundoo.Dashboard.Model.UserLoginModel;
-//import com.bridgelabz.fundoo.Dashboard.Model.UserModel;
+//import com.bridgelabz.fundoo.LoginSignup.Model.UserLoginModel;
+//import com.bridgelabz.fundoo.LoginSignup.Model.UserModel;
 //import com.bridgelabz.fundoo.R;
 //import com.bridgelabz.fundoo.LoginSignup.Model.RestApiService.UserRestApiService;
 //

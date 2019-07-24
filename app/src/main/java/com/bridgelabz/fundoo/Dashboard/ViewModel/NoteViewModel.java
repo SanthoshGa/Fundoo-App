@@ -4,14 +4,20 @@ import android.content.Context;
 
 import com.bridgelabz.fundoo.Dashboard.Model.Note;
 import com.bridgelabz.fundoo.Dashboard.Model.NoteDatabaseManager;
+import com.bridgelabz.fundoo.ObserverPattern.Observable;
+import com.bridgelabz.fundoo.ObserverPattern.ObservableNotes;
+
 import java.util.List;
 
 public class NoteViewModel
 {
+    private Observable<List<Note>> observableNotes;
     private NoteDatabaseManager noteDbManager;
 
     public NoteViewModel(Context context){
         noteDbManager = new NoteDatabaseManager(context);
+//        List<Note> listOfNotes = noteDbManager.getAllNoteData();
+        this.observableNotes = noteDbManager.getAllObservableNotes();
     }
 
     public  boolean addNote(Note note){
@@ -42,5 +48,9 @@ public class NoteViewModel
     }
     public boolean updateNote(Note noteToEdit){
         return noteDbManager.updateNote(noteToEdit);
+    }
+
+    public Observable<List<Note>> fetchAllNotes() {
+        return observableNotes;
     }
 }

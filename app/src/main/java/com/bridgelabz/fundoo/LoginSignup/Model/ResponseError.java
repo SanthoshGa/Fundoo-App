@@ -1,4 +1,4 @@
-package com.bridgelabz.fundoo.Dashboard.Model;
+package com.bridgelabz.fundoo.LoginSignup.Model;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -14,7 +14,7 @@ public class ResponseError {
     private String message;
 
     @SerializedName("details")
-    private String details;
+    private Object details;
 
     @SerializedName("stack")
     private String stack;
@@ -53,7 +53,7 @@ public class ResponseError {
         this.message = message;
     }
 
-    public String getDetails() {
+    public Object getDetails() {
         return details;
     }
 

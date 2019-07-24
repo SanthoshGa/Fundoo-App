@@ -11,10 +11,10 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.bridgelabz.fundoo.Dashboard.Model.RestApiUserDataManager;
-import com.bridgelabz.fundoo.Dashboard.Model.ResponseData;
-import com.bridgelabz.fundoo.Dashboard.Model.ResponseError;
-import com.bridgelabz.fundoo.Dashboard.Model.UserModel;
+import com.bridgelabz.fundoo.LoginSignup.Model.RestApiUserDataManager;
+import com.bridgelabz.fundoo.LoginSignup.Model.ResponseData;
+import com.bridgelabz.fundoo.LoginSignup.Model.ResponseError;
+import com.bridgelabz.fundoo.LoginSignup.Model.UserModel;
 import com.bridgelabz.fundoo.LoginSignup.Model.User;
 import com.bridgelabz.fundoo.LoginSignup.ViewModel.UserViewModel;
 import com.bridgelabz.fundoo.R;
@@ -138,7 +138,13 @@ public class RegisterActivity extends AppCompatActivity {
             @Override
             public void onResponse(ResponseData responseData, ResponseError responseError) {
 
+                if (responseData != null) {
+                    Toast.makeText(RegisterActivity.this, responseData.getMessage()
+                            , Toast.LENGTH_SHORT).show();
+//                    finish();
+                } else {
 
+                }
 //                Log.e(TAG, responseError.getStatusCode() + responseError.getMessage());
             }
 

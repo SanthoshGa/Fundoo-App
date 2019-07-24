@@ -7,6 +7,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import com.bridgelabz.fundoo.DatabaseHelpers.SQLiteDatabaseHelper;
+import com.bridgelabz.fundoo.ObserverPattern.Observable;
+import com.bridgelabz.fundoo.ObserverPattern.ObservableNotes;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -236,4 +238,7 @@ public class NoteDatabaseManager {
         return isDeleted;
     }
 
+    public Observable<List<Note>> getAllObservableNotes() {
+        return new ObservableNotes(getAllNoteData());
+    }
 }

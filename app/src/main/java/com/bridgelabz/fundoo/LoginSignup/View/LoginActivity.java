@@ -14,11 +14,10 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bridgelabz.fundoo.Dashboard.Model.FirebaseAuthManager;
-import com.bridgelabz.fundoo.Dashboard.Model.ResponseData;
-import com.bridgelabz.fundoo.Dashboard.Model.ResponseError;
-import com.bridgelabz.fundoo.Dashboard.Model.RestApiUserDataManager;
-import com.bridgelabz.fundoo.Dashboard.Model.UserLoginModel;
-import com.bridgelabz.fundoo.Dashboard.Model.UserModel;
+import com.bridgelabz.fundoo.LoginSignup.Model.ResponseError;
+import com.bridgelabz.fundoo.LoginSignup.Model.RestApiUserDataManager;
+import com.bridgelabz.fundoo.LoginSignup.Model.UserLoginModel;
+import com.bridgelabz.fundoo.LoginSignup.Model.UserModel;
 import com.bridgelabz.fundoo.Dashboard.View.DashboardActivity;
 import com.bridgelabz.fundoo.LoginSignup.ViewModel.UserViewModel;
 import com.bridgelabz.fundoo.R;
