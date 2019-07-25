@@ -234,7 +234,7 @@ public class AddNoteActivity extends AppCompatActivity implements View.OnClickLi
             if (intent.hasExtra("isNoteAdded")) {
                 boolean isNoteAdded = intent.
                         getBooleanExtra("isNoteAdded", false);
-                Log.e(TAG, "onReceive: Yippie we got the data " + isNoteAdded);
+                Log.e(TAG, "onReceive: Yup we got the data " + isNoteAdded);
 
                 if (isNoteAdded) {
                     Toast.makeText(AddNoteActivity.this, " Note is Successfully Saved",
@@ -251,7 +251,8 @@ public class AddNoteActivity extends AppCompatActivity implements View.OnClickLi
                     startActivity(data);
                     finish();
                 } else {
-                    Toast.makeText(AddNoteActivity.this, "Something Went Wrong", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(AddNoteActivity.this, "Something Went Wrong",
+                            Toast.LENGTH_SHORT).show();
                 }
 
             }

@@ -32,6 +32,7 @@ public class RestApiNoteDataManager {
             @Override
             public void onResponse(Call<Map<String, ResponseData>> call, Response<Map<String, ResponseData>> response) {
                 if (response.isSuccessful()) {
+                    Log.e(TAG, "RESPONSE IS SUCCESSFUL");
                     ResponseData responseData = response.body().get("data");
                     addNoteCallback.onResponse(responseData, null);
 //                    Map<ResponseData, ResponseError> responseErrorMap = new HashMap<>();

@@ -28,11 +28,7 @@ public class RestApiNoteViewModel {
             public void onResponse(ResponseData responseData, ResponseError responseError) {
 
                 boolean isAddedStatus;
-                if (responseData != null) {
-                    isAddedStatus = true;
-                } else {
-                   isAddedStatus = false;
-                }
+                isAddedStatus = (responseData != null);
                 localIntent.putExtra("isNoteAdded", isAddedStatus);
                 localBroadcastManager.sendBroadcast(localIntent);
             }
