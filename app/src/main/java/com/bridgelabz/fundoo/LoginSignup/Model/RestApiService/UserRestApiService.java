@@ -1,6 +1,6 @@
 package com.bridgelabz.fundoo.LoginSignup.Model.RestApiService;
 
-import com.bridgelabz.fundoo.LoginSignup.Model.ResponseData;
+import com.bridgelabz.fundoo.LoginSignup.Model.Response.ResponseData;
 import com.bridgelabz.fundoo.LoginSignup.Model.UserLoginModel;
 import com.bridgelabz.fundoo.LoginSignup.Model.UserModel;
 

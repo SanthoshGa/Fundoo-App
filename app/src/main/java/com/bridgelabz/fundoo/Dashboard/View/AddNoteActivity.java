@@ -4,12 +4,17 @@ import android.app.AlarmManager;
 import android.app.DatePickerDialog;
 import android.app.PendingIntent;
 import android.app.TimePickerDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
+
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -25,7 +30,9 @@ import android.widget.Toast;
 
 import com.bridgelabz.fundoo.BroadcastReceivers.ReminderReceiver;
 import com.bridgelabz.fundoo.Dashboard.Model.Note;
+import com.bridgelabz.fundoo.Dashboard.Model.NoteModel;
 import com.bridgelabz.fundoo.Dashboard.ViewModel.NoteViewModel;
+import com.bridgelabz.fundoo.Dashboard.ViewModel.RestApiNoteViewModel;
 import com.bridgelabz.fundoo.R;
 import com.bridgelabz.fundoo.Utility.ValidationHelper;
 
@@ -34,7 +41,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-public class AddNoteActivity extends AppCompatActivity implements View.OnClickListener{
+public class AddNoteActivity extends AppCompatActivity implements View.OnClickListener {
 
 
     private static final String TAG = "AddNoteActivity";
@@ -74,6 +81,8 @@ public class AddNoteActivity extends AppCompatActivity implements View.OnClickLi
         mButtonDate.setOnClickListener(this);
         mButtonTime.setOnClickListener(this);
         notificationManagerCompat = NotificationManagerCompat.from(this);
+        LocalBroadcastManager.getInstance(this).registerReceiver(addedNoteBroadcastReceiver,
+                new IntentFilter("com.bridgelabz.fundoo.added_note_action"));
 //        try {
 //            parseStringToDate();
 //        } catch (ParseException e) {
@@ -100,8 +109,6 @@ public class AddNoteActivity extends AppCompatActivity implements View.OnClickLi
 //        notificationManagerCompat.notify(1, notification);
 //
 //    }
-
-
 
     private void checkEditMode() {
         Intent intent = getIntent();
@@ -147,7 +154,7 @@ public class AddNoteActivity extends AppCompatActivity implements View.OnClickLi
 
     private void checkColorRadioBtn(String defaultColor, final String noteColor, int viewResId,
                                     final int colorResId) {
-        if(defaultColor.equals(noteColor)){
+        if (defaultColor.equals(noteColor)) {
 
             radioGroup.check(viewResId);
             RadioButton rdBtn = findViewById(viewResId);
@@ -189,7 +196,7 @@ public class AddNoteActivity extends AppCompatActivity implements View.OnClickLi
                             updateNoteToDB(noteToEdit);
                         } else {
                             Note note = new Note(title, description, noteColor, isArchived,
-                                    reminderStringBuilder.toString(), isPinned, isTrashed );
+                                    reminderStringBuilder.toString(), isPinned, isTrashed);
 
                             Log.e(TAG, note.toString());
                             addNoteToDb(note);
@@ -211,37 +218,59 @@ public class AddNoteActivity extends AppCompatActivity implements View.OnClickLi
     private void updateNoteToDB(Note noteToEdit) {
         // update note to database
         boolean isNoteEdit = noteViewModel.updateNote(noteToEdit);
-        if(isNoteEdit){
+        if (isNoteEdit) {
             Toast.makeText(AddNoteActivity.this, "Note is Updated", Toast.LENGTH_SHORT).show();
             Intent editData = new Intent(AddNoteActivity.this, DashboardActivity.class);
             startActivity(editData);
-        }
-        else{
+        } else {
             Toast.makeText(AddNoteActivity.this, "Unable to update", Toast.LENGTH_SHORT).show();
         }
     }
 
+    private BroadcastReceiver addedNoteBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.e(TAG, "onReceive: Local broadcasts are working ");
+            if (intent.hasExtra("isNoteAdded")) {
+                boolean isNoteAdded = intent.
+                        getBooleanExtra("isNoteAdded", false);
+                Log.e(TAG, "onReceive: Yippie we got the data " + isNoteAdded);
+
+                if (isNoteAdded) {
+                    Toast.makeText(AddNoteActivity.this, " Note is Successfully Saved",
+                            Toast.LENGTH_SHORT).show();
+//                    Log.e(TAG, note.toString());
+//                    if(reminderStringBuilder.toString().isEmpty()){
+//                        Toast.makeText(this, "not added the reminder", Toast.LENGTH_SHORT).show();
+//                    }
+//                    else{
+//                        addReminder(new Date());
+//                    }
+
+                    Intent data = new Intent(AddNoteActivity.this, DashboardActivity.class);
+                    startActivity(data);
+                    finish();
+                } else {
+                    Toast.makeText(AddNoteActivity.this, "Something Went Wrong", Toast.LENGTH_SHORT).show();
+                }
+
+            }
+        }
+    };
+
     protected void addNoteToDb(Note note) {
         //TODO :
-        boolean isNoteAdd = noteViewModel.addNote(note);
-        if (isNoteAdd) {
-            Toast.makeText(AddNoteActivity.this, " Note is Successfully Saved",
-                    Toast.LENGTH_SHORT).show();
-            Log.e(TAG, note.toString());
-            if(reminderStringBuilder.toString().isEmpty()){
-                Toast.makeText(this, "not added the reminder", Toast.LENGTH_SHORT).show();
-            }
-            else{
-                addReminder(new Date());
-            }
 
-            Intent data = new Intent(AddNoteActivity.this, DashboardActivity.class);
-            startActivity(data);
-            finish();
-        } else {
-            Toast.makeText(AddNoteActivity.this, "Something Went Wrong", Toast.LENGTH_SHORT).show();
-        }
+        NoteModel noteModel = new NoteModel(note.getTitle(), note.getDescription(),
+                note.isPinned(), note.isArchived(), note.isTrashed(),
+                note.getIfReminder(), "", "", note.getColor(), "", "");
+
+        RestApiNoteViewModel noteViewModel = new RestApiNoteViewModel(this);
+        noteViewModel.addNotes(noteModel);
+//        boolean isNoteAdd = noteViewModel.addNote(note);
+
     }
+
     public void onRadioButtonClicked(View radioButtonView) {
         boolean checked = ((RadioButton) radioButtonView).isChecked();
         switch (radioButtonView.getId()) {
@@ -363,7 +392,7 @@ public class AddNoteActivity extends AppCompatActivity implements View.OnClickLi
                 String title_1 = mTextTitle.getText().toString().trim();
                 String description_1 = mTextDescription.getText().toString().trim();
                 Note note1 = new Note(title_1, description_1, noteColor, false,
-                        reminderStringBuilder.toString(), true,false);
+                        reminderStringBuilder.toString(), true, false);
                 addNoteToDb(note1);
                 return true;
             default:
@@ -394,7 +423,6 @@ public class AddNoteActivity extends AppCompatActivity implements View.OnClickLi
                         }
                     }, mYear, mMonth, mDay);
             datePickerDialog.show();
-
 
 
             setDateTimeString("EEE, MMM d ", calender.getTime());
@@ -436,7 +464,8 @@ public class AddNoteActivity extends AppCompatActivity implements View.OnClickLi
 
         alarmManager.set(AlarmManager.RTC_WAKEUP, date.getTime(), broadcast);
     }
-//
+
+    //
 //    @Override
 //    public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
 //
@@ -459,8 +488,14 @@ public class AddNoteActivity extends AppCompatActivity implements View.OnClickLi
 //        Log.e(TAG, "THE TIME IS : " + calendar.getTime().toString());
 //    }
 //
-    private void setDateTimeString(String pattern, Date date){
+    private void setDateTimeString(String pattern, Date date) {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern, Locale.getDefault());
         reminderStringBuilder.append(simpleDateFormat.format(date)).append(" ");
+    }
+
+    @Override
+    protected void onDestroy() {
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(addedNoteBroadcastReceiver);
+        super.onDestroy();
     }
 }

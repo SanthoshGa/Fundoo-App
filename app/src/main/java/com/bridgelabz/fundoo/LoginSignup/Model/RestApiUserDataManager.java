@@ -3,6 +3,8 @@ package com.bridgelabz.fundoo.LoginSignup.Model;
 
 import android.util.Log;
 
+import com.bridgelabz.fundoo.LoginSignup.Model.Response.ResponseData;
+import com.bridgelabz.fundoo.LoginSignup.Model.Response.ResponseError;
 import com.bridgelabz.fundoo.LoginSignup.Model.RestApiService.UserRestApiService;
 import com.bridgelabz.fundoo.Utility.RetrofitRestApiConnection;
 
@@ -72,7 +74,7 @@ public class RestApiUserDataManager {
 
 //        responseDataCall.enqueue(new Callback<ResponseData>() {
 //            @Override
-//            public void onResponse(Call<ResponseData> call, Response<ResponseData> response) {
+//            public void onResponse(Call<ResponseData> call, ResponseModel<ResponseData> response) {
 //                if (response.isSuccessful()) {
 //                    ResponseData responseData = response.body();
 //                    Log.e(TAG, response.body().getSuccess() + "");
@@ -112,7 +114,7 @@ public class RestApiUserDataManager {
 //        call.enqueue(new Callback<Map<String, Map<String, Object>>>() {
 //            @Override
 //            public void onResponse(Call<Map<String, Map<String, Object>>> call,
-//                                   Response<Map<String, Map<String, Object>>> response) {
+//                                   ResponseModel<Map<String, Map<String, Object>>> response) {
 //                Map<String, Map<String, Object>> responseModel = response.body();
 //                if (response.isSuccessful()) {
 //                    if (responseModel.containsKey("data")) {
@@ -159,12 +161,12 @@ public class RestApiUserDataManager {
             public void onResponse(Call<UserModel> call, Response<UserModel> response) {
                 if(response.isSuccessful()){
                     UserModel userModel = response.body();
-                    Log.e(TAG, " Response :" +  response.body() + "");
+                    Log.e(TAG, " ResponseModel :" +  response.body() + "");
                     signInCallback.onResponse(userModel, null);
                 } else {
 
                     try {
-                        Log.e(TAG, "ERROR Response :" + response.errorBody().string() + "");
+                        Log.e(TAG, "ERROR ResponseModel :" + response.errorBody().string() + "");
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -181,7 +183,7 @@ public class RestApiUserDataManager {
 
 //        responseDataCall.enqueue(new Callback<UserModel>() {
 //            @Override
-//            public void onResponse(Call<UserModel> call, Response<UserModel> response) {
+//            public void onResponse(Call<UserModel> call, ResponseModel<UserModel> response) {
 //
 //                if (response.isSuccessful()) {
 //                    UserModel userModel = response.body();
@@ -201,7 +203,7 @@ public class RestApiUserDataManager {
 //
 //        responseDataCall.enqueue(new Callback<Map<String, ResponseData>>() {
 //            @Override
-//            public void onResponse(Call<Map<String, ResponseData>> call, Response<Map<String,
+//            public void onResponse(Call<Map<String, ResponseData>> call, ResponseModel<Map<String,
 //                    ResponseData>> response) {
 //                if(response.isSuccessful()){
 //                    ResponseData responseData = response.body().get("data");
@@ -242,7 +244,7 @@ public class RestApiUserDataManager {
 //    Call<UserModel> call = apiService.signUpUser(userModel);
 //        call.enqueue(new Callback<UserModel>() {
 //@Override
-//public void onResponse(Call<UserModel> call, Response<UserModel> response) {
+//public void onResponse(Call<UserModel> call, ResponseModel<UserModel> response) {
 //
 //        Map<String, Map<String, Object>> response = response.body();
 //        if(response.isSuccessful()){

@@ -12,8 +12,8 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bridgelabz.fundoo.LoginSignup.Model.RestApiUserDataManager;
-import com.bridgelabz.fundoo.LoginSignup.Model.ResponseData;
-import com.bridgelabz.fundoo.LoginSignup.Model.ResponseError;
+import com.bridgelabz.fundoo.LoginSignup.Model.Response.ResponseData;
+import com.bridgelabz.fundoo.LoginSignup.Model.Response.ResponseError;
 import com.bridgelabz.fundoo.LoginSignup.Model.UserModel;
 import com.bridgelabz.fundoo.LoginSignup.Model.User;
 import com.bridgelabz.fundoo.LoginSignup.ViewModel.UserViewModel;

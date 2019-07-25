@@ -2,7 +2,9 @@ package com.bridgelabz.fundoo.Dashboard.Model;
 
 import com.google.gson.annotations.SerializedName;
 
-public class NoteModel {
+import java.io.Serializable;
+
+public class NoteModel implements Serializable {
 
     @SerializedName("title")
     private String title;
@@ -11,13 +13,13 @@ public class NoteModel {
     private String description;
 
     @SerializedName("isPinned")
-    private String isPinned;
+    private boolean isPinned;
 
     @SerializedName("isArchived")
-    private String isArchived;
+    private boolean isArchived;
 
     @SerializedName("isDeleted")
-    private String isDeleted;
+    private boolean isDeleted;
 
     @SerializedName("reminder")
     private String reminder;
@@ -37,8 +39,8 @@ public class NoteModel {
     @SerializedName("userId")
     private String userId;
 
-    public NoteModel(String title, String description, String isPinned, String isArchived,
-                     String isDeleted, String reminder, String createdDate, String modifiedDate,
+    public NoteModel(String title, String description, boolean isPinned, boolean isArchived,
+                     boolean isDeleted, String reminder, String createdDate, String modifiedDate,
                      String color, String id, String userId) {
         this.title = title;
         this.description = description;
@@ -69,27 +71,27 @@ public class NoteModel {
         this.description = description;
     }
 
-    public String getIsPinned() {
+    public boolean getIsPinned() {
         return isPinned;
     }
 
-    public void setIsPinned(String isPinned) {
+    public void setIsPinned(boolean isPinned) {
         this.isPinned = isPinned;
     }
 
-    public String getIsArchived() {
+    public boolean getIsArchived() {
         return isArchived;
     }
 
-    public void setIsArchived(String isArchived) {
+    public void setIsArchived(boolean isArchived) {
         this.isArchived = isArchived;
     }
 
-    public String getIsDeleted() {
+    public boolean getIsDeleted() {
         return isDeleted;
     }
 
-    public void setIsDeleted(String isDeleted) {
+    public void setIsDeleted(boolean isDeleted) {
         this.isDeleted = isDeleted;
     }
 
@@ -139,5 +141,20 @@ public class NoteModel {
 
     public void setUserId(String userId) {
         this.userId = userId;
+    }
+
+    public  String toString(){
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(" title: ").append(title).append("\n")
+                     .append(" description :").append(description).append("\n")
+                     .append(" isPinned :").append(isPinned).append("\n")
+                     .append("isArchived :").append(isArchived).append("\n")
+                     .append("isDeleted :").append(isDeleted).append("\n")
+                     .append("reminder :").append(reminder).append("\n")
+                     .append("createdDate :").append(createdDate).append("\n")
+                     .append("modifiedDate :").append(modifiedDate).append("\n");
+//                     .append()
+
+        return stringBuilder.toString();
     }
 }

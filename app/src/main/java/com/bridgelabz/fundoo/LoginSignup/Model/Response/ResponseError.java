@@ -1,8 +1,8 @@
-package com.bridgelabz.fundoo.LoginSignup.Model;
+package com.bridgelabz.fundoo.LoginSignup.Model.Response;
 
 import com.google.gson.annotations.SerializedName;
 
-public class ResponseError {
+public class ResponseError extends ResponseModel {
 
     @SerializedName("statusCode")
     private String statusCode;

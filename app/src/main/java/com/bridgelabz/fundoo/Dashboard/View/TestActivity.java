@@ -16,7 +16,7 @@
 //
 //import retrofit2.Call;
 //import retrofit2.Callback;
-//import retrofit2.Response;
+//import retrofit2.ResponseModel;
 //import retrofit2.Retrofit;
 //import retrofit2.converter.gson.GsonConverterFactory;
 //
@@ -51,7 +51,7 @@
 //        Call<List<UserModel>> call = userRestApiService.getUsers();
 //        call.enqueue(new Callback<List<UserModel>>() {
 //            @Override
-//            public void onResponse(Call<List<UserModel>> call, Response<List<UserModel>> response) {
+//            public void onResponse(Call<List<UserModel>> call, ResponseModel<List<UserModel>> response) {
 //                List<UserModel> userList = response.body();
 //
 //                for(UserModel userModel : userList) {
@@ -89,7 +89,7 @@
 //        Call<UserModel> call = userRestApiService.signUpUser(model);
 //        call.enqueue(new Callback<UserModel>() {
 //            @Override
-//            public void onResponse(Call<UserModel> call, Response<UserModel> response) {
+//            public void onResponse(Call<UserModel> call, ResponseModel<UserModel> response) {
 //                UserModel model1 = response.body();
 //                if(response.isSuccessful() && model1 != null){
 //                    Toast.makeText(TestActivity.this, "response is"
@@ -118,7 +118,7 @@
 //        Call<UserModel> call = userRestApiService.logInUser(loginModel);
 //        call.enqueue(new Callback<UserModel>() {
 //            @Override
-//            public void onResponse(Call<UserModel> call, Response<UserModel> response) {
+//            public void onResponse(Call<UserModel> call, ResponseModel<UserModel> response) {
 //                UserModel loginModel1 = response.body();
 //                if(response.isSuccessful() && loginModel1!= null){
 //                    Toast.makeText(TestActivity.this, "response is"

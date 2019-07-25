@@ -14,7 +14,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bridgelabz.fundoo.Dashboard.Model.FirebaseAuthManager;
-import com.bridgelabz.fundoo.LoginSignup.Model.ResponseError;
+import com.bridgelabz.fundoo.LoginSignup.Model.Response.ResponseError;
 import com.bridgelabz.fundoo.LoginSignup.Model.RestApiUserDataManager;
 import com.bridgelabz.fundoo.LoginSignup.Model.UserLoginModel;
 import com.bridgelabz.fundoo.LoginSignup.Model.UserModel;
