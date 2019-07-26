@@ -2,37 +2,45 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
-    <group android:checkableBehavior="single" android:id="@+id/menu_group" android:menuCategory="container"
-        >
+    <group
+        android:id="@+id/menu_group"
+        android:checkableBehavior="single"
+        android:menuCategory="container">
 
-        <item android:id="@+id/drawer_menu_notes"
-            android:title="@string/notes"
+        <item
+            android:id="@+id/drawer_menu_notes"
+            android:checkable="true"
             android:icon="@drawable/ic_notes"
-            android:checkable="true"/>
-        <item android:id="@+id/drawer_menu_reminders"
-            android:title="@string/reminders"
+            android:title="@string/notes" />
+        <item
+            android:id="@+id/drawer_menu_reminders"
+            android:checkable="true"
             android:icon="@drawable/reminder1"
-            android:checkable="true"/>
-        <item android:id="@+id/drawer_menu_create_label"
-            android:title="@string/create_new_label"
+            android:title="@string/reminders" />
+        <item
+            android:id="@+id/drawer_menu_create_label"
             android:icon="@drawable/label"
-            />
-        <item android:id="@+id/drawer_menu_archives"
-            android:title="@string/archives"
+            android:title="@string/create_new_label" />
+        <item
+            android:id="@+id/drawer_menu_archives"
             android:icon="@drawable/archive1"
-            />
-        <item android:id="@+id/drawer_menu_trashed_notes"
-            android:title="@string/trashed"
+            android:title="@string/archives" />
+        <item
+            android:id="@+id/drawer_menu_pinned"
+            android:icon="@drawable/pinned"
+            android:title="@string/pinned" />
+        <item
+            android:id="@+id/drawer_menu_trashed_notes"
             android:icon="@drawable/delete"
-            />
-        <item android:id="@+id/drawer_menu_signOut"
-            android:title="@string/signOut"
+            android:title="@string/trashed" />
+        <item
+            android:id="@+id/drawer_menu_signOut"
             android:icon="@drawable/ic_signout"
-            />
-        <item android:id="@+id/drawer_menu_settings"
-            android:title="@string/settings"
+            android:title="@string/signOut" />
+        <item
+            android:id="@+id/drawer_menu_settings"
             android:icon="@drawable/ic_settings"
-           />
+            android:title="@string/settings" />
 
     </group>
 

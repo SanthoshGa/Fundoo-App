@@ -66,6 +66,7 @@
     <string name="fb_login_protocol_scheme">fb2459088504324662</string>
     <string name="lastName">lastName</string>
     <string name="firstName">firstName</string>
+    <string name="pinned1">Pinned</string>
 
 
 </resources>

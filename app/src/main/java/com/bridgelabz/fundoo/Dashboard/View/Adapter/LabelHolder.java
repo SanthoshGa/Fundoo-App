@@ -5,7 +5,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
 
-import com.bridgelabz.fundoo.Dashboard.Model.Label;
+import com.bridgelabz.fundoo.label_page.model.Label;
 import com.bridgelabz.fundoo.R;
 
 class LabelHolder extends RecyclerView.ViewHolder{

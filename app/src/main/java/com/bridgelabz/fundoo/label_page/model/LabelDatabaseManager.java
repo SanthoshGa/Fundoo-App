@@ -1,4 +1,4 @@
-package com.bridgelabz.fundoo.Dashboard.Model;
+package com.bridgelabz.fundoo.label_page.model;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import com.bridgelabz.fundoo.DatabaseHelpers.SQLiteDatabaseHelper;
+import com.bridgelabz.fundoo.label_page.model.Label;
 
 import java.util.ArrayList;
 import java.util.List;

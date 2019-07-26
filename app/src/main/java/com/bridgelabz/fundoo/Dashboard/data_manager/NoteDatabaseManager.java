@@ -1,4 +1,4 @@
-package com.bridgelabz.fundoo.Dashboard.Model;
+package com.bridgelabz.fundoo.Dashboard.data_manager;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
+import com.bridgelabz.fundoo.Dashboard.Model.Note;
 import com.bridgelabz.fundoo.DatabaseHelpers.SQLiteDatabaseHelper;
 import com.bridgelabz.fundoo.ObserverPattern.Observable;
 import com.bridgelabz.fundoo.ObserverPattern.ObservableNotes;

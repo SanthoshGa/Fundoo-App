@@ -6,7 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.bridgelabz.fundoo.Dashboard.Model.Label;
+import com.bridgelabz.fundoo.label_page.model.Label;
 import com.bridgelabz.fundoo.R;
 
 import java.util.List;

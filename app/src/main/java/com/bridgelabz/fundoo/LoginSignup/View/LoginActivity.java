@@ -1,5 +1,6 @@
 package com.bridgelabz.fundoo.LoginSignup.View;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -13,7 +14,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.bridgelabz.fundoo.Dashboard.Model.FirebaseAuthManager;
+import com.bridgelabz.fundoo.common.SharedPreferencesManager;
+import com.bridgelabz.fundoo.firebase.FirebaseAuthManager;
 import com.bridgelabz.fundoo.LoginSignup.Model.Response.ResponseError;
 import com.bridgelabz.fundoo.LoginSignup.Model.RestApiUserDataManager;
 import com.bridgelabz.fundoo.LoginSignup.Model.UserLoginModel;
@@ -57,11 +59,13 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
     private CallbackManager callbackManager;
     public static final int REQUEST_CODE = 9001;
     FirebaseAuthManager firebaseAuthManager;
+    SharedPreferencesManager sharedPreferencesManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        sharedPreferencesManager = new SharedPreferencesManager(this);
 
 
         findViews();
@@ -151,11 +155,16 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                     @Override
                     public void onResponse(UserModel userModel, ResponseError responseError) {
                         Log.e(TAG, "onResponse: " + userModel.toString());
-
+                        String token = userModel.getId();
+                        sharedPreferencesManager.setAccessToken(token);
+                        Intent intent = new Intent(LoginActivity.this, DashboardActivity.class);
+                        intent.putExtra("email", email);
+                        startActivity(intent);
                     }
 
                     @Override
                     public void onFailure(Throwable throwable) {
+                        Log.e(TAG, throwable.getLocalizedMessage() + "THIS IS THROWABLE");
 
                     }
                 });

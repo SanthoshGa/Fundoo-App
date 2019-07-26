@@ -2,13 +2,16 @@ package com.bridgelabz.fundoo.Dashboard.View;
 
 import android.content.Intent;
 import android.os.Bundle;
+
 import androidx.annotation.NonNull;
 
 import com.bridgelabz.fundoo.ObserverPattern.Observable;
 import com.bridgelabz.fundoo.ObserverPattern.ObservableNotes;
 import com.bridgelabz.fundoo.ObserverPattern.Observer;
+import com.bridgelabz.fundoo.label_page.view.AddLabelFragment;
 import com.bumptech.glide.Glide;
 import com.google.android.material.navigation.NavigationView;
+
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -17,10 +20,10 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DefaultItemAnimator;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import androidx.recyclerview.widget.ItemTouchHelper;
+
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -81,13 +84,13 @@ public class DashboardActivity extends AppCompatActivity implements
     }
 
     private boolean deleteNote(Note noteAt) {
-       return noteViewModel.deleteNote(noteAt);
-   }
+        return noteViewModel.deleteNote(noteAt);
+    }
 
 
     private void prepareRecyclerView() {
         observableNotes = noteViewModel.fetchAllNotes();
-        noteList = ((ObservableNotes)observableNotes).getListOfNotes();
+        noteList = ((ObservableNotes) observableNotes).getListOfNotes();
 //        noteList = noteViewModel.getAllNoteData();
         mRecyclerView = findViewById(R.id.recycleView);
         mRecyclerView.setHasFixedSize(true);
@@ -117,43 +120,43 @@ public class DashboardActivity extends AppCompatActivity implements
             (new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP | ItemTouchHelper.DOWN,
                     ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
 
-        @Override
-        public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder
-                draggedViewHolder, @NonNull RecyclerView.ViewHolder targetViewHolder) {
-            int draggedPosition = draggedViewHolder.getAdapterPosition();
-            int targetPosition = targetViewHolder.getAdapterPosition();
+                @Override
+                public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder
+                        draggedViewHolder, @NonNull RecyclerView.ViewHolder targetViewHolder) {
+                    int draggedPosition = draggedViewHolder.getAdapterPosition();
+                    int targetPosition = targetViewHolder.getAdapterPosition();
 
-            notesAdapter.onItemMove(draggedPosition, targetPosition);
-            Collections.swap(noteList, draggedPosition, targetPosition);
-            Log.e(TAG, "dragged and moved");
-            return false;
-        }
+                    notesAdapter.onItemMove(draggedPosition, targetPosition);
+                    Collections.swap(noteList, draggedPosition, targetPosition);
+                    Log.e(TAG, "dragged and moved");
+                    return false;
+                }
 
-        @Override
-        public void onSwiped(@NonNull RecyclerView.ViewHolder swipedViewHolder, int direction) {
-            int adapterPosition = swipedViewHolder.getAdapterPosition();
-            Log.e(TAG, "The adapter position is " + adapterPosition);
-            Note noteToDelete = notesAdapter.getNoteAt(adapterPosition);
-            boolean isDeleted = deleteNote(noteToDelete);
-            if (isDeleted) {
-                noteList.remove(noteToDelete);
-                notesAdapter.notifyItemRemoved(adapterPosition);
-                Toast.makeText(DashboardActivity.this, "Item Deleted",
-                        Toast.LENGTH_SHORT).show();
+                @Override
+                public void onSwiped(@NonNull RecyclerView.ViewHolder swipedViewHolder, int direction) {
+                    int adapterPosition = swipedViewHolder.getAdapterPosition();
+                    Log.e(TAG, "The adapter position is " + adapterPosition);
+                    Note noteToDelete = notesAdapter.getNoteAt(adapterPosition);
+                    boolean isDeleted = deleteNote(noteToDelete);
+                    if (isDeleted) {
+                        noteList.remove(noteToDelete);
+                        notesAdapter.notifyItemRemoved(adapterPosition);
+                        Toast.makeText(DashboardActivity.this, "Item Deleted",
+                                Toast.LENGTH_SHORT).show();
 
 
-            } else {
-                Toast.makeText(DashboardActivity.this, "Item could not be deleted",
-                        Toast.LENGTH_SHORT).show();
-            }
-        }
-    });
+                    } else {
+                        Toast.makeText(DashboardActivity.this, "Item could not be deleted",
+                                Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
 
     private void closeDrawer() {
         mDrawerLayout.closeDrawer(GravityCompat.START);
     }
 
-    private void setOnClickTakeNote(){
+    private void setOnClickTakeNote() {
         mTextTakeNote = findViewById(R.id.tv_takeNote);
         mTextTakeNote.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -167,17 +170,17 @@ public class DashboardActivity extends AppCompatActivity implements
 
     private void setUpNavigationView() {
         Intent intent = getIntent();
-        if(intent.hasExtra("email")) {
-                String emailId = intent.getStringExtra("email");
-                String imageUrl = intent.getStringExtra("imageUrl");
-                Log.e("Dashboard", emailId);
+        if (intent.hasExtra("email")) {
+            String emailId = intent.getStringExtra("email");
+            String imageUrl = intent.getStringExtra("imageUrl");
+            Log.e("Dashboard", emailId);
 
-                navigationView = findViewById(R.id.nav_view);
-                TextView tvEmail = navigationView.getHeaderView(0).findViewById(R.id.tv_email);
-                ImageView imageProfile = navigationView.getHeaderView(0).findViewById(R.id.profile_pic);
-                tvEmail.setText(emailId);
+            navigationView = findViewById(R.id.nav_view);
+            TextView tvEmail = navigationView.getHeaderView(0).findViewById(R.id.tv_email);
+            ImageView imageProfile = navigationView.getHeaderView(0).findViewById(R.id.profile_pic);
+            tvEmail.setText(emailId);
             Glide.with(this).load(imageUrl).circleCrop().into(imageProfile);
-            } else  {
+        } else {
             Log.e(TAG, "intent does not have extra string \"email id\" ");
         }
 
@@ -189,12 +192,12 @@ public class DashboardActivity extends AppCompatActivity implements
             return true;
         }
 
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case R.id.delete_all_notes:
                 noteViewModel.deleteAllNotes();
                 noteList.clear();
                 notesAdapter.notifyDataSetChanged();
-                Toast.makeText(this, " All Notes Deleted " , Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, " All Notes Deleted ", Toast.LENGTH_SHORT).show();
                 Log.e(TAG, "items in arrayList is " + noteList.size());
                 return true;
 
@@ -254,6 +257,14 @@ public class DashboardActivity extends AppCompatActivity implements
                 notesAdapter.setNoteModelArrayList(noteList);
                 notesAdapter.notifyDataSetChanged();
                 break;
+
+            case R.id.drawer_menu_pinned:
+                closeDrawer();
+                closeFragmentIfShowing();
+                Toast.makeText(this, "Pinned drawer menu clicked!", Toast.LENGTH_SHORT).show();
+                noteList = noteViewModel.getPinnedNotes();
+                notesAdapter.notifyDataSetChanged();
+                break;
             case R.id.drawer_menu_create_label:
                 closeDrawer();
                 closeFragmentIfShowing();
@@ -287,12 +298,12 @@ public class DashboardActivity extends AppCompatActivity implements
 
     private void closeFragmentIfShowing() {
         Fragment fragment = getSupportFragmentManager().findFragmentByTag("Add Label Fragment");
-        if (fragment !=  null) {
+        if (fragment != null) {
             fragment.getFragmentManager().popBackStack();
         }
     }
 
-    private void setNavigationViewListener(){
+    private void setNavigationViewListener() {
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
@@ -300,7 +311,7 @@ public class DashboardActivity extends AppCompatActivity implements
 
     @Override
     public void update(Observable observable) {
-        this.noteList = ((ObservableNotes)observable).getListOfNotes();
+        this.noteList = ((ObservableNotes) observable).getListOfNotes();
         notesAdapter.notifyDataSetChanged();
     }
 

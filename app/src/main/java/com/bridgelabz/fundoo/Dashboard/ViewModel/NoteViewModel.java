@@ -3,9 +3,8 @@ package com.bridgelabz.fundoo.Dashboard.ViewModel;
 import android.content.Context;
 
 import com.bridgelabz.fundoo.Dashboard.Model.Note;
-import com.bridgelabz.fundoo.Dashboard.Model.NoteDatabaseManager;
+import com.bridgelabz.fundoo.Dashboard.data_manager.NoteDatabaseManager;
 import com.bridgelabz.fundoo.ObserverPattern.Observable;
-import com.bridgelabz.fundoo.ObserverPattern.ObservableNotes;
 
 import java.util.List;
 

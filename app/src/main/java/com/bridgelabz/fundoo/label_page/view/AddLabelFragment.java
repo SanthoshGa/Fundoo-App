@@ -1,4 +1,4 @@
-package com.bridgelabz.fundoo.Dashboard.View;
+package com.bridgelabz.fundoo.label_page.view;
 
 
 import android.os.Bundle;
@@ -15,9 +15,9 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
-import com.bridgelabz.fundoo.Dashboard.Model.Label;
+import com.bridgelabz.fundoo.label_page.model.Label;
 import com.bridgelabz.fundoo.Dashboard.View.Adapter.LabelAdapter;
-import com.bridgelabz.fundoo.Dashboard.ViewModel.LabelViewModel;
+import com.bridgelabz.fundoo.label_page.view_model.LabelViewModel;
 import com.bridgelabz.fundoo.R;
 
 import java.util.List;

@@ -83,32 +83,7 @@ public class AddNoteActivity extends AppCompatActivity implements View.OnClickLi
         notificationManagerCompat = NotificationManagerCompat.from(this);
         LocalBroadcastManager.getInstance(this).registerReceiver(addedNoteBroadcastReceiver,
                 new IntentFilter("com.bridgelabz.fundoo.added_note_action"));
-//        try {
-//            parseStringToDate();
-//        } catch (ParseException e) {
-//            e.printStackTrace();
-//        }
-
     }
-
-//    private void parseStringToDate() throws ParseException {
-//        String date = "Thu, Jul 4 04:00:00";
-//        date1 = new SimpleDateFormat("EEE, MMM dd hh:mm:ss").parse(date);
-//        addReminder(date1);
-//    }
-
-//    public void sendOnChannel1(View view){
-//        Notification notification = new NotificationCompat.Builder(this, CHANNEL_1_ID)
-//                .setSmallIcon(R.drawable.ic_notifications)
-//                .setContentTitle("notification")
-//                .setContentText("description")
-//                .setPriority(NotificationCompat.PRIORITY_HIGH)
-//                .setCategory(NotificationCompat.CATEGORY_MESSAGE)
-//                .setAutoCancel(true)
-//                .build();
-//        notificationManagerCompat.notify(1, notification);
-//
-//    }
 
     private void checkEditMode() {
         Intent intent = getIntent();
@@ -259,7 +234,7 @@ public class AddNoteActivity extends AppCompatActivity implements View.OnClickLi
         }
     };
 
-    protected void addNoteToDb(Note note) {
+    protected void  addNoteToDb(Note note) {
         //TODO :
 
         NoteModel noteModel = new NoteModel(note.getTitle(), note.getDescription(),

@@ -1,4 +1,4 @@
-package com.bridgelabz.fundoo;
+package com.bridgelabz.fundoo.application;
 
 import android.app.Application;
 import android.app.NotificationChannel;

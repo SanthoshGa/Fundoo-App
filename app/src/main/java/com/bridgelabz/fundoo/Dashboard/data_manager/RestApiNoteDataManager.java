@@ -1,7 +1,9 @@
-package com.bridgelabz.fundoo.Dashboard.Model;
+package com.bridgelabz.fundoo.Dashboard.data_manager;
 
 import android.util.Log;
 
+import com.bridgelabz.fundoo.Dashboard.Model.NoteModel;
+import com.bridgelabz.fundoo.Dashboard.data_manager.apis.NoteRestApiService;
 import com.bridgelabz.fundoo.LoginSignup.Model.Response.ResponseData;
 import com.bridgelabz.fundoo.LoginSignup.Model.Response.ResponseError;
 import com.bridgelabz.fundoo.ObserverPattern.Observable;
@@ -27,10 +29,11 @@ public class RestApiNoteDataManager {
     public void addNotes(NoteModel noteModel, final AddNoteCallback addNoteCallback) {
         Retrofit retrofit = RetrofitRestApiConnection.openRetrofitConnection();
         NoteRestApiService apiService = retrofit.create(NoteRestApiService.class);
-        Call<Map<String, ResponseData>> responseDataCall = apiService.addNotes(noteModel);
+        Call<Map<String, ResponseData>> responseDataCall = apiService.addNotes("", noteModel);
         responseDataCall.enqueue(new Callback<Map<String, ResponseData>>() {
             @Override
-            public void onResponse(Call<Map<String, ResponseData>> call, Response<Map<String, ResponseData>> response) {
+            public void onResponse(Call<Map<String, ResponseData>> call, Response<Map<String,
+                    ResponseData>> response) {
                 if (response.isSuccessful()) {
                     Log.e(TAG, "RESPONSE IS SUCCESSFUL");
                     ResponseData responseData = response.body().get("data");

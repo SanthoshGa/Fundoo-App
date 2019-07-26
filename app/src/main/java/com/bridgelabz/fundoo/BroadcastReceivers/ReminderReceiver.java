@@ -13,7 +13,7 @@ import androidx.core.app.TaskStackBuilder;
 import com.bridgelabz.fundoo.Dashboard.View.AddNoteActivity;
 import com.bridgelabz.fundoo.R;
 
-import static com.bridgelabz.fundoo.MyApplicationClass.CHANNEL_1_ID;
+import static com.bridgelabz.fundoo.application.MyApplicationClass.CHANNEL_1_ID;
 
 public class ReminderReceiver extends BroadcastReceiver {
     private static final String TAG = "ReminderReceiver.class";

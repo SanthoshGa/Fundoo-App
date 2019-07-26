@@ -141,8 +141,12 @@ public class RegisterActivity extends AppCompatActivity {
                 if (responseData != null) {
                     Toast.makeText(RegisterActivity.this, responseData.getMessage()
                             , Toast.LENGTH_SHORT).show();
-//                    finish();
+                    Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
+                    startActivity(intent);
+                    finish();
+
                 } else {
+                    Log.e(TAG, "response is null");
 
                 }
 //                Log.e(TAG, responseError.getStatusCode() + responseError.getMessage());

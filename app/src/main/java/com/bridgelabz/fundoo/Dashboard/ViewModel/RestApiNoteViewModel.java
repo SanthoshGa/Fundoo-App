@@ -6,7 +6,7 @@ import android.content.Intent;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.bridgelabz.fundoo.Dashboard.Model.NoteModel;
-import com.bridgelabz.fundoo.Dashboard.Model.RestApiNoteDataManager;
+import com.bridgelabz.fundoo.Dashboard.data_manager.RestApiNoteDataManager;
 import com.bridgelabz.fundoo.LoginSignup.Model.Response.ResponseData;
 import com.bridgelabz.fundoo.LoginSignup.Model.Response.ResponseError;
 
