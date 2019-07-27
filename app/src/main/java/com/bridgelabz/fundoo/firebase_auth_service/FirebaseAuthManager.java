@@ -1,4 +1,4 @@
-package com.bridgelabz.fundoo.firebase;
+package com.bridgelabz.fundoo.firebase_auth_service;
 
 import android.widget.Toast;
 

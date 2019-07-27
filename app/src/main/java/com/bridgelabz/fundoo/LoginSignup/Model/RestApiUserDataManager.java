@@ -181,49 +181,6 @@ public class RestApiUserDataManager {
             }
         });
 
-//        responseDataCall.enqueue(new Callback<UserModel>() {
-//            @Override
-//            public void onResponse(Call<UserModel> call, ResponseModel<UserModel> response) {
-//
-//                if (response.isSuccessful()) {
-//                    UserModel userModel = response.body();
-//                    Log.e(TAG, response.body() + "");
-//                } else {
-//                    Log.e(TAG, response.errorBody().toString());
-//                }
-//            }
-//
-//            @Override
-//            public void onFailure(Call<Map<String, UserModel>> call, Throwable t) {
-//
-//
-//            }
-//        });
-//        Call<Map<String, ResponseData>> responseDataCall = apiService.logInUser(loginModel);
-//
-//        responseDataCall.enqueue(new Callback<Map<String, ResponseData>>() {
-//            @Override
-//            public void onResponse(Call<Map<String, ResponseData>> call, ResponseModel<Map<String,
-//                    ResponseData>> response) {
-//                if(response.isSuccessful()){
-//                    ResponseData responseData = response.body().get("data");
-//                    Log.e(TAG, response.body().get("data") + "");
-//
-//                }
-//                else{
-//
-//                    Log.e(TAG, response.errorBody().toString());
-//                }
-//
-//            }
-//
-//            @Override
-//            public void onFailure(Call<Map<String, ResponseData>> call, Throwable t) {
-//
-//            }
-//        });
-
-
     }
 
 

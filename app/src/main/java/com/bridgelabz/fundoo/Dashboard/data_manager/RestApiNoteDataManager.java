@@ -1,17 +1,17 @@
 package com.bridgelabz.fundoo.Dashboard.data_manager;
 
+import android.content.Context;
 import android.util.Log;
 
 import com.bridgelabz.fundoo.Dashboard.Model.NoteModel;
 import com.bridgelabz.fundoo.Dashboard.data_manager.apis.NoteRestApiService;
 import com.bridgelabz.fundoo.LoginSignup.Model.Response.ResponseData;
 import com.bridgelabz.fundoo.LoginSignup.Model.Response.ResponseError;
-import com.bridgelabz.fundoo.ObserverPattern.Observable;
-import com.bridgelabz.fundoo.ObserverPattern.ObservableImpl;
 import com.bridgelabz.fundoo.Utility.RetrofitRestApiConnection;
+import com.bridgelabz.fundoo.common.SharedPreferencesManager;
 
 import java.io.IOException;
-import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import retrofit2.Call;
@@ -22,21 +22,27 @@ import retrofit2.Retrofit;
 public class RestApiNoteDataManager {
 
     public static final String TAG = "RestApiNoteDataManager";
-    private Map<String, Response> dataResponseErrorMap = new HashMap<>();
-    private ObservableImpl<Map<String, Response>> observableResponse =
-            new ObservableImpl<>(dataResponseErrorMap);
+    private SharedPreferencesManager sharedPreferencesManager;
 
-    public void addNotes(NoteModel noteModel, final AddNoteCallback addNoteCallback) {
+    public RestApiNoteDataManager(Context context) {
+        sharedPreferencesManager = new SharedPreferencesManager(context);
+    }
+
+    public void addNote(NoteModel noteModel, final AddNoteCallback addNoteCallback) {
         Retrofit retrofit = RetrofitRestApiConnection.openRetrofitConnection();
         NoteRestApiService apiService = retrofit.create(NoteRestApiService.class);
-        Call<Map<String, ResponseData>> responseDataCall = apiService.addNotes("", noteModel);
+        String authKey = sharedPreferencesManager.getAccessToken();
+
+        Call<Map<String, ResponseData>> responseDataCall = apiService.addNotes(authKey, noteModel);
         responseDataCall.enqueue(new Callback<Map<String, ResponseData>>() {
             @Override
             public void onResponse(Call<Map<String, ResponseData>> call, Response<Map<String,
                     ResponseData>> response) {
                 if (response.isSuccessful()) {
                     Log.e(TAG, "RESPONSE IS SUCCESSFUL");
-                    ResponseData responseData = response.body().get("data");
+                    ResponseData responseData = response.body().get("status");
+                    Log.e(TAG, response.body().toString());
+                    Log.e(TAG, responseData.toString());
                     addNoteCallback.onResponse(responseData, null);
 //                    Map<ResponseData, ResponseError> responseErrorMap = new HashMap<>();
 //                    responseErrorMap.put(responseData, null);
@@ -66,12 +72,51 @@ public class RestApiNoteDataManager {
 
     }
 
-    public Observable<Map<ResponseData, ResponseError>> getObservableResponse() {
-        return observableResponse;
+    public void getNoteList(final GetNotesCallback getNotesCallback) {
+        Retrofit retrofit = RetrofitRestApiConnection.openRetrofitConnection();
+        NoteRestApiService apiService = retrofit.create(NoteRestApiService.class);
+        String authKey = sharedPreferencesManager.getAccessToken();
+
+        Call<Map<String, ResponseData>> responseDataCall = apiService.getNoteList(authKey);
+        responseDataCall.enqueue(new Callback<Map<String, ResponseData>>() {
+            @Override
+            public void onResponse(Call<Map<String, ResponseData>> call, Response<Map<String, ResponseData>> response) {
+                if(response.isSuccessful()){
+                    Log.e(TAG, "onResponse: response is successful");
+                    ResponseData responseData = response.body().get("data");
+                    Log.e(TAG,  responseData.getNoteModelList() + "");
+                    getNotesCallback.onResponse(responseData.getNoteModelList(), null);
+                }
+                else{
+                    try {
+                        getNotesCallback.onResponse(null, new ResponseError(
+                                response.code() + "", response.errorBody().string(),
+                                response.message(),
+                                null) );
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Map<String, ResponseData>> call, Throwable throwable) {
+                Log.e(TAG, throwable.getLocalizedMessage());
+                getNotesCallback.onFailure(throwable);
+
+            }
+        });
+
     }
 
     public interface AddNoteCallback {
         void onResponse(ResponseData responseData, ResponseError responseError);
+
+        void onFailure(Throwable throwable);
+    }
+
+    public interface GetNotesCallback {
+        void onResponse(List<NoteModel> noteModelList, ResponseError responseError);
 
         void onFailure(Throwable throwable);
     }

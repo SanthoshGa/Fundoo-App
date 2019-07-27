@@ -7,13 +7,17 @@ import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.POST;
 
 public interface NoteRestApiService {
 
-    @POST("notes/addNotes")
+    @POST("notes/addNote")
     Call<Map<String, ResponseData>> addNotes(@Header("Authorization") String authKey,
                                              @Body NoteModel noteModel);
+    @GET("notes/getNoteList")
+    Call<Map<String, ResponseData>> getNoteList(@Header("Authorization") String authKey);
+
 
 }

@@ -1,6 +1,5 @@
 package com.bridgelabz.fundoo.LoginSignup.View;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -14,15 +13,15 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.bridgelabz.fundoo.common.SharedPreferencesManager;
-import com.bridgelabz.fundoo.firebase.FirebaseAuthManager;
+import com.bridgelabz.fundoo.Dashboard.View.DashboardActivity;
 import com.bridgelabz.fundoo.LoginSignup.Model.Response.ResponseError;
 import com.bridgelabz.fundoo.LoginSignup.Model.RestApiUserDataManager;
 import com.bridgelabz.fundoo.LoginSignup.Model.UserLoginModel;
 import com.bridgelabz.fundoo.LoginSignup.Model.UserModel;
-import com.bridgelabz.fundoo.Dashboard.View.DashboardActivity;
 import com.bridgelabz.fundoo.LoginSignup.ViewModel.UserViewModel;
 import com.bridgelabz.fundoo.R;
+import com.bridgelabz.fundoo.common.SharedPreferencesManager;
+import com.bridgelabz.fundoo.firebase_auth_service.FirebaseAuthManager;
 import com.facebook.AccessToken;
 import com.facebook.AccessTokenTracker;
 import com.facebook.CallbackManager;
