@@ -3,7 +3,8 @@ package com.bridgelabz.fundoo.Dashboard.data_manager;
 import android.content.Context;
 import android.util.Log;
 
-import com.bridgelabz.fundoo.Dashboard.Model.NoteModel;
+import com.bridgelabz.fundoo.add_note_page.Model.AddNoteModel;
+import com.bridgelabz.fundoo.add_note_page.Model.NoteListModel;
 import com.bridgelabz.fundoo.Dashboard.data_manager.apis.NoteRestApiService;
 import com.bridgelabz.fundoo.LoginSignup.Model.Response.ResponseData;
 import com.bridgelabz.fundoo.LoginSignup.Model.Response.ResponseError;
@@ -28,12 +29,12 @@ public class RestApiNoteDataManager {
         sharedPreferencesManager = new SharedPreferencesManager(context);
     }
 
-    public void addNote(NoteModel noteModel, final AddNoteCallback addNoteCallback) {
+    public void addNote(AddNoteModel noteModel, final AddNoteCallback addNoteCallback) {
         Retrofit retrofit = RetrofitRestApiConnection.openRetrofitConnection();
         NoteRestApiService apiService = retrofit.create(NoteRestApiService.class);
         String authKey = sharedPreferencesManager.getAccessToken();
 
-        Log.e(TAG, "addNote: NoteModel :" + noteModel.toString());
+        Log.e(TAG, "addNote: BaseNoteModel :" + noteModel.toString());
 
         Call<Map<String, ResponseData>> responseDataCall = apiService.addNotes(authKey, noteModel);
         responseDataCall.enqueue(new Callback<Map<String, ResponseData>>() {
@@ -121,7 +122,7 @@ public class RestApiNoteDataManager {
     }
 
     public interface GetNotesCallback {
-        void onResponse(List<NoteModel> noteModelList, ResponseError responseError);
+        void onResponse(List<NoteListModel> noteModelList, ResponseError responseError);
 
         void onFailure(Throwable throwable);
     }

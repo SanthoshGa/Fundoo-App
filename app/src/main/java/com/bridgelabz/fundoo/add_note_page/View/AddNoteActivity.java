@@ -29,8 +29,10 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.bridgelabz.fundoo.BroadcastReceivers.ReminderReceiver;
-import com.bridgelabz.fundoo.Dashboard.Model.Note;
-import com.bridgelabz.fundoo.Dashboard.Model.NoteModel;
+import com.bridgelabz.fundoo.Dashboard.DashboardActivity;
+import com.bridgelabz.fundoo.add_note_page.Model.AddNoteModel;
+import com.bridgelabz.fundoo.add_note_page.Model.BaseNoteModel;
+import com.bridgelabz.fundoo.add_note_page.Model.Note;
 import com.bridgelabz.fundoo.Dashboard.ViewModel.NoteViewModel;
 import com.bridgelabz.fundoo.Dashboard.ViewModel.RestApiNoteViewModel;
 import com.bridgelabz.fundoo.R;
@@ -38,7 +40,6 @@ import com.bridgelabz.fundoo.Utility.ValidationHelper;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
 import java.util.Locale;
 
@@ -238,13 +239,13 @@ public class AddNoteActivity extends AppCompatActivity implements View.OnClickLi
     protected void addNoteToDb(Note note) {
         //TODO :
 
-        NoteModel noteModel = new NoteModel(note.getTitle(), note.getDescription(),
+        BaseNoteModel noteModel = new AddNoteModel(note.getTitle(), note.getDescription(),
                 note.isPinned(), note.isArchived(), note.isTrashed(),
-                Collections.singletonList(note.getIfReminder()), "", "",
-                note.getColor(), "", "");
+                "", "",
+                note.getColor(), "", "", note.getIfReminder());
 
         RestApiNoteViewModel noteViewModel = new RestApiNoteViewModel(this);
-        noteViewModel.addNotes(noteModel);
+        noteViewModel.addNotes((AddNoteModel) noteModel);
 //        boolean isNoteAdd = noteViewModel.addNote(note);
 
     }

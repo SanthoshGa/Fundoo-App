@@ -6,7 +6,8 @@ import android.util.Log;
 
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
-import com.bridgelabz.fundoo.Dashboard.Model.NoteModel;
+import com.bridgelabz.fundoo.add_note_page.Model.AddNoteModel;
+import com.bridgelabz.fundoo.add_note_page.Model.NoteListModel;
 import com.bridgelabz.fundoo.Dashboard.data_manager.RestApiNoteDataManager;
 import com.bridgelabz.fundoo.LoginSignup.Model.Response.ResponseData;
 import com.bridgelabz.fundoo.LoginSignup.Model.Response.ResponseError;
@@ -26,7 +27,7 @@ public class RestApiNoteViewModel {
     }
 
 
-    public void addNotes(NoteModel noteModel) {
+    public void addNotes(AddNoteModel noteModel) {
         restApiNoteDataManager.addNote(noteModel, new RestApiNoteDataManager.AddNoteCallback() {
             Intent localIntent = new Intent("com.bridgelabz.fundoo.added_note_action");
 
@@ -56,7 +57,7 @@ public class RestApiNoteViewModel {
         restApiNoteDataManager.getNoteList(new RestApiNoteDataManager.GetNotesCallback() {
             Intent localIntent = new Intent("com.bridgelabz.fundoo.fetch_notes_action");
             @Override
-            public void onResponse(List<NoteModel> noteModelList, ResponseError responseError) {
+            public void onResponse(List<NoteListModel> noteModelList, ResponseError responseError) {
 
                 if(noteModelList != null) {
                     Log.e(TAG, "onResponse: successful");

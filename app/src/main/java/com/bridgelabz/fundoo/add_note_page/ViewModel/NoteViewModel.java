@@ -2,7 +2,7 @@ package com.bridgelabz.fundoo.Dashboard.ViewModel;
 
 import android.content.Context;
 
-import com.bridgelabz.fundoo.Dashboard.Model.Note;
+import com.bridgelabz.fundoo.add_note_page.Model.Note;
 import com.bridgelabz.fundoo.Dashboard.data_manager.NoteDatabaseManager;
 import com.bridgelabz.fundoo.ObserverPattern.Observable;
 

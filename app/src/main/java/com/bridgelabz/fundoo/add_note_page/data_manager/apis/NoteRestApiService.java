@@ -1,6 +1,6 @@
 package com.bridgelabz.fundoo.Dashboard.data_manager.apis;
 
-import com.bridgelabz.fundoo.Dashboard.Model.NoteModel;
+import com.bridgelabz.fundoo.add_note_page.Model.AddNoteModel;
 import com.bridgelabz.fundoo.LoginSignup.Model.Response.ResponseData;
 
 import java.util.Map;
@@ -15,7 +15,7 @@ public interface NoteRestApiService {
 
     @POST("notes/addNotes")
     Call<Map<String, ResponseData>> addNotes(@Header("Authorization") String authKey,
-                                             @Body NoteModel noteModel);
+                                             @Body AddNoteModel noteModel);
     @GET("notes/getNotesList")
     Call<Map<String, ResponseData>> getNoteList(@Header("Authorization") String authKey);
 

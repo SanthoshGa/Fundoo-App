@@ -29,13 +29,14 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
-import com.bridgelabz.fundoo.Dashboard.Model.NoteModel;
+import com.bridgelabz.fundoo.Dashboard.Model.BaseNoteModel;
+import com.bridgelabz.fundoo.Dashboard.Model.NoteListModel;
 import com.bridgelabz.fundoo.Dashboard.View.Adapter.NotesAdapter;
 import com.bridgelabz.fundoo.Dashboard.ViewModel.NoteViewModel;
 import com.bridgelabz.fundoo.Dashboard.ViewModel.RestApiNoteViewModel;
 import com.bridgelabz.fundoo.LoginSignup.View.LoginActivity;
 import com.bridgelabz.fundoo.R;
-import com.bridgelabz.fundoo.label_page.view.AddLabelFragment;
+import com.bridgelabz.fundoo.add_label_page.view.AddLabelFragment;
 import com.bumptech.glide.Glide;
 import com.google.android.material.navigation.NavigationView;
 
@@ -51,12 +52,12 @@ public class DashboardActivity extends AppCompatActivity implements
     private ActionBarDrawerToggle mToggle;
     TextView mTextTakeNote;
     RecyclerView mRecyclerView;
-    private List<NoteModel> noteList = new ArrayList<>();
+    private List<NoteListModel> noteList = new ArrayList<>();
     NoteViewModel noteViewModel;
     RestApiNoteViewModel restApiNoteViewModel;
     NotesAdapter notesAdapter;
     NavigationView navigationView;
-//    Observable<List<NoteModel>> observableNotes = new ObservableNotes(noteList);
+//    Observable<List<BaseNoteModel>> observableNotes = new ObservableNotes(noteList);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,9 +82,9 @@ public class DashboardActivity extends AppCompatActivity implements
         public void onReceive(Context context, Intent intent) {
             Log.e(TAG, "Local Broadcast is working in dashboard");
             if (intent.hasExtra("noteList")) {
-                List<NoteModel> noteModelList = (List<NoteModel>)
+                noteList = (List<NoteListModel>)
                         intent.getSerializableExtra("noteList");
-                notesAdapter.setNoteModelArrayList(noteModelList);
+                notesAdapter.setNoteModelArrayList(noteList);
                 notesAdapter.notifyDataSetChanged();
             }
         }
@@ -100,7 +101,7 @@ public class DashboardActivity extends AppCompatActivity implements
         mToggle.syncState();
     }
 
-    private boolean deleteNote(NoteModel noteAt) {
+    private boolean deleteNote(BaseNoteModel noteAt) {
 //        return noteViewModel.deleteNote(noteAt);
         return true;          // TODO: change
     }
@@ -156,7 +157,7 @@ public class DashboardActivity extends AppCompatActivity implements
                 public void onSwiped(@NonNull RecyclerView.ViewHolder swipedViewHolder, int direction) {
                     int adapterPosition = swipedViewHolder.getAdapterPosition();
                     Log.e(TAG, "The adapter position is " + adapterPosition);
-                    NoteModel noteToDelete = notesAdapter.getNoteAt(adapterPosition);
+                    BaseNoteModel noteToDelete = notesAdapter.getNoteAt(adapterPosition);
                     boolean isDeleted = deleteNote(noteToDelete);
                     if (isDeleted) {
                         noteList.remove(noteToDelete);

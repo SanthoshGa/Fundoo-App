@@ -8,8 +8,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
-import com.bridgelabz.fundoo.Dashboard.Model.Note;
-import com.bridgelabz.fundoo.Dashboard.Model.NoteModel;
+import com.bridgelabz.fundoo.add_note_page.Model.NoteListModel;
 import com.bridgelabz.fundoo.R;
 
 public class NoteHolder extends RecyclerView.ViewHolder {
@@ -43,7 +42,7 @@ public class NoteHolder extends RecyclerView.ViewHolder {
         });
     }
 
-    public void bindNoteToCard(NoteModel note) {
+    public void bindNoteToCard(NoteListModel note) {
         mTitle.setText(note.getTitle());
         mDescription.setText(note.getDescription());
 //        if (!note.getReminder().equals("")) {
@@ -57,7 +56,7 @@ public class NoteHolder extends RecyclerView.ViewHolder {
 //            reminderCard.setVisibility(View.GONE);
 //        }
 
-        if (note.getColor() != null) {
+        if (note.getColor() != null && !note.getColor().isEmpty()) {
             noteCard.setCardBackgroundColor(Color.parseColor(note.getColor()));
         } else {
             noteCard.setCardBackgroundColor(Color.WHITE);

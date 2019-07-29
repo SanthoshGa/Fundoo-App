@@ -8,7 +8,8 @@ import android.view.ViewGroup;
 import android.widget.Filter;
 import android.widget.Filterable;
 
-import com.bridgelabz.fundoo.Dashboard.Model.NoteModel;
+import com.bridgelabz.fundoo.add_note_page.Model.BaseNoteModel;
+import com.bridgelabz.fundoo.add_note_page.Model.NoteListModel;
 import com.bridgelabz.fundoo.R;
 import com.bridgelabz.fundoo.Utility.ItemTouchHelperAdapter;
 
@@ -17,14 +18,14 @@ import java.util.List;
 
 public class NotesAdapter extends RecyclerView.Adapter<NoteHolder> implements ItemTouchHelperAdapter, Filterable {
 
-    private List<NoteModel> noteModelArrayList;
-    private List<NoteModel> noteModelArrayListFull;
+    private List<NoteListModel> noteModelArrayList;
+    private List<NoteListModel> noteModelArrayListFull;
 
     private ItemTouchHelper itemTouchHelper;
     private OnItemClickListener listener;
 
 
-    public NotesAdapter(List<NoteModel> noteModelArrayList, OnItemClickListener onItemClickListener) {
+    public NotesAdapter(List<NoteListModel> noteModelArrayList, OnItemClickListener onItemClickListener) {
         this.noteModelArrayList = noteModelArrayList;
         this.listener = onItemClickListener;
         noteModelArrayListFull = new ArrayList<>(noteModelArrayList);
@@ -39,7 +40,7 @@ public class NotesAdapter extends RecyclerView.Adapter<NoteHolder> implements It
 
     @Override
     public void onBindViewHolder(NoteHolder noteHolder, int position) {
-        NoteModel note = noteModelArrayList.get(position);
+        NoteListModel note = noteModelArrayList.get(position);
         noteHolder.bindNoteToCard(note);
     }
 
@@ -48,13 +49,13 @@ public class NotesAdapter extends RecyclerView.Adapter<NoteHolder> implements It
         return noteModelArrayList.size();
     }
 
-    public NoteModel getNoteAt(int position){
+    public BaseNoteModel getNoteAt(int position){
         return noteModelArrayList.get(position);
     }
 
     @Override
     public void onItemMove(int draggedPosition, int targetPosition) {
-        NoteModel draggedNote = noteModelArrayList.get(draggedPosition);
+        NoteListModel draggedNote = noteModelArrayList.get(draggedPosition);
         noteModelArrayList.remove(draggedNote);
         noteModelArrayList.add(targetPosition, draggedNote);
         notifyItemMoved(draggedPosition, targetPosition);
@@ -92,7 +93,7 @@ public class NotesAdapter extends RecyclerView.Adapter<NoteHolder> implements It
     private Filter noteFilter = new Filter() {
         @Override
         protected FilterResults performFiltering(CharSequence constraint) {
-            List<NoteModel> filteredList = new ArrayList<>();
+            List<BaseNoteModel> filteredList = new ArrayList<>();
 
             if(constraint == null || constraint.length() == 0)
             {
@@ -101,7 +102,7 @@ public class NotesAdapter extends RecyclerView.Adapter<NoteHolder> implements It
             else{
                 String filterPattern = constraint.toString().toLowerCase().trim();
 
-                for(NoteModel note : noteModelArrayListFull){
+                for(BaseNoteModel note : noteModelArrayListFull){
                     if(note.getTitle().toLowerCase().contains(filterPattern)){
                         filteredList.add(note);
                     }

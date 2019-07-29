@@ -3,33 +3,32 @@ package com.bridgelabz.fundoo.Dashboard.Model;
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
-import java.util.List;
 
-public class NoteModel implements Serializable {
+public class BaseNoteModel implements Serializable {
 
     @SerializedName("title")
-    private String title;
+    protected String title;
 
     @SerializedName("description")
-    private String description;
+    protected String description;
 
     @SerializedName("isPinned")
-    private boolean isPinned;
+    protected boolean isPinned;
 
     @SerializedName("isArchived")
-    private boolean isArchived;
+    protected boolean isArchived;
 
     @SerializedName("isDeleted")
-    private boolean isDeleted;
+    protected boolean isDeleted;
 
-    @SerializedName("reminder")
-    private List<String> reminder;
+//    @SerializedName("reminder")
+//    private String reminderString;
 
     @SerializedName("createdDate")
-    private String createdDate;
+    protected String createdDate;
 
     @SerializedName("modifiedDate")
-    private String modifiedDate;
+    protected String modifiedDate;
 
     @SerializedName("color")
     private String color;
@@ -40,15 +39,15 @@ public class NoteModel implements Serializable {
     @SerializedName("userId")
     private String userId;
 
-    public NoteModel(String title, String description, boolean isPinned, boolean isArchived,
-                     boolean isDeleted, List<String> reminder, String createdDate, String modifiedDate,
-                     String color, String id, String userId) {
+    public BaseNoteModel(String title, String description, boolean isPinned, boolean isArchived,
+                         boolean isDeleted, String createdDate, String modifiedDate,
+                         String color, String id, String userId) {
         this.title = title;
         this.description = description;
         this.isPinned = isPinned;
         this.isArchived = isArchived;
         this.isDeleted = isDeleted;
-        this.reminder = reminder;
+//        this.reminder = reminder;
         this.createdDate = createdDate;
         this.modifiedDate = modifiedDate;
         this.color = color;
@@ -96,13 +95,13 @@ public class NoteModel implements Serializable {
         this.isDeleted = isDeleted;
     }
 
-    public List<String> getReminder() {
-        return reminder;
-    }
+//    public List<String> getReminder() {
+//        return reminder;
+//    }
 
-    public void setReminder(List<String> reminder) {
-        this.reminder = reminder;
-    }
+//    public void setReminder(List<String> reminder) {
+//        this.reminder = reminder;
+//    }
 
     public String getCreatedDate() {
         return createdDate;
@@ -145,17 +144,14 @@ public class NoteModel implements Serializable {
     }
 
     public  String toString(){
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(" title: ").append(title).append("\n")
-                     .append(" description :").append(description).append("\n")
-                     .append(" isPinned :").append(isPinned).append("\n")
-                     .append("isArchived :").append(isArchived).append("\n")
-                     .append("isDeleted :").append(isDeleted).append("\n")
-                     .append("reminder :").append(reminder).append("\n")
-                     .append("createdDate :").append(createdDate).append("\n")
-                     .append("modifiedDate :").append(modifiedDate).append("\n");
-//                     .append()
-
-        return stringBuilder.toString();
+        //                     .append()
+        return " title: " + title + "\n" +
+                " description :" + description + "\n" +
+                " isPinned :" + isPinned + "\n" +
+                "isArchived :" + isArchived + "\n" +
+                "isDeleted :" + isDeleted + "\n" +
+//                     .append("reminder :").append(reminder).append("\n")
+                "createdDate :" + createdDate + "\n" +
+                "modifiedDate :" + modifiedDate + "\n";
     }
 }
