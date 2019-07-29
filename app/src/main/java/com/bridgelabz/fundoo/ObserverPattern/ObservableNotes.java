@@ -1,6 +1,7 @@
 package com.bridgelabz.fundoo.ObserverPattern;
 
 import com.bridgelabz.fundoo.Dashboard.Model.Note;
+import com.bridgelabz.fundoo.Dashboard.Model.NoteModel;
 
 import java.util.ArrayList;
 import java.util.List;

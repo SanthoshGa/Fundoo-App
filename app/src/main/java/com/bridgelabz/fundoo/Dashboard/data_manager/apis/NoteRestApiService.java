@@ -13,11 +13,14 @@ import retrofit2.http.POST;
 
 public interface NoteRestApiService {
 
-    @POST("notes/addNote")
+    @POST("notes/addNotes")
     Call<Map<String, ResponseData>> addNotes(@Header("Authorization") String authKey,
                                              @Body NoteModel noteModel);
-    @GET("notes/getNoteList")
+    @GET("notes/getNotesList")
     Call<Map<String, ResponseData>> getNoteList(@Header("Authorization") String authKey);
+
+//    @GET("notes/getArchiveNotesList")
+//    Call<>
 
 
 }

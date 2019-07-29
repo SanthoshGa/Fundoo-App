@@ -3,6 +3,7 @@ package com.bridgelabz.fundoo.Dashboard.Model;
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
+import java.util.List;
 
 public class NoteModel implements Serializable {
 
@@ -22,7 +23,7 @@ public class NoteModel implements Serializable {
     private boolean isDeleted;
 
     @SerializedName("reminder")
-    private String reminder;
+    private List<String> reminder;
 
     @SerializedName("createdDate")
     private String createdDate;
@@ -40,7 +41,7 @@ public class NoteModel implements Serializable {
     private String userId;
 
     public NoteModel(String title, String description, boolean isPinned, boolean isArchived,
-                     boolean isDeleted, String reminder, String createdDate, String modifiedDate,
+                     boolean isDeleted, List<String> reminder, String createdDate, String modifiedDate,
                      String color, String id, String userId) {
         this.title = title;
         this.description = description;
@@ -95,11 +96,11 @@ public class NoteModel implements Serializable {
         this.isDeleted = isDeleted;
     }
 
-    public String getReminder() {
+    public List<String> getReminder() {
         return reminder;
     }
 
-    public void setReminder(String reminder) {
+    public void setReminder(List<String> reminder) {
         this.reminder = reminder;
     }
 

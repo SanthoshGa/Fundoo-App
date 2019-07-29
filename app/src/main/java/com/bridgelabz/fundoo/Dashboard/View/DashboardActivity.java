@@ -1,29 +1,10 @@
 package com.bridgelabz.fundoo.Dashboard.View;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-
-import com.bridgelabz.fundoo.ObserverPattern.Observable;
-import com.bridgelabz.fundoo.ObserverPattern.ObservableNotes;
-import com.bridgelabz.fundoo.ObserverPattern.Observer;
-import com.bridgelabz.fundoo.label_page.view.AddLabelFragment;
-import com.bumptech.glide.Glide;
-import com.google.android.material.navigation.NavigationView;
-
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.DefaultItemAnimator;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.StaggeredGridLayoutManager;
-import androidx.recyclerview.widget.ItemTouchHelper;
-
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -34,47 +15,83 @@ import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bridgelabz.fundoo.Dashboard.Model.Note;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
+
+import com.bridgelabz.fundoo.Dashboard.Model.NoteModel;
 import com.bridgelabz.fundoo.Dashboard.View.Adapter.NotesAdapter;
 import com.bridgelabz.fundoo.Dashboard.ViewModel.NoteViewModel;
+import com.bridgelabz.fundoo.Dashboard.ViewModel.RestApiNoteViewModel;
 import com.bridgelabz.fundoo.LoginSignup.View.LoginActivity;
 import com.bridgelabz.fundoo.R;
+import com.bridgelabz.fundoo.label_page.view.AddLabelFragment;
+import com.bumptech.glide.Glide;
+import com.google.android.material.navigation.NavigationView;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 public class DashboardActivity extends AppCompatActivity implements
-        NavigationView.OnNavigationItemSelectedListener, Observer {
+        NavigationView.OnNavigationItemSelectedListener {
 
     private static final String TAG = "DashboardActivity";
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mToggle;
     TextView mTextTakeNote;
     RecyclerView mRecyclerView;
-    private List<Note> noteList = new ArrayList<>();
+    private List<NoteModel> noteList = new ArrayList<>();
     NoteViewModel noteViewModel;
+    RestApiNoteViewModel restApiNoteViewModel;
     NotesAdapter notesAdapter;
     NavigationView navigationView;
-    Observable<List<Note>> observableNotes = new ObservableNotes(noteList);
+//    Observable<List<NoteModel>> observableNotes = new ObservableNotes(noteList);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        noteViewModel = new NoteViewModel(this);
+//        noteViewModel = new NoteViewModel(this);
+        restApiNoteViewModel = new RestApiNoteViewModel(this);
         prepareRecyclerView();
-        registerObserverForNotes();
+//        registerObserverForNotes();
         setNavigationViewListener();
         setUpDrawer();
         setUpNavigationView();
         setOnClickTakeNote();
+        LocalBroadcastManager.getInstance(this).registerReceiver(getNotesBroadcastReceiver,
+                new IntentFilter("com.bridgelabz.fundoo.fetch_notes_action"));
+
     }
 
-    private void registerObserverForNotes() {
-        observableNotes.registerObserver(this);
-    }
+    private BroadcastReceiver getNotesBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.e(TAG, "Local Broadcast is working in dashboard");
+            if (intent.hasExtra("noteList")) {
+                List<NoteModel> noteModelList = (List<NoteModel>)
+                        intent.getSerializableExtra("noteList");
+                notesAdapter.setNoteModelArrayList(noteModelList);
+                notesAdapter.notifyDataSetChanged();
+            }
+        }
+    };
+
+//    private void registerObserverForNotes() {
+//        observableNotes.registerObserver(this);
+//    }
 
     private void setUpDrawer() {
         mDrawerLayout = findViewById(R.id.drawer_layout_dashboard);
@@ -83,17 +100,20 @@ public class DashboardActivity extends AppCompatActivity implements
         mToggle.syncState();
     }
 
-    private boolean deleteNote(Note noteAt) {
-        return noteViewModel.deleteNote(noteAt);
+    private boolean deleteNote(NoteModel noteAt) {
+//        return noteViewModel.deleteNote(noteAt);
+        return true;          // TODO: change
     }
 
 
     private void prepareRecyclerView() {
-        observableNotes = noteViewModel.fetchAllNotes();
-        noteList = ((ObservableNotes) observableNotes).getListOfNotes();
+//        observableNotes = noteViewModel.fetchAllNotes();
+//        noteList = ((ObservableNotes) observableNotes).getListOfNotes();
 //        noteList = noteViewModel.getAllNoteData();
         mRecyclerView = findViewById(R.id.recycleView);
         mRecyclerView.setHasFixedSize(true);
+        restApiNoteViewModel.fetchNoteList();
+
 
         // for Staggered Grid View
         mRecyclerView.setLayoutManager(
@@ -136,7 +156,7 @@ public class DashboardActivity extends AppCompatActivity implements
                 public void onSwiped(@NonNull RecyclerView.ViewHolder swipedViewHolder, int direction) {
                     int adapterPosition = swipedViewHolder.getAdapterPosition();
                     Log.e(TAG, "The adapter position is " + adapterPosition);
-                    Note noteToDelete = notesAdapter.getNoteAt(adapterPosition);
+                    NoteModel noteToDelete = notesAdapter.getNoteAt(adapterPosition);
                     boolean isDeleted = deleteNote(noteToDelete);
                     if (isDeleted) {
                         noteList.remove(noteToDelete);
@@ -237,7 +257,7 @@ public class DashboardActivity extends AppCompatActivity implements
                 closeDrawer();
                 closeFragmentIfShowing();
                 Toast.makeText(this, "Notes drawer menu clicked!", Toast.LENGTH_SHORT).show();
-                noteList = noteViewModel.getAllNoteData();
+//                noteList = noteViewModel.getAllNoteData();            // TODO: change
                 notesAdapter.setNoteModelArrayList(noteList);
                 notesAdapter.notifyDataSetChanged();
                 break;
@@ -245,7 +265,7 @@ public class DashboardActivity extends AppCompatActivity implements
                 closeDrawer();
                 closeFragmentIfShowing();
                 Toast.makeText(this, "Reminders drawer menu clicked!", Toast.LENGTH_SHORT).show();
-                noteList = noteViewModel.getReminderNotes();
+//                noteList = noteViewModel.getReminderNotes();          // TODO: change
                 notesAdapter.setNoteModelArrayList(noteList);
                 notesAdapter.notifyDataSetChanged();
                 break;
@@ -253,7 +273,7 @@ public class DashboardActivity extends AppCompatActivity implements
                 closeDrawer();
                 closeFragmentIfShowing();
                 Toast.makeText(this, "Archive drawer menu clicked!", Toast.LENGTH_SHORT).show();
-                noteList = noteViewModel.getArchivedNotes();
+//                noteList = noteViewModel.getArchivedNotes();          // TODO: change
                 notesAdapter.setNoteModelArrayList(noteList);
                 notesAdapter.notifyDataSetChanged();
                 break;
@@ -262,7 +282,7 @@ public class DashboardActivity extends AppCompatActivity implements
                 closeDrawer();
                 closeFragmentIfShowing();
                 Toast.makeText(this, "Pinned drawer menu clicked!", Toast.LENGTH_SHORT).show();
-                noteList = noteViewModel.getPinnedNotes();
+//                noteList = noteViewModel.getPinnedNotes();          // TODO: change
                 notesAdapter.notifyDataSetChanged();
                 break;
             case R.id.drawer_menu_create_label:
@@ -279,7 +299,7 @@ public class DashboardActivity extends AppCompatActivity implements
                 closeDrawer();
                 closeFragmentIfShowing();
                 Toast.makeText(this, "Trashed drawer menu clicked!", Toast.LENGTH_SHORT).show();
-                noteList = noteViewModel.getTrashedNotes();
+//                noteList = noteViewModel.getTrashedNotes();          // TODO: change
                 notesAdapter.setNoteModelArrayList(noteList);
                 notesAdapter.notifyDataSetChanged();
                 break;
@@ -309,15 +329,15 @@ public class DashboardActivity extends AppCompatActivity implements
 
     }
 
-    @Override
-    public void update(Observable observable) {
-        this.noteList = ((ObservableNotes) observable).getListOfNotes();
-        notesAdapter.notifyDataSetChanged();
-    }
+//    @Override
+//    public void update(Observable observable) {
+//        this.noteList = ((ObservableNotes) observable).getListOfNotes();
+//        notesAdapter.notifyDataSetChanged();
+//    }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        observableNotes.unregisterObserver(this);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(getNotesBroadcastReceiver);
     }
 }

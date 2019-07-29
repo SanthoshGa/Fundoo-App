@@ -33,6 +33,8 @@ public class RestApiNoteDataManager {
         NoteRestApiService apiService = retrofit.create(NoteRestApiService.class);
         String authKey = sharedPreferencesManager.getAccessToken();
 
+        Log.e(TAG, "addNote: NoteModel :" + noteModel.toString());
+
         Call<Map<String, ResponseData>> responseDataCall = apiService.addNotes(authKey, noteModel);
         responseDataCall.enqueue(new Callback<Map<String, ResponseData>>() {
             @Override
@@ -82,7 +84,8 @@ public class RestApiNoteDataManager {
             @Override
             public void onResponse(Call<Map<String, ResponseData>> call, Response<Map<String, ResponseData>> response) {
                 if(response.isSuccessful()){
-                    Log.e(TAG, "onResponse: response is successful");
+                    Log.e(TAG, "onResponseSuccessful: getNotesList - " + response.body()
+                            .toString());
                     ResponseData responseData = response.body().get("data");
                     Log.e(TAG,  responseData.getNoteModelList() + "");
                     getNotesCallback.onResponse(responseData.getNoteModelList(), null);
@@ -93,6 +96,8 @@ public class RestApiNoteDataManager {
                                 response.code() + "", response.errorBody().string(),
                                 response.message(),
                                 null) );
+                        Log.e(TAG, "onResponseError: getNotesList - " + response.errorBody()
+                                .toString());
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -101,7 +106,7 @@ public class RestApiNoteDataManager {
 
             @Override
             public void onFailure(Call<Map<String, ResponseData>> call, Throwable throwable) {
-                Log.e(TAG, throwable.getLocalizedMessage());
+                Log.e(TAG, "Throwable: getNotesList - " + throwable.getLocalizedMessage());
                 getNotesCallback.onFailure(throwable);
 
             }

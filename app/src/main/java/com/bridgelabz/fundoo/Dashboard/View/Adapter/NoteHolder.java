@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.bridgelabz.fundoo.Dashboard.Model.Note;
+import com.bridgelabz.fundoo.Dashboard.Model.NoteModel;
 import com.bridgelabz.fundoo.R;
 
 public class NoteHolder extends RecyclerView.ViewHolder {
@@ -42,19 +43,19 @@ public class NoteHolder extends RecyclerView.ViewHolder {
         });
     }
 
-    public void bindNoteToCard(Note note) {
+    public void bindNoteToCard(NoteModel note) {
         mTitle.setText(note.getTitle());
         mDescription.setText(note.getDescription());
-        if (!note.getIfReminder().equals("")) {
-            // show the card
-            reminderCard.setCardBackgroundColor(Color.LTGRAY);
-            // set the reminder date to reminder text view
-            mReminder.setText(note.getIfReminder());
-            reminderCard.setVisibility(View.VISIBLE);
-        } else {
-             // hide the card
-            reminderCard.setVisibility(View.GONE);
-        }
+//        if (!note.getReminder().equals("")) {
+//            // show the card
+//            reminderCard.setCardBackgroundColor(Color.LTGRAY);
+//            // set the reminder date to reminder text view
+//            mReminder.setText((CharSequence) note.getReminder());
+//            reminderCard.setVisibility(View.VISIBLE);
+//        } else {
+//             // hide the card
+//            reminderCard.setVisibility(View.GONE);
+//        }
 
         if (note.getColor() != null) {
             noteCard.setCardBackgroundColor(Color.parseColor(note.getColor()));

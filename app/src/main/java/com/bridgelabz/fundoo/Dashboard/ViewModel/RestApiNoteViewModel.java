@@ -17,8 +17,8 @@ import java.util.List;
 public class RestApiNoteViewModel {
     private static final String TAG = "RestApiNoteViewModel";
 
-    RestApiNoteDataManager restApiNoteDataManager;
-    LocalBroadcastManager localBroadcastManager;
+    private RestApiNoteDataManager restApiNoteDataManager;
+    private LocalBroadcastManager localBroadcastManager;
 
     public RestApiNoteViewModel(Context context) {
         restApiNoteDataManager = new RestApiNoteDataManager(context);
@@ -58,9 +58,14 @@ public class RestApiNoteViewModel {
             @Override
             public void onResponse(List<NoteModel> noteModelList, ResponseError responseError) {
 
-                localIntent.putExtra("noteList", (Serializable) noteModelList);
-                localBroadcastManager.sendBroadcast(localIntent);
-
+                if(noteModelList != null) {
+                    Log.e(TAG, "onResponse: successful");
+                    localIntent.putExtra("noteList", (Serializable) noteModelList);
+                    localBroadcastManager.sendBroadcast(localIntent);
+                }else {
+                    Log.e(TAG, "onResponse: unsuccessful");
+                    Log.e(TAG, "onResponse: " + responseError.getStatusCode());
+                }
             }
 
             @Override

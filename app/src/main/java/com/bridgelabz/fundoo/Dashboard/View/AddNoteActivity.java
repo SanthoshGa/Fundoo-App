@@ -38,6 +38,7 @@ import com.bridgelabz.fundoo.Utility.ValidationHelper;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Locale;
 
@@ -234,12 +235,13 @@ public class AddNoteActivity extends AppCompatActivity implements View.OnClickLi
         }
     };
 
-    protected void  addNoteToDb(Note note) {
+    protected void addNoteToDb(Note note) {
         //TODO :
 
         NoteModel noteModel = new NoteModel(note.getTitle(), note.getDescription(),
                 note.isPinned(), note.isArchived(), note.isTrashed(),
-                note.getIfReminder(), "", "", note.getColor(), "", "");
+                Collections.singletonList(note.getIfReminder()), "", "",
+                note.getColor(), "", "");
 
         RestApiNoteViewModel noteViewModel = new RestApiNoteViewModel(this);
         noteViewModel.addNotes(noteModel);
