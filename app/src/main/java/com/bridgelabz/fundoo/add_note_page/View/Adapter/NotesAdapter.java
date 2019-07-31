@@ -9,7 +9,7 @@ import android.widget.Filter;
 import android.widget.Filterable;
 
 import com.bridgelabz.fundoo.add_note_page.Model.BaseNoteModel;
-import com.bridgelabz.fundoo.add_note_page.Model.NoteListModel;
+import com.bridgelabz.fundoo.add_note_page.Model.NoteResponseModel;
 import com.bridgelabz.fundoo.R;
 import com.bridgelabz.fundoo.Utility.ItemTouchHelperAdapter;
 
@@ -18,14 +18,14 @@ import java.util.List;
 
 public class NotesAdapter extends RecyclerView.Adapter<NoteHolder> implements ItemTouchHelperAdapter, Filterable {
 
-    private List<NoteListModel> noteModelArrayList;
-    private List<NoteListModel> noteModelArrayListFull;
+    private List<NoteResponseModel> noteModelArrayList;
+    private List<NoteResponseModel> noteModelArrayListFull;
 
     private ItemTouchHelper itemTouchHelper;
     private OnItemClickListener listener;
 
 
-    public NotesAdapter(List<NoteListModel> noteModelArrayList, OnItemClickListener onItemClickListener) {
+    public NotesAdapter(List<NoteResponseModel> noteModelArrayList, OnItemClickListener onItemClickListener) {
         this.noteModelArrayList = noteModelArrayList;
         this.listener = onItemClickListener;
         noteModelArrayListFull = new ArrayList<>(noteModelArrayList);
@@ -40,7 +40,7 @@ public class NotesAdapter extends RecyclerView.Adapter<NoteHolder> implements It
 
     @Override
     public void onBindViewHolder(NoteHolder noteHolder, int position) {
-        NoteListModel note = noteModelArrayList.get(position);
+        NoteResponseModel note = noteModelArrayList.get(position);
         noteHolder.bindNoteToCard(note);
     }
 
@@ -55,7 +55,7 @@ public class NotesAdapter extends RecyclerView.Adapter<NoteHolder> implements It
 
     @Override
     public void onItemMove(int draggedPosition, int targetPosition) {
-        NoteListModel draggedNote = noteModelArrayList.get(draggedPosition);
+        NoteResponseModel draggedNote = noteModelArrayList.get(draggedPosition);
         noteModelArrayList.remove(draggedNote);
         noteModelArrayList.add(targetPosition, draggedNote);
         notifyItemMoved(draggedPosition, targetPosition);

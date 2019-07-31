@@ -23,7 +23,7 @@ public class AddNoteModel extends BaseNoteModel {
         this.reminder = reminder;
     }
 
-    public  String toString(){
+    public String toString() {
         //                     .append()
         return " title: " + title + "\n" +
                 " description :" + description + "\n" +
@@ -33,5 +33,16 @@ public class AddNoteModel extends BaseNoteModel {
                 "reminder :" + reminder + "\n" +
                 "createdDate :" + createdDate + "\n" +
                 "modifiedDate :" + modifiedDate + "\n";
+    }
+
+    public static AddNoteModel getNoteFromResponse(NoteResponseModel noteResponseModel) {
+        return new AddNoteModel(noteResponseModel.getTitle(),
+                noteResponseModel.getDescription(), noteResponseModel.getIsPinned(),
+                noteResponseModel.getIsArchived(), noteResponseModel.getIsDeleted(),
+                noteResponseModel.getCreatedDate(), noteResponseModel.getModifiedDate(),
+                noteResponseModel.getColor(), noteResponseModel.getId(),
+                noteResponseModel.getUserId(),
+                noteResponseModel.getReminder().isEmpty() ? ""
+                        : noteResponseModel.getReminder().get(0));
     }
 }

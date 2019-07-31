@@ -4,10 +4,10 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-public class NoteListModel extends BaseNoteModel {
-    public NoteListModel(String title, String description, boolean isPinned, boolean isArchived,
-                         boolean isDeleted, String createdDate, String modifiedDate, String color,
-                         String id, String userId, List<String> reminder) {
+public class NoteResponseModel extends BaseNoteModel {
+    public NoteResponseModel(String title, String description, boolean isPinned, boolean isArchived,
+                             boolean isDeleted, String createdDate, String modifiedDate, String color,
+                             String id, String userId, List<String> reminder) {
         super(title, description, isPinned, isArchived, isDeleted, createdDate, modifiedDate,
                 color, id, userId);
         this.reminder = reminder;

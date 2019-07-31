@@ -34,6 +34,7 @@ import com.bridgelabz.fundoo.Utility.ValidationHelper;
 import com.bridgelabz.fundoo.add_note_page.Model.AddNoteModel;
 import com.bridgelabz.fundoo.add_note_page.Model.BaseNoteModel;
 import com.bridgelabz.fundoo.add_note_page.Model.Note;
+import com.bridgelabz.fundoo.add_note_page.Model.NoteResponseModel;
 import com.bridgelabz.fundoo.add_note_page.ViewModel.NoteViewModel;
 import com.bridgelabz.fundoo.add_note_page.ViewModel.RestApiNoteViewModel;
 
@@ -43,6 +44,8 @@ import java.util.Date;
 import java.util.Locale;
 
 import static com.bridgelabz.fundoo.BroadcastReceivers.LocalBroadcastManager.setArchiveNoteBroadcastReceiver;
+import static com.bridgelabz.fundoo.Utility.AppConstants.ADD_NOTE_ACTION;
+import static com.bridgelabz.fundoo.Utility.AppConstants.SET_ARCHIVE_ACTION;
 
 public class AddNoteActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -66,7 +69,7 @@ public class AddNoteActivity extends AppCompatActivity implements View.OnClickLi
     private boolean isArchived = false;
     private boolean isPinned = false;
     private boolean isTrashed = false;
-    private Note noteToEdit;
+    private AddNoteModel noteToEdit;
     private RadioGroup radioGroup;
     private StringBuilder reminderStringBuilder = new StringBuilder();
     private NotificationManagerCompat notificationManagerCompat;
@@ -87,16 +90,19 @@ public class AddNoteActivity extends AppCompatActivity implements View.OnClickLi
 
         LocalBroadcastManager.getInstance(this).registerReceiver
                 (addedNoteBroadcastReceiver,
-                new IntentFilter("com.bridgelabz.fundoo.added_note_action"));
+                        new IntentFilter(ADD_NOTE_ACTION));
 
         LocalBroadcastManager.getInstance(this).registerReceiver(setArchiveNoteBroadcastReceiver,
-                new IntentFilter("com.bridgelabz.fundoo.set_archive_action"));
+                new IntentFilter(SET_ARCHIVE_ACTION));
     }
 
     private void checkEditMode() {
         Intent intent = getIntent();
         if (intent.hasExtra("noteToEdit")) {
-            noteToEdit = (Note) intent.getSerializableExtra("noteToEdit");
+            NoteResponseModel noteResponseModel = (NoteResponseModel) intent.
+                    getSerializableExtra("noteToEdit");
+            if(noteResponseModel.getReminder().isEmpty())
+            noteToEdit = AddNoteModel.getNoteFromResponse(noteResponseModel);
             Log.e(TAG, "note is available");
             System.out.println(noteToEdit.toString());
             isEditMode = true;
@@ -112,7 +118,7 @@ public class AddNoteActivity extends AppCompatActivity implements View.OnClickLi
         setColorRdButton(noteToEdit);
     }
 
-    private void setColorRdButton(Note noteToEdit) {
+    private void setColorRdButton(AddNoteModel noteToEdit) {
         String noteColor = noteToEdit.getColor();
         String defaultColor = getString(R.string.none_hexCode);
         String whiteColor = getString(R.string.white_hexCode);
@@ -198,7 +204,7 @@ public class AddNoteActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     // test
-    private void updateNoteToDB(Note noteToEdit) {
+    private void updateNoteToDB(AddNoteModel noteToEdit) {
         // update note to database
         boolean isNoteEdit = noteViewModel.updateNote(noteToEdit);
         if (isNoteEdit) {
@@ -209,7 +215,6 @@ public class AddNoteActivity extends AppCompatActivity implements View.OnClickLi
             Toast.makeText(AddNoteActivity.this, "Unable to update", Toast.LENGTH_SHORT).show();
         }
     }
-
 
 
     public BroadcastReceiver addedNoteBroadcastReceiver = new BroadcastReceiver() {

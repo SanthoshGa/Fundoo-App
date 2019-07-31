@@ -31,6 +31,7 @@ public class LocalBroadcastManager {
                 Log.e(TAG, "onReceive:  we got the data " + isNoteArchived);
                 if(isNoteArchived){
 
+
                 }
             }
 

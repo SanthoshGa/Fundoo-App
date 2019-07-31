@@ -2,6 +2,7 @@ package com.bridgelabz.fundoo.add_note_page.ViewModel;
 
 import android.content.Context;
 
+import com.bridgelabz.fundoo.add_note_page.Model.AddNoteModel;
 import com.bridgelabz.fundoo.add_note_page.Model.Note;
 import com.bridgelabz.fundoo.add_note_page.data_manager.NoteDatabaseManager;
 import com.bridgelabz.fundoo.ObserverPattern.Observable;
@@ -45,7 +46,7 @@ public class NoteViewModel
     public boolean deleteAllNotes() {
         return noteDbManager.deleteAllNotes();
     }
-    public boolean updateNote(Note noteToEdit){
+    public boolean updateNote(AddNoteModel noteToEdit){
         return noteDbManager.updateNote(noteToEdit);
     }
 

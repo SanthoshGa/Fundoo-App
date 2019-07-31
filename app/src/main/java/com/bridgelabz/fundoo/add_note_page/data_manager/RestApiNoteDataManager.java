@@ -4,7 +4,7 @@ import android.content.Context;
 import android.util.Log;
 
 import com.bridgelabz.fundoo.add_note_page.Model.AddNoteModel;
-import com.bridgelabz.fundoo.add_note_page.Model.NoteListModel;
+import com.bridgelabz.fundoo.add_note_page.Model.NoteResponseModel;
 import com.bridgelabz.fundoo.add_note_page.data_manager.apis.NoteRestApiService;
 import com.bridgelabz.fundoo.LoginSignup.Model.Response.ResponseData;
 import com.bridgelabz.fundoo.LoginSignup.Model.Response.ResponseError;
@@ -12,6 +12,8 @@ import com.bridgelabz.fundoo.Utility.RetrofitRestApiConnection;
 import com.bridgelabz.fundoo.common.SharedPreferencesManager;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -115,18 +117,24 @@ public class RestApiNoteDataManager {
 
     }
 
-    public void setArchive(final  SetArchiveCallback setArchiveCallback){
+    public void setArchive(AddNoteModel noteModel, final SetArchiveCallback setArchiveCallback){
         Retrofit retrofit = RetrofitRestApiConnection.openRetrofitConnection();
         NoteRestApiService apiService = retrofit.create(NoteRestApiService.class);
         String authKey = sharedPreferencesManager.getAccessToken();
 
-        Call<Map<String, ResponseData>> responseDataCall = apiService.setArchive(authKey);
+        Map<String, Object> archiveDataMap = new HashMap<>();
+        List<String> noteIdList = new ArrayList<>();
+        noteIdList.add(noteModel.getId());
+        archiveDataMap.put("isArchived", true);
+        archiveDataMap.put("noteIdList", noteIdList);
+        Call<Map<String, ResponseData>> responseDataCall = apiService.setArchiveToNote(authKey,
+                archiveDataMap);
         responseDataCall.enqueue(new Callback<Map<String, ResponseData>>() {
             @Override
             public void onResponse(Call<Map<String, ResponseData>> call, Response<Map<String, ResponseData>> response) {
                 if(response.isSuccessful()){
                     Log.e(TAG, "Response is successful");
-                    Log.e(TAG, "onResponse : setArchive " + response.body().toString());
+                    Log.e(TAG, "onResponse : setArchiveToNote " + response.body().toString());
                     ResponseData responseData = response.body().get("data");
                     setArchiveCallback.onResponse(responseData, null);
                 }
@@ -145,12 +153,14 @@ public class RestApiNoteDataManager {
 
             @Override
             public void onFailure(Call<Map<String, ResponseData>> call, Throwable throwable) {
-                Log.e(TAG, "Throwable : setArchive" + throwable.getLocalizedMessage());
+                Log.e(TAG, "Throwable : setArchiveToNote" + throwable.getLocalizedMessage());
                 setArchiveCallback.onFailure(throwable);
 
             }
         });
     }
+
+
 
     public interface AddNoteCallback {
         void onResponse(ResponseData responseData, ResponseError responseError);
@@ -159,7 +169,7 @@ public class RestApiNoteDataManager {
     }
 
     public interface GetNotesCallback {
-        void onResponse(List<NoteListModel> noteModelList, ResponseError responseError);
+        void onResponse(List<NoteResponseModel> noteModelList, ResponseError responseError);
 
         void onFailure(Throwable throwable);
     }

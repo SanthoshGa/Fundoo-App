@@ -31,7 +31,7 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import com.bridgelabz.fundoo.add_note_page.View.AddNoteActivity;
 import com.bridgelabz.fundoo.add_note_page.Model.BaseNoteModel;
-import com.bridgelabz.fundoo.add_note_page.Model.NoteListModel;
+import com.bridgelabz.fundoo.add_note_page.Model.NoteResponseModel;
 import com.bridgelabz.fundoo.add_note_page.View.Adapter.NotesAdapter;
 import com.bridgelabz.fundoo.add_note_page.ViewModel.NoteViewModel;
 import com.bridgelabz.fundoo.add_note_page.ViewModel.RestApiNoteViewModel;
@@ -45,6 +45,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static com.bridgelabz.fundoo.Utility.AppConstants.FETCH_NOTE_ACTION;
+
 public class DashboardActivity extends AppCompatActivity implements
         NavigationView.OnNavigationItemSelectedListener {
 
@@ -53,7 +55,7 @@ public class DashboardActivity extends AppCompatActivity implements
     private ActionBarDrawerToggle mToggle;
     TextView mTextTakeNote;
     RecyclerView mRecyclerView;
-    private List<NoteListModel> noteList = new ArrayList<>();
+    private List<NoteResponseModel> noteList = new ArrayList<>();
     NoteViewModel noteViewModel;
     RestApiNoteViewModel restApiNoteViewModel;
     NotesAdapter notesAdapter;
@@ -74,7 +76,7 @@ public class DashboardActivity extends AppCompatActivity implements
         setUpNavigationView();
         setOnClickTakeNote();
         LocalBroadcastManager.getInstance(this).registerReceiver(getNotesBroadcastReceiver,
-                new IntentFilter("com.bridgelabz.fundoo.fetch_notes_action"));
+                new IntentFilter(FETCH_NOTE_ACTION));
 
     }
 
@@ -83,7 +85,7 @@ public class DashboardActivity extends AppCompatActivity implements
         public void onReceive(Context context, Intent intent) {
             Log.e(TAG, "Local Broadcast is working in dashboard");
             if (intent.hasExtra("noteList")) {
-                noteList = (List<NoteListModel>)
+                noteList = (List<NoteResponseModel>)
                         intent.getSerializableExtra("noteList");
                 notesAdapter.setNoteModelArrayList(noteList);
                 notesAdapter.notifyDataSetChanged();

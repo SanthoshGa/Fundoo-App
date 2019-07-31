@@ -8,7 +8,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
-import com.bridgelabz.fundoo.add_note_page.Model.NoteListModel;
+import com.bridgelabz.fundoo.add_note_page.Model.NoteResponseModel;
 import com.bridgelabz.fundoo.R;
 
 public class NoteHolder extends RecyclerView.ViewHolder {
@@ -42,7 +42,7 @@ public class NoteHolder extends RecyclerView.ViewHolder {
         });
     }
 
-    public void bindNoteToCard(NoteListModel note) {
+    public void bindNoteToCard(NoteResponseModel note) {
         mTitle.setText(note.getTitle());
         mDescription.setText(note.getDescription());
 //        if (!note.getReminder().equals("")) {

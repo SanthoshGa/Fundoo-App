@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
+import com.bridgelabz.fundoo.add_note_page.Model.AddNoteModel;
 import com.bridgelabz.fundoo.add_note_page.Model.Note;
 import com.bridgelabz.fundoo.DatabaseHelpers.SQLiteDatabaseHelper;
 import com.bridgelabz.fundoo.ObserverPattern.Observable;
@@ -211,7 +212,7 @@ public class NoteDatabaseManager {
         return  noteList;
     }
 
-    public boolean updateNote(Note noteToEdit){
+    public boolean updateNote(AddNoteModel noteToEdit){
         SQLiteDatabase db = databaseHelper.openDb();
         ContentValues contentValues = new ContentValues();
         contentValues.put(NOTE_TABLE_COL_TITLE, noteToEdit.getTitle());

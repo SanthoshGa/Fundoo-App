@@ -20,7 +20,8 @@ public interface NoteRestApiService {
     Call<Map<String, ResponseData>> getNoteList(@Header("Authorization") String authKey);
 
     @POST("notes/archiveNotes")
-    Call<Map<String, ResponseData>> setArchive(@Header("Authorization") String authKey);
+    Call<Map<String, ResponseData>> setArchiveToNote(@Header("Authorization") String authKey,
+                                                     @Body Map<String, Object> model);
 
     @POST("notes//pinUnpinNotes")
     Call<Map<String, ResponseData>> setPin(@Header("Authorization") String authKey);

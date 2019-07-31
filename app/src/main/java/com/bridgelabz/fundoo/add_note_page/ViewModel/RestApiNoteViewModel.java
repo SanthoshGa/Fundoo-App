@@ -7,13 +7,17 @@ import android.util.Log;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.bridgelabz.fundoo.add_note_page.Model.AddNoteModel;
-import com.bridgelabz.fundoo.add_note_page.Model.NoteListModel;
+import com.bridgelabz.fundoo.add_note_page.Model.NoteResponseModel;
 import com.bridgelabz.fundoo.add_note_page.data_manager.RestApiNoteDataManager;
 import com.bridgelabz.fundoo.LoginSignup.Model.Response.ResponseData;
 import com.bridgelabz.fundoo.LoginSignup.Model.Response.ResponseError;
 
 import java.io.Serializable;
 import java.util.List;
+
+import static com.bridgelabz.fundoo.Utility.AppConstants.ADD_NOTE_ACTION;
+import static com.bridgelabz.fundoo.Utility.AppConstants.FETCH_NOTE_ACTION;
+import static com.bridgelabz.fundoo.Utility.AppConstants.SET_ARCHIVE_ACTION;
 
 public class RestApiNoteViewModel {
     private static final String TAG = "RestApiNoteViewModel";
@@ -29,7 +33,7 @@ public class RestApiNoteViewModel {
 
     public void addNotes(AddNoteModel noteModel) {
         restApiNoteDataManager.addNote(noteModel, new RestApiNoteDataManager.AddNoteCallback() {
-            Intent localIntent = new Intent("com.bridgelabz.fundoo.added_note_action");
+            Intent localIntent = new Intent(ADD_NOTE_ACTION);
 
             @Override
             public void onResponse(ResponseData responseData, ResponseError responseError) {
@@ -55,15 +59,16 @@ public class RestApiNoteViewModel {
 
     public void fetchNoteList() {
         restApiNoteDataManager.getNoteList(new RestApiNoteDataManager.GetNotesCallback() {
-            Intent localIntent = new Intent("com.bridgelabz.fundoo.fetch_notes_action");
-            @Override
-            public void onResponse(List<NoteListModel> noteModelList, ResponseError responseError) {
+            Intent localIntent = new Intent(FETCH_NOTE_ACTION);
 
-                if(noteModelList != null) {
+            @Override
+            public void onResponse(List<NoteResponseModel> noteModelList, ResponseError responseError) {
+
+                if (noteModelList != null) {
                     Log.e(TAG, "onResponse: successful");
                     localIntent.putExtra("noteList", (Serializable) noteModelList);
                     localBroadcastManager.sendBroadcast(localIntent);
-                }else {
+                } else {
                     Log.e(TAG, "onResponse: unsuccessful");
                     Log.e(TAG, "onResponse: " + responseError.getStatusCode());
                 }
@@ -77,9 +82,11 @@ public class RestApiNoteViewModel {
         });
 
     }
-    public void setArchiveToNote(){
-        restApiNoteDataManager.setArchive(new RestApiNoteDataManager.SetArchiveCallback() {
-            Intent localIntent = new Intent("com.bridgelabz.fundoo.set_archive_action");
+
+    public void setArchiveToNote(AddNoteModel addNoteModel) {
+        restApiNoteDataManager.setArchive(addNoteModel, new RestApiNoteDataManager.SetArchiveCallback() {
+            Intent localIntent = new Intent(SET_ARCHIVE_ACTION);
+
             @Override
             public void onResponse(ResponseData responseData, ResponseError responseError) {
 
