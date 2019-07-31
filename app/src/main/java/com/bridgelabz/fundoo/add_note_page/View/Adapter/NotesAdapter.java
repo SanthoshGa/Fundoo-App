@@ -1,4 +1,4 @@
-package com.bridgelabz.fundoo.Dashboard.View.Adapter;
+package com.bridgelabz.fundoo.add_note_page.View.Adapter;
 
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.ItemTouchHelper;

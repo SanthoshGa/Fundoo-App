@@ -1,6 +1,6 @@
 package com.bridgelabz.fundoo.LoginSignup.Model.Response;
 
-import com.bridgelabz.fundoo.Dashboard.Model.NoteModel;
+import com.bridgelabz.fundoo.add_note_page.Model.NoteListModel;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
@@ -17,7 +17,7 @@ public class ResponseData extends ResponseModel {
     private Object details;
 
     @SerializedName("data")
-    private List<NoteModel> noteModelList;
+    private List<NoteListModel> noteModelList;
 
     public ResponseData(boolean success, String message) {
         this.success = success;
@@ -48,7 +48,7 @@ public class ResponseData extends ResponseModel {
 
     }
 
-    public List<NoteModel> getNoteModelList() {
+    public List<NoteListModel> getNoteModelList() {
         return noteModelList;
     }
 }

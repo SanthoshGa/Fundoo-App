@@ -10,7 +10,7 @@ import android.content.Intent;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.TaskStackBuilder;
 
-import com.bridgelabz.fundoo.Dashboard.View.AddNoteActivity;
+import com.bridgelabz.fundoo.add_note_page.View.AddNoteActivity;
 import com.bridgelabz.fundoo.R;
 
 import static com.bridgelabz.fundoo.application.MyApplicationClass.CHANNEL_1_ID;

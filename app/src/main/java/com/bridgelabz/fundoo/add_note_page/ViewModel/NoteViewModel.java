@@ -1,9 +1,9 @@
-package com.bridgelabz.fundoo.Dashboard.ViewModel;
+package com.bridgelabz.fundoo.add_note_page.ViewModel;
 
 import android.content.Context;
 
 import com.bridgelabz.fundoo.add_note_page.Model.Note;
-import com.bridgelabz.fundoo.Dashboard.data_manager.NoteDatabaseManager;
+import com.bridgelabz.fundoo.add_note_page.data_manager.NoteDatabaseManager;
 import com.bridgelabz.fundoo.ObserverPattern.Observable;
 
 import java.util.List;

@@ -1,4 +1,4 @@
-package com.bridgelabz.fundoo.Dashboard.View;
+package com.bridgelabz.fundoo.Dashboard;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -29,11 +29,12 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
-import com.bridgelabz.fundoo.Dashboard.Model.BaseNoteModel;
-import com.bridgelabz.fundoo.Dashboard.Model.NoteListModel;
-import com.bridgelabz.fundoo.Dashboard.View.Adapter.NotesAdapter;
-import com.bridgelabz.fundoo.Dashboard.ViewModel.NoteViewModel;
-import com.bridgelabz.fundoo.Dashboard.ViewModel.RestApiNoteViewModel;
+import com.bridgelabz.fundoo.add_note_page.View.AddNoteActivity;
+import com.bridgelabz.fundoo.add_note_page.Model.BaseNoteModel;
+import com.bridgelabz.fundoo.add_note_page.Model.NoteListModel;
+import com.bridgelabz.fundoo.add_note_page.View.Adapter.NotesAdapter;
+import com.bridgelabz.fundoo.add_note_page.ViewModel.NoteViewModel;
+import com.bridgelabz.fundoo.add_note_page.ViewModel.RestApiNoteViewModel;
 import com.bridgelabz.fundoo.LoginSignup.View.LoginActivity;
 import com.bridgelabz.fundoo.R;
 import com.bridgelabz.fundoo.add_label_page.view.AddLabelFragment;

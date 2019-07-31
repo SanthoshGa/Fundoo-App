@@ -1,4 +1,4 @@
-package com.bridgelabz.fundoo.Dashboard.data_manager;
+package com.bridgelabz.fundoo.add_note_page.data_manager;
 
 import android.content.ContentValues;
 import android.content.Context;

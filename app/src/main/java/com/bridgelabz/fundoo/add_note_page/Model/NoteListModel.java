@@ -1,4 +1,4 @@
-package com.bridgelabz.fundoo.Dashboard.Model;
+package com.bridgelabz.fundoo.add_note_page.Model;
 
 import com.google.gson.annotations.SerializedName;
 

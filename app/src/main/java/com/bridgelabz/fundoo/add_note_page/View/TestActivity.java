@@ -1,4 +1,4 @@
-//package com.bridgelabz.fundoo.Dashboard.View;
+//package com.bridgelabz.fundoo.add_note_page.View;
 //
 //import android.os.Bundle;
 //import android.util.Log;

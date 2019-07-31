@@ -13,7 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.bridgelabz.fundoo.Dashboard.View.DashboardActivity;
+import com.bridgelabz.fundoo.Dashboard.DashboardActivity;
 import com.bridgelabz.fundoo.LoginSignup.Model.Response.ResponseError;
 import com.bridgelabz.fundoo.LoginSignup.Model.RestApiUserDataManager;
 import com.bridgelabz.fundoo.LoginSignup.Model.UserLoginModel;

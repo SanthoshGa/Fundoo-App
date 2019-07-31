@@ -1,4 +1,4 @@
-package com.bridgelabz.fundoo.Dashboard.ViewModel;
+package com.bridgelabz.fundoo.add_note_page.ViewModel;
 
 import android.content.Context;
 import android.content.Intent;
@@ -8,7 +8,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.bridgelabz.fundoo.add_note_page.Model.AddNoteModel;
 import com.bridgelabz.fundoo.add_note_page.Model.NoteListModel;
-import com.bridgelabz.fundoo.Dashboard.data_manager.RestApiNoteDataManager;
+import com.bridgelabz.fundoo.add_note_page.data_manager.RestApiNoteDataManager;
 import com.bridgelabz.fundoo.LoginSignup.Model.Response.ResponseData;
 import com.bridgelabz.fundoo.LoginSignup.Model.Response.ResponseError;
 
@@ -76,5 +76,27 @@ public class RestApiNoteViewModel {
             }
         });
 
+    }
+    public void setArchiveToNote(){
+        restApiNoteDataManager.setArchive(new RestApiNoteDataManager.SetArchiveCallback() {
+            Intent localIntent = new Intent("com.bridgelabz.fundoo.set_archive_action");
+            @Override
+            public void onResponse(ResponseData responseData, ResponseError responseError) {
+
+                boolean isAddedArchive;
+                isAddedArchive = (responseData != null);
+                Log.e(TAG, "onResponse isAddedArchive: " + isAddedArchive);
+
+                localIntent.putExtra("isNoteArchived", isAddedArchive);
+                localBroadcastManager.sendBroadcast(localIntent);
+            }
+
+            @Override
+            public void onFailure(Throwable throwable) {
+                localIntent.putExtra("throwable", throwable);
+                localBroadcastManager.sendBroadcast(localIntent);
+
+            }
+        });
     }
 }

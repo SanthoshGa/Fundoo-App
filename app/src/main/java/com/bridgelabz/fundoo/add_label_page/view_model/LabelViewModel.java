@@ -1,9 +1,9 @@
-package com.bridgelabz.fundoo.label_page.view_model;
+package com.bridgelabz.fundoo.add_label_page.view_model;
 
 import android.content.Context;
 
-import com.bridgelabz.fundoo.label_page.model.Label;
-import com.bridgelabz.fundoo.label_page.model.LabelDatabaseManager;
+import com.bridgelabz.fundoo.add_label_page.model.Label;
+import com.bridgelabz.fundoo.add_label_page.model.LabelDatabaseManager;
 
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package com.bridgelabz.fundoo.Dashboard.data_manager.apis;
+package com.bridgelabz.fundoo.add_note_page.data_manager.apis;
 
 import com.bridgelabz.fundoo.add_note_page.Model.AddNoteModel;
 import com.bridgelabz.fundoo.LoginSignup.Model.Response.ResponseData;
@@ -19,8 +19,10 @@ public interface NoteRestApiService {
     @GET("notes/getNotesList")
     Call<Map<String, ResponseData>> getNoteList(@Header("Authorization") String authKey);
 
-//    @GET("notes/getArchiveNotesList")
-//    Call<>
+    @POST("notes/archiveNotes")
+    Call<Map<String, ResponseData>> setArchive(@Header("Authorization") String authKey);
 
+    @POST("notes//pinUnpinNotes")
+    Call<Map<String, ResponseData>> setPin(@Header("Authorization") String authKey);
 
 }

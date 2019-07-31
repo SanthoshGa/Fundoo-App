@@ -1,12 +1,13 @@
-package com.bridgelabz.fundoo.Dashboard.View.Adapter;
+package com.bridgelabz.fundoo.add_label_page.view;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
 
-import com.bridgelabz.fundoo.label_page.model.Label;
+import com.bridgelabz.fundoo.add_label_page.model.Label;
 import com.bridgelabz.fundoo.R;
+import com.bridgelabz.fundoo.add_label_page.view.LabelAdapter;
 
 class LabelHolder extends RecyclerView.ViewHolder{
 

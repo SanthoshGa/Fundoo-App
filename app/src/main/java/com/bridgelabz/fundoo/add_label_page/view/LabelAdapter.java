@@ -1,13 +1,14 @@
-package com.bridgelabz.fundoo.Dashboard.View.Adapter;
+package com.bridgelabz.fundoo.add_label_page.view;
 
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.bridgelabz.fundoo.label_page.model.Label;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.bridgelabz.fundoo.R;
+import com.bridgelabz.fundoo.add_label_page.model.Label;
 
 import java.util.List;
 

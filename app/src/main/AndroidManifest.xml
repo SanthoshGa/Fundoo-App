@@ -14,8 +14,8 @@
         android:theme="@style/AppTheme">
         <!--<activity android:name=".Dashboard.View.TestActivity">-->
         <!--</activity>-->
-        <activity android:name=".Dashboard.View.AddNoteActivity" />
-        <activity android:name=".Dashboard.View.DashboardActivity"></activity>
+        <activity android:name=".add_note_page.View.AddNoteActivity" />
+        <activity android:name=".Dashboard.DashboardActivity"></activity>
         <activity android:name=".LoginSignup.View.RegisterActivity">
 
         </activity>

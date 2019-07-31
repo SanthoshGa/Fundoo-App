@@ -1,4 +1,4 @@
-package com.bridgelabz.fundoo.label_page.model;
+package com.bridgelabz.fundoo.add_label_page.model;
 
 public class Label {
 

@@ -1,4 +1,4 @@
-package com.bridgelabz.fundoo.Dashboard.View;
+package com.bridgelabz.fundoo.add_note_page.View;
 
 import android.app.AlarmManager;
 import android.app.DatePickerDialog;
@@ -9,12 +9,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.core.app.NotificationManagerCompat;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -28,20 +22,27 @@ import android.widget.RadioGroup;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.app.NotificationManagerCompat;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+
 import com.bridgelabz.fundoo.BroadcastReceivers.ReminderReceiver;
 import com.bridgelabz.fundoo.Dashboard.DashboardActivity;
+import com.bridgelabz.fundoo.R;
+import com.bridgelabz.fundoo.Utility.ValidationHelper;
 import com.bridgelabz.fundoo.add_note_page.Model.AddNoteModel;
 import com.bridgelabz.fundoo.add_note_page.Model.BaseNoteModel;
 import com.bridgelabz.fundoo.add_note_page.Model.Note;
-import com.bridgelabz.fundoo.Dashboard.ViewModel.NoteViewModel;
-import com.bridgelabz.fundoo.Dashboard.ViewModel.RestApiNoteViewModel;
-import com.bridgelabz.fundoo.R;
-import com.bridgelabz.fundoo.Utility.ValidationHelper;
+import com.bridgelabz.fundoo.add_note_page.ViewModel.NoteViewModel;
+import com.bridgelabz.fundoo.add_note_page.ViewModel.RestApiNoteViewModel;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+
+import static com.bridgelabz.fundoo.BroadcastReceivers.LocalBroadcastManager.setArchiveNoteBroadcastReceiver;
 
 public class AddNoteActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -83,8 +84,13 @@ public class AddNoteActivity extends AppCompatActivity implements View.OnClickLi
         mButtonDate.setOnClickListener(this);
         mButtonTime.setOnClickListener(this);
         notificationManagerCompat = NotificationManagerCompat.from(this);
-        LocalBroadcastManager.getInstance(this).registerReceiver(addedNoteBroadcastReceiver,
+
+        LocalBroadcastManager.getInstance(this).registerReceiver
+                (addedNoteBroadcastReceiver,
                 new IntentFilter("com.bridgelabz.fundoo.added_note_action"));
+
+        LocalBroadcastManager.getInstance(this).registerReceiver(setArchiveNoteBroadcastReceiver,
+                new IntentFilter("com.bridgelabz.fundoo.set_archive_action"));
     }
 
     private void checkEditMode() {
@@ -204,7 +210,9 @@ public class AddNoteActivity extends AppCompatActivity implements View.OnClickLi
         }
     }
 
-    private BroadcastReceiver addedNoteBroadcastReceiver = new BroadcastReceiver() {
+
+
+    public BroadcastReceiver addedNoteBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             Log.e(TAG, "onReceive: Local broadcasts are working ");
@@ -213,16 +221,17 @@ public class AddNoteActivity extends AppCompatActivity implements View.OnClickLi
                         getBooleanExtra("isNoteAdded", false);
                 Log.e(TAG, "onReceive: Yup we got the data " + isNoteAdded);
 
+
                 if (isNoteAdded) {
                     Toast.makeText(AddNoteActivity.this, " Note is Successfully Saved",
                             Toast.LENGTH_SHORT).show();
-//                    Log.e(TAG, note.toString());
-//                    if(reminderStringBuilder.toString().isEmpty()){
+//                      Log.e(TAG, note.toString());
+//                      if(reminderStringBuilder.toString().isEmpty()){
 //                        Toast.makeText(this, "not added the reminder", Toast.LENGTH_SHORT).show();
-//                    }
-//                    else{
+//                      }
+//                      else{
 //                        addReminder(new Date());
-//                    }
+//                       }
 
                     Intent data = new Intent(AddNoteActivity.this, DashboardActivity.class);
                     startActivity(data);
@@ -231,10 +240,10 @@ public class AddNoteActivity extends AppCompatActivity implements View.OnClickLi
                     Toast.makeText(AddNoteActivity.this, "Something Went Wrong",
                             Toast.LENGTH_SHORT).show();
                 }
-
             }
         }
     };
+
 
     protected void addNoteToDb(Note note) {
         //TODO :
