@@ -46,6 +46,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static com.bridgelabz.fundoo.Utility.AppConstants.FETCH_NOTE_ACTION;
+import static com.bridgelabz.fundoo.Utility.AppConstants.UPDATE_NOTE_ACTION;
 
 public class DashboardActivity extends AppCompatActivity implements
         NavigationView.OnNavigationItemSelectedListener {
@@ -78,7 +79,10 @@ public class DashboardActivity extends AppCompatActivity implements
         LocalBroadcastManager.getInstance(this).registerReceiver(getNotesBroadcastReceiver,
                 new IntentFilter(FETCH_NOTE_ACTION));
 
+
     }
+
+
 
     private BroadcastReceiver getNotesBroadcastReceiver = new BroadcastReceiver() {
         @Override

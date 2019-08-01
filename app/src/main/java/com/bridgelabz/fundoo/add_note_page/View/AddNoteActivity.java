@@ -46,6 +46,7 @@ import java.util.Locale;
 import static com.bridgelabz.fundoo.BroadcastReceivers.LocalBroadcastManager.setArchiveNoteBroadcastReceiver;
 import static com.bridgelabz.fundoo.Utility.AppConstants.ADD_NOTE_ACTION;
 import static com.bridgelabz.fundoo.Utility.AppConstants.SET_ARCHIVE_ACTION;
+import static com.bridgelabz.fundoo.Utility.AppConstants.UPDATE_NOTE_ACTION;
 
 public class AddNoteActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -58,7 +59,6 @@ public class AddNoteActivity extends AppCompatActivity implements View.OnClickLi
     private EditText mTextTime;
     private Button mButtonDate;
     private Button mButtonTime;
-    private int mYear, mMonth, mDay, mHour, mMinute;
     MenuItem mArchive;
     MenuItem mReminder;
     MenuItem mPinned;
@@ -88,15 +88,17 @@ public class AddNoteActivity extends AppCompatActivity implements View.OnClickLi
         mButtonTime.setOnClickListener(this);
         notificationManagerCompat = NotificationManagerCompat.from(this);
 
-        LocalBroadcastManager.getInstance(this).registerReceiver
-                (addedNoteBroadcastReceiver,
+        LocalBroadcastManager.getInstance(this).registerReceiver(addedNoteBroadcastReceiver,
                         new IntentFilter(ADD_NOTE_ACTION));
 
         LocalBroadcastManager.getInstance(this).registerReceiver(setArchiveNoteBroadcastReceiver,
                 new IntentFilter(SET_ARCHIVE_ACTION));
+
+        LocalBroadcastManager.getInstance(this).registerReceiver(updateNotesBroadcastReceiver,
+                new IntentFilter(UPDATE_NOTE_ACTION));
     }
 
-    private void checkEditMode() {
+    private boolean checkEditMode() {
         Intent intent = getIntent();
         if (intent.hasExtra("noteToEdit")) {
             NoteResponseModel noteResponseModel = (NoteResponseModel) intent.
@@ -110,6 +112,7 @@ public class AddNoteActivity extends AppCompatActivity implements View.OnClickLi
         } else {
             isEditMode = false;
         }
+        return true;
     }
 
     private void setUpEditFields() {
@@ -203,17 +206,44 @@ public class AddNoteActivity extends AppCompatActivity implements View.OnClickLi
         });
     }
 
+    private BroadcastReceiver updateNotesBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.e(TAG, "onReceive: Local Broadcasts are working in dashboard");
+            if(intent.hasExtra("isNoteEdit")){
+                boolean isNoteEdit = intent.getBooleanExtra("isNoteEdit", false);
+                Log.e(TAG, "onReceive: Yes we got the data " + isNoteEdit);
+                if(isNoteEdit){
+                    Toast.makeText(AddNoteActivity.this, "Note updated", Toast.LENGTH_SHORT).show();
+
+                    Intent editNoteIntent = new Intent(AddNoteActivity.this, DashboardActivity.class);
+                    startActivity(editNoteIntent);
+                }
+                else{
+                    Toast.makeText(AddNoteActivity.this, "Something went wrong",
+                            Toast.LENGTH_SHORT).show();
+                }
+
+            }
+
+        }
+    };
+
     // test
     private void updateNoteToDB(AddNoteModel noteToEdit) {
         // update note to database
-        boolean isNoteEdit = noteViewModel.updateNote(noteToEdit);
-        if (isNoteEdit) {
-            Toast.makeText(AddNoteActivity.this, "Note is Updated", Toast.LENGTH_SHORT).show();
-            Intent editData = new Intent(AddNoteActivity.this, DashboardActivity.class);
-            startActivity(editData);
-        } else {
-            Toast.makeText(AddNoteActivity.this, "Unable to update", Toast.LENGTH_SHORT).show();
-        }
+//        boolean isNoteEdit = noteViewModel.updateNote(noteToEdit);
+//        if (isNoteEdit) {
+//            Toast.makeText(AddNoteActivity.this, "Note is Updated", Toast.LENGTH_SHORT).show();
+//            Intent editData = new Intent(AddNoteActivity.this, DashboardActivity.class);
+//            startActivity(editData);
+//        } else {
+//            Toast.makeText(AddNoteActivity.this, "Unable to update", Toast.LENGTH_SHORT).show();
+//        }
+        RestApiNoteViewModel apiNoteViewModel = new RestApiNoteViewModel(this);
+        apiNoteViewModel.updateNotes(noteToEdit);
+
+
     }
 
 
@@ -344,12 +374,14 @@ public class AddNoteActivity extends AppCompatActivity implements View.OnClickLi
 
         switch (item.getItemId()) {
             case R.id.action_archive:
-                String title = mTextTitle.getText().toString().trim();
-                String description = mTextDescription.getText().toString().trim();
-                Note note = new Note(title, description, noteColor, true,
-                        reminderStringBuilder.toString(), false, isTrashed);
-                addNoteToDb(note);
-                return true;
+
+                    String title = mTextTitle.getText().toString().trim();
+                    String description = mTextDescription.getText().toString().trim();
+                    Note note = new Note(title, description, noteColor, true,
+                            reminderStringBuilder.toString(), false, isTrashed);
+                    addNoteToDb(note);
+                    return true;
+
 
             case R.id.action_reminder:
 //                DialogFragment datePicker = new DatePickerFragment();
@@ -399,9 +431,9 @@ public class AddNoteActivity extends AppCompatActivity implements View.OnClickLi
 
             // Get Current Date
             Calendar calender = Calendar.getInstance();
-            mYear = calender.get(Calendar.YEAR);
-            mMonth = calender.get(Calendar.MONTH);
-            mDay = calender.get(Calendar.DAY_OF_MONTH);
+            int mYear = calender.get(Calendar.YEAR);
+            int mMonth = calender.get(Calendar.MONTH);
+            int mDay = calender.get(Calendar.DAY_OF_MONTH);
 
 
             DatePickerDialog datePickerDialog = new DatePickerDialog(this,
@@ -424,8 +456,8 @@ public class AddNoteActivity extends AppCompatActivity implements View.OnClickLi
 
             // Get Current Time
             final Calendar calender = Calendar.getInstance();
-            mHour = calender.get(Calendar.HOUR_OF_DAY);
-            mMinute = calender.get(Calendar.MINUTE);
+            int mHour = calender.get(Calendar.HOUR_OF_DAY);
+            int mMinute = calender.get(Calendar.MINUTE);
 
             // Launch Time Picker Dialog
             TimePickerDialog timePickerDialog = new TimePickerDialog(this,

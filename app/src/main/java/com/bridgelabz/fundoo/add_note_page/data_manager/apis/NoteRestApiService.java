@@ -23,7 +23,17 @@ public interface NoteRestApiService {
     Call<Map<String, ResponseData>> setArchiveToNote(@Header("Authorization") String authKey,
                                                      @Body Map<String, Object> model);
 
-    @POST("notes//pinUnpinNotes")
-    Call<Map<String, ResponseData>> setPin(@Header("Authorization") String authKey);
+    @POST("notes/pinUnpinNotes")
+    Call<Map<String, ResponseData>> setPinUnpinToNote(@Header("Authorization") String authKey,
+                                           @Body Map<String, Object> model);
+    @POST("notes/trashNotes")
+    Call<Map<String, ResponseData>>  trashNotes(@Header("Authorization") String authKey,
+                                                @Body Map<String, Object> model);
+    @POST("notes/addUpdateReminderNotes")
+    Call<Map<String, ResponseData>> addReminder();
+
+    @POST("notes/updateNotes")
+    Call<Map<String, ResponseData>>  updateNotes(@Header("Authorization") String authKey,
+                                                 @Body Map<String, String> model);
 
 }

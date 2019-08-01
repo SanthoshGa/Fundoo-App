@@ -18,6 +18,7 @@ import java.util.List;
 import static com.bridgelabz.fundoo.Utility.AppConstants.ADD_NOTE_ACTION;
 import static com.bridgelabz.fundoo.Utility.AppConstants.FETCH_NOTE_ACTION;
 import static com.bridgelabz.fundoo.Utility.AppConstants.SET_ARCHIVE_ACTION;
+import static com.bridgelabz.fundoo.Utility.AppConstants.UPDATE_NOTE_ACTION;
 
 public class RestApiNoteViewModel {
     private static final String TAG = "RestApiNoteViewModel";
@@ -95,6 +96,29 @@ public class RestApiNoteViewModel {
                 Log.e(TAG, "onResponse isAddedArchive: " + isAddedArchive);
 
                 localIntent.putExtra("isNoteArchived", isAddedArchive);
+                localBroadcastManager.sendBroadcast(localIntent);
+            }
+
+            @Override
+            public void onFailure(Throwable throwable) {
+                localIntent.putExtra("throwable", throwable);
+                localBroadcastManager.sendBroadcast(localIntent);
+
+            }
+        });
+    }
+
+    public void updateNotes(AddNoteModel addNoteModel){
+        restApiNoteDataManager.updateNotes(addNoteModel, new RestApiNoteDataManager.ResponseCallback() {
+
+            Intent localIntent = new Intent(UPDATE_NOTE_ACTION);
+            @Override
+            public void onResponse(Object data, Object error) {
+                boolean isNoteEdit;
+                isNoteEdit = (data != null);
+                Log.e(TAG, "onResponse isNoteEdit: " + isNoteEdit);
+
+                localIntent.putExtra("isNoteEdit", isNoteEdit);
                 localBroadcastManager.sendBroadcast(localIntent);
             }
 
