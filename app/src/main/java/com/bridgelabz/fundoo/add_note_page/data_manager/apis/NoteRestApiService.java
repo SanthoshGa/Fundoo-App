@@ -19,21 +19,30 @@ public interface NoteRestApiService {
     @GET("notes/getNotesList")
     Call<Map<String, ResponseData>> getNoteList(@Header("Authorization") String authKey);
 
+    @POST("notes/updateNotes")
+    Call<Map<String, ResponseData>>  updateNotes(@Header("Authorization") String authKey,
+                                                 @Body Map<String, String> model);
+
+    @POST("notes/changesColorNotes")
+    Call<Map<String, ResponseData>>  changeColorToNote(@Header("Authorization") String authKey,
+                                                       @Body Map<String, Object> model);
+
+
+    @POST("notes/pinUnpinNotes")
+    Call<Map<String, ResponseData>> setPinUnpinToNote(@Header("Authorization") String authKey,
+                                                      @Body Map<String, Object> model);
+
     @POST("notes/archiveNotes")
     Call<Map<String, ResponseData>> setArchiveToNote(@Header("Authorization") String authKey,
                                                      @Body Map<String, Object> model);
 
-    @POST("notes/pinUnpinNotes")
-    Call<Map<String, ResponseData>> setPinUnpinToNote(@Header("Authorization") String authKey,
-                                           @Body Map<String, Object> model);
+
     @POST("notes/trashNotes")
     Call<Map<String, ResponseData>>  trashNotes(@Header("Authorization") String authKey,
                                                 @Body Map<String, Object> model);
     @POST("notes/addUpdateReminderNotes")
     Call<Map<String, ResponseData>> addReminder();
 
-    @POST("notes/updateNotes")
-    Call<Map<String, ResponseData>>  updateNotes(@Header("Authorization") String authKey,
-                                                 @Body Map<String, String> model);
+
 
 }

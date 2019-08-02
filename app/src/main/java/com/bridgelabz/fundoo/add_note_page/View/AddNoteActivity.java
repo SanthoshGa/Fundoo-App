@@ -45,6 +45,8 @@ import java.util.Locale;
 
 import static com.bridgelabz.fundoo.BroadcastReceivers.LocalBroadcastManager.setArchiveNoteBroadcastReceiver;
 import static com.bridgelabz.fundoo.Utility.AppConstants.ADD_NOTE_ACTION;
+import static com.bridgelabz.fundoo.Utility.AppConstants.CHANGE_COLOR_TO_NOTE_ACTION;
+import static com.bridgelabz.fundoo.Utility.AppConstants.PIN_UNPIN_TO_NOTE_ACTION;
 import static com.bridgelabz.fundoo.Utility.AppConstants.SET_ARCHIVE_ACTION;
 import static com.bridgelabz.fundoo.Utility.AppConstants.UPDATE_NOTE_ACTION;
 
@@ -69,10 +71,12 @@ public class AddNoteActivity extends AppCompatActivity implements View.OnClickLi
     private boolean isArchived = false;
     private boolean isPinned = false;
     private boolean isTrashed = false;
+    private boolean isChangeColor = false;
     private AddNoteModel noteToEdit;
     private RadioGroup radioGroup;
     private StringBuilder reminderStringBuilder = new StringBuilder();
     private NotificationManagerCompat notificationManagerCompat;
+    RestApiNoteViewModel apiNoteViewModel;
 //    private DatePickerDialog.OnDateSetListener mDateSetListener;
 //    private TimePickerDialog.OnTimeSetListener mTimeSetListener;
 
@@ -87,24 +91,61 @@ public class AddNoteActivity extends AppCompatActivity implements View.OnClickLi
         mButtonDate.setOnClickListener(this);
         mButtonTime.setOnClickListener(this);
         notificationManagerCompat = NotificationManagerCompat.from(this);
+        apiNoteViewModel = new RestApiNoteViewModel(this);
 
         LocalBroadcastManager.getInstance(this).registerReceiver(addedNoteBroadcastReceiver,
-                        new IntentFilter(ADD_NOTE_ACTION));
+                new IntentFilter(ADD_NOTE_ACTION));
 
         LocalBroadcastManager.getInstance(this).registerReceiver(setArchiveNoteBroadcastReceiver,
                 new IntentFilter(SET_ARCHIVE_ACTION));
 
         LocalBroadcastManager.getInstance(this).registerReceiver(updateNotesBroadcastReceiver,
                 new IntentFilter(UPDATE_NOTE_ACTION));
+
+        LocalBroadcastManager.getInstance(this).registerReceiver(changeColorToNoteBroadcastReceiver,
+                new IntentFilter(CHANGE_COLOR_TO_NOTE_ACTION));
+
+        LocalBroadcastManager.getInstance(this).registerReceiver(pinUnpinToNoteBroadcastReceiver,
+                new IntentFilter(PIN_UNPIN_TO_NOTE_ACTION));
     }
+
+    public BroadcastReceiver pinUnpinToNoteBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.hasExtra("isPinned")) {
+                boolean isPinned = intent.getBooleanExtra("isPinned", false);
+                Log.e(TAG, "onReceive: Yes we got the data!!!!!!!!!!! " + isPinned);
+                if (isPinned) {
+
+                }
+
+            }
+
+        }
+    };
+
+    public BroadcastReceiver changeColorToNoteBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.hasExtra("isColorEdit")) {
+                boolean isColorEdit = intent.getBooleanExtra("isColorEdit", false);
+                Log.e(TAG, "onReceive: Yes we got the data!!!! " + isColorEdit);
+                if (isColorEdit) {
+
+                }
+
+            }
+
+        }
+    };
 
     private boolean checkEditMode() {
         Intent intent = getIntent();
         if (intent.hasExtra("noteToEdit")) {
             NoteResponseModel noteResponseModel = (NoteResponseModel) intent.
                     getSerializableExtra("noteToEdit");
-            if(noteResponseModel.getReminder().isEmpty())
-            noteToEdit = AddNoteModel.getNoteFromResponse(noteResponseModel);
+            if (noteResponseModel.getReminder().isEmpty())
+                noteToEdit = AddNoteModel.getNoteFromResponse(noteResponseModel);
             Log.e(TAG, "note is available");
             System.out.println(noteToEdit.toString());
             isEditMode = true;
@@ -210,16 +251,15 @@ public class AddNoteActivity extends AppCompatActivity implements View.OnClickLi
         @Override
         public void onReceive(Context context, Intent intent) {
             Log.e(TAG, "onReceive: Local Broadcasts are working in dashboard");
-            if(intent.hasExtra("isNoteEdit")){
+            if (intent.hasExtra("isNoteEdit")) {
                 boolean isNoteEdit = intent.getBooleanExtra("isNoteEdit", false);
                 Log.e(TAG, "onReceive: Yes we got the data " + isNoteEdit);
-                if(isNoteEdit){
+                if (isNoteEdit) {
                     Toast.makeText(AddNoteActivity.this, "Note updated", Toast.LENGTH_SHORT).show();
 
                     Intent editNoteIntent = new Intent(AddNoteActivity.this, DashboardActivity.class);
                     startActivity(editNoteIntent);
-                }
-                else{
+                } else {
                     Toast.makeText(AddNoteActivity.this, "Something went wrong",
                             Toast.LENGTH_SHORT).show();
                 }
@@ -240,8 +280,9 @@ public class AddNoteActivity extends AppCompatActivity implements View.OnClickLi
 //        } else {
 //            Toast.makeText(AddNoteActivity.this, "Unable to update", Toast.LENGTH_SHORT).show();
 //        }
-        RestApiNoteViewModel apiNoteViewModel = new RestApiNoteViewModel(this);
+//        RestApiNoteViewModel apiNoteViewModel = new RestApiNoteViewModel(this);
         apiNoteViewModel.updateNotes(noteToEdit);
+        apiNoteViewModel.changeColorToNote(noteToEdit);
 
 
     }
@@ -288,8 +329,8 @@ public class AddNoteActivity extends AppCompatActivity implements View.OnClickLi
                 "", "",
                 note.getColor(), "", "", note.getIfReminder());
 
-        RestApiNoteViewModel noteViewModel = new RestApiNoteViewModel(this);
-        noteViewModel.addNotes((AddNoteModel) noteModel);
+
+        apiNoteViewModel.addNotes((AddNoteModel) noteModel);
 //        boolean isNoteAdd = noteViewModel.addNote(note);
 
     }
@@ -375,12 +416,12 @@ public class AddNoteActivity extends AppCompatActivity implements View.OnClickLi
         switch (item.getItemId()) {
             case R.id.action_archive:
 
-                    String title = mTextTitle.getText().toString().trim();
-                    String description = mTextDescription.getText().toString().trim();
-                    Note note = new Note(title, description, noteColor, true,
-                            reminderStringBuilder.toString(), false, isTrashed);
-                    addNoteToDb(note);
-                    return true;
+                String title = mTextTitle.getText().toString().trim();
+                String description = mTextDescription.getText().toString().trim();
+                Note note = new Note(title, description, noteColor, true,
+                        reminderStringBuilder.toString(), false, isTrashed);
+                addNoteToDb(note);
+                return true;
 
 
             case R.id.action_reminder:
@@ -414,11 +455,24 @@ public class AddNoteActivity extends AppCompatActivity implements View.OnClickLi
 
 
             case R.id.action_pinned:
-                String title_1 = mTextTitle.getText().toString().trim();
-                String description_1 = mTextDescription.getText().toString().trim();
-                Note note1 = new Note(title_1, description_1, noteColor, false,
-                        reminderStringBuilder.toString(), true, false);
-                addNoteToDb(note1);
+                if (isEditMode) {
+                    Log.e(TAG, "IF CLAUSE");
+                    AddNoteModel addNoteModel = new AddNoteModel(noteToEdit.getTitle(), noteToEdit.getDescription(),
+                            noteToEdit.getIsPinned(), noteToEdit.getIsArchived(), noteToEdit.getIsDeleted(),
+                            noteToEdit.getCreatedDate(), noteToEdit.getModifiedDate(), noteToEdit.getColor(),
+                            noteToEdit.getId(), noteToEdit.getUserId(), noteToEdit.getReminder());
+                    apiNoteViewModel.pinUnpinToNote(addNoteModel);
+                    updateNoteToDB(addNoteModel);
+                }
+                else{
+                    Log.e(TAG, "");
+                    String title_1 = mTextTitle.getText().toString().trim();
+                    String description_1 = mTextDescription.getText().toString().trim();
+                    Note note1 = new Note(title_1, description_1, noteColor, false,
+                            reminderStringBuilder.toString(), true, false);
+                    addNoteToDb(note1);
+                }
+
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -521,6 +575,7 @@ public class AddNoteActivity extends AppCompatActivity implements View.OnClickLi
     @Override
     protected void onDestroy() {
         LocalBroadcastManager.getInstance(this).unregisterReceiver(addedNoteBroadcastReceiver);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(updateNotesBroadcastReceiver);
         super.onDestroy();
     }
 }

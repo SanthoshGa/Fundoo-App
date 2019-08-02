@@ -16,7 +16,9 @@ import java.io.Serializable;
 import java.util.List;
 
 import static com.bridgelabz.fundoo.Utility.AppConstants.ADD_NOTE_ACTION;
+import static com.bridgelabz.fundoo.Utility.AppConstants.CHANGE_COLOR_TO_NOTE_ACTION;
 import static com.bridgelabz.fundoo.Utility.AppConstants.FETCH_NOTE_ACTION;
+import static com.bridgelabz.fundoo.Utility.AppConstants.PIN_UNPIN_TO_NOTE_ACTION;
 import static com.bridgelabz.fundoo.Utility.AppConstants.SET_ARCHIVE_ACTION;
 import static com.bridgelabz.fundoo.Utility.AppConstants.UPDATE_NOTE_ACTION;
 
@@ -109,11 +111,12 @@ public class RestApiNoteViewModel {
     }
 
     public void updateNotes(AddNoteModel addNoteModel){
-        restApiNoteDataManager.updateNotes(addNoteModel, new RestApiNoteDataManager.ResponseCallback() {
+        restApiNoteDataManager.updateNotes(addNoteModel, new RestApiNoteDataManager.ResponseCallback
+                <ResponseData, ResponseError>() {
 
             Intent localIntent = new Intent(UPDATE_NOTE_ACTION);
             @Override
-            public void onResponse(Object data, Object error) {
+            public void onResponse(ResponseData data, ResponseError error) {
                 boolean isNoteEdit;
                 isNoteEdit = (data != null);
                 Log.e(TAG, "onResponse isNoteEdit: " + isNoteEdit);
@@ -127,6 +130,50 @@ public class RestApiNoteViewModel {
                 localIntent.putExtra("throwable", throwable);
                 localBroadcastManager.sendBroadcast(localIntent);
 
+            }
+        });
+    }
+
+    public void changeColorToNote(AddNoteModel addNoteModel){
+        restApiNoteDataManager.changeColorToNotes(addNoteModel, new RestApiNoteDataManager.ResponseCallback
+                <ResponseData, ResponseError>() {
+            Intent localIntent = new Intent(CHANGE_COLOR_TO_NOTE_ACTION);
+            @Override
+            public void onResponse(ResponseData data, ResponseError error) {
+                boolean isColorEdit;
+                isColorEdit = (data != null);
+                Log.e(TAG, "onResponse: isColorEdit " + isColorEdit);
+
+                localIntent.putExtra("isColorEdit", isColorEdit);
+                localBroadcastManager.sendBroadcast(localIntent);
+            }
+
+            @Override
+            public void onFailure(Throwable throwable) {
+                localIntent.putExtra("throwable", throwable);
+                localBroadcastManager.sendBroadcast(localIntent);
+
+            }
+        });
+    }
+
+    public void  pinUnpinToNote(AddNoteModel addNoteModel){
+        restApiNoteDataManager.pinUnpinToNote(addNoteModel, new RestApiNoteDataManager.ResponseCallback
+                <ResponseData, ResponseError>() {
+            Intent localIntent = new Intent(PIN_UNPIN_TO_NOTE_ACTION);
+            @Override
+            public void onResponse(ResponseData data, ResponseError error) {
+                boolean isPinned;
+                isPinned = (data != null);
+                Log.e(TAG, "onResponse: isPinned" + isPinned);
+                localIntent.putExtra("isPinned", isPinned);
+                localBroadcastManager.sendBroadcast(localIntent);
+            }
+
+            @Override
+            public void onFailure(Throwable throwable) {
+                localIntent.putExtra("throwable", throwable);
+                localBroadcastManager.sendBroadcast(localIntent);
             }
         });
     }
