@@ -18,6 +18,7 @@ import java.util.List;
 import static com.bridgelabz.fundoo.Utility.AppConstants.ADD_NOTE_ACTION;
 import static com.bridgelabz.fundoo.Utility.AppConstants.CHANGE_COLOR_TO_NOTE_ACTION;
 import static com.bridgelabz.fundoo.Utility.AppConstants.FETCH_NOTE_ACTION;
+import static com.bridgelabz.fundoo.Utility.AppConstants.GET_ARCHIVE_NOTES_ACTION;
 import static com.bridgelabz.fundoo.Utility.AppConstants.PIN_UNPIN_TO_NOTE_ACTION;
 import static com.bridgelabz.fundoo.Utility.AppConstants.SET_ARCHIVE_ACTION;
 import static com.bridgelabz.fundoo.Utility.AppConstants.UPDATE_NOTE_ACTION;
@@ -85,6 +86,31 @@ public class RestApiNoteViewModel {
         });
 
     }
+    public void  getArchiveNotesList(){
+        restApiNoteDataManager.getArchiveNotesList(new RestApiNoteDataManager.GetArchiveNotesCallback() {
+            Intent localIntent = new Intent(GET_ARCHIVE_NOTES_ACTION);
+            @Override
+            public void onResponse(List<NoteResponseModel> noteModelList, ResponseError responseError) {
+                if(noteModelList != null){
+                    Log.e(TAG, "onResponse : archiveList Successful");
+
+                    localIntent.putExtra("archiveNoteList ", (Serializable) noteModelList);
+                    localBroadcastManager.sendBroadcast(localIntent);
+                }
+                else {
+                    Log.e(TAG, "onResponse: archiveList Unsuccessful");
+                    Log.e(TAG, "onResponse: archive " + responseError.getStatusCode());
+                }
+            }
+
+            @Override
+            public void onFailure(Throwable throwable) {
+                localIntent.putExtra("throwable", throwable);
+                localBroadcastManager.sendBroadcast(localIntent);
+            }
+        });
+    }
+
 
     public void setArchiveToNote(AddNoteModel addNoteModel) {
         restApiNoteDataManager.setArchive(addNoteModel, new RestApiNoteDataManager.SetArchiveCallback() {

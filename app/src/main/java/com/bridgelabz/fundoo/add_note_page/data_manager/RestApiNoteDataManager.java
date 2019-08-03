@@ -116,6 +116,45 @@ public class RestApiNoteDataManager {
 
     }
 
+    public void getArchiveNotesList(final GetArchiveNotesCallback getArchiveNotesCallback){
+        Retrofit retrofit = RetrofitRestApiConnection.openRetrofitConnection();
+        NoteRestApiService apiService = retrofit.create(NoteRestApiService.class);
+        String authKey = sharedPreferencesManager.getAccessToken();
+
+        Call<Map<String, ResponseData>> responseDataCall = apiService.getArchiveNotesList(authKey);
+        responseDataCall.enqueue(new Callback<Map<String, ResponseData>>() {
+            @Override
+            public void onResponse(Call<Map<String, ResponseData>> call, Response<Map<String, ResponseData>> response) {
+                if(response.isSuccessful()){
+                    Log.e(TAG, "onResponse: getArchiveNotesList" + response.body().toString());
+                    ResponseData responseData = response.body().get("data");
+                    Log.e(TAG, responseData.getNoteModelList() + "");
+                    getArchiveNotesCallback.onResponse(responseData.getNoteModelList(), null);
+                }
+                else{
+                    try {
+                        getArchiveNotesCallback.onResponse(null,  new ResponseError(
+                                response.code() + "", response.errorBody().string(),
+                                response.message(),
+                                null) );
+                        Log.e(TAG, "onResponseError : getArchiveNotesList" + response.errorBody()
+                                .toString());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Map<String, ResponseData>> call, Throwable throwable) {
+                Log.e(TAG, "Throwable: getArchiveNotesList - " + throwable.getLocalizedMessage());
+                getArchiveNotesCallback.onFailure(throwable);
+
+            }
+        });
+
+    }
+
     public void setArchive(AddNoteModel noteModel, final SetArchiveCallback setArchiveCallback) {
         Retrofit retrofit = RetrofitRestApiConnection.openRetrofitConnection();
         NoteRestApiService apiService = retrofit.create(NoteRestApiService.class);
@@ -303,6 +342,12 @@ public class RestApiNoteDataManager {
 
 
     public interface GetNotesCallback {
+        void onResponse(List<NoteResponseModel> noteModelList, ResponseError responseError);
+
+        void onFailure(Throwable throwable);
+    }
+
+    public interface  GetArchiveNotesCallback{
         void onResponse(List<NoteResponseModel> noteModelList, ResponseError responseError);
 
         void onFailure(Throwable throwable);

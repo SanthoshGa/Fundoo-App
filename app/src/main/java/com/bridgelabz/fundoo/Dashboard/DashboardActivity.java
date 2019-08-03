@@ -46,6 +46,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static com.bridgelabz.fundoo.Utility.AppConstants.FETCH_NOTE_ACTION;
+import static com.bridgelabz.fundoo.Utility.AppConstants.GET_ARCHIVE_NOTES_ACTION;
 import static com.bridgelabz.fundoo.Utility.AppConstants.UPDATE_NOTE_ACTION;
 
 public class DashboardActivity extends AppCompatActivity implements
@@ -78,9 +79,24 @@ public class DashboardActivity extends AppCompatActivity implements
         setOnClickTakeNote();
         LocalBroadcastManager.getInstance(this).registerReceiver(getNotesBroadcastReceiver,
                 new IntentFilter(FETCH_NOTE_ACTION));
+        LocalBroadcastManager.getInstance(this).registerReceiver(getArchiveNotesListBroadcastReceiver,
+                new IntentFilter(GET_ARCHIVE_NOTES_ACTION));
 
 
     }
+
+    public BroadcastReceiver getArchiveNotesListBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if(intent.hasExtra("archiveNoteList")){
+                noteList = (List<NoteResponseModel>)
+                        intent.getSerializableExtra("archiveNoteList");
+                notesAdapter.setNoteModelArrayList(noteList);
+                notesAdapter.notifyDataSetChanged();
+            }
+
+        }
+    };
 
 
 
@@ -266,6 +282,7 @@ public class DashboardActivity extends AppCompatActivity implements
                 closeFragmentIfShowing();
                 Toast.makeText(this, "Notes drawer menu clicked!", Toast.LENGTH_SHORT).show();
 //                noteList = noteViewModel.getAllNoteData();            // TODO: change
+                restApiNoteViewModel.fetchNoteList();
                 notesAdapter.setNoteModelArrayList(noteList);
                 notesAdapter.notifyDataSetChanged();
                 break;
@@ -282,6 +299,8 @@ public class DashboardActivity extends AppCompatActivity implements
                 closeFragmentIfShowing();
                 Toast.makeText(this, "Archive drawer menu clicked!", Toast.LENGTH_SHORT).show();
 //                noteList = noteViewModel.getArchivedNotes();          // TODO: change
+                restApiNoteViewModel.getArchiveNotesList();
+                Log.e(TAG, "Inside archive list method");
                 notesAdapter.setNoteModelArrayList(noteList);
                 notesAdapter.notifyDataSetChanged();
                 break;
@@ -347,5 +366,6 @@ public class DashboardActivity extends AppCompatActivity implements
     protected void onDestroy() {
         super.onDestroy();
         LocalBroadcastManager.getInstance(this).unregisterReceiver(getNotesBroadcastReceiver);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(getArchiveNotesListBroadcastReceiver);
     }
 }

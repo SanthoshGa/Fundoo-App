@@ -43,7 +43,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-import static com.bridgelabz.fundoo.BroadcastReceivers.LocalBroadcastManager.setArchiveNoteBroadcastReceiver;
 import static com.bridgelabz.fundoo.Utility.AppConstants.ADD_NOTE_ACTION;
 import static com.bridgelabz.fundoo.Utility.AppConstants.CHANGE_COLOR_TO_NOTE_ACTION;
 import static com.bridgelabz.fundoo.Utility.AppConstants.PIN_UNPIN_TO_NOTE_ACTION;
@@ -109,6 +108,21 @@ public class AddNoteActivity extends AppCompatActivity implements View.OnClickLi
                 new IntentFilter(PIN_UNPIN_TO_NOTE_ACTION));
     }
 
+    public static BroadcastReceiver setArchiveNoteBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.hasExtra("isNoteArchived")) {
+                boolean isNoteArchived = intent.getBooleanExtra("isNoteArchived", false);
+                Log.e(TAG, "onReceive:  we got the data of Archive " + isNoteArchived);
+                if (isNoteArchived) {
+
+
+                }
+            }
+
+        }
+    };
+
     public BroadcastReceiver pinUnpinToNoteBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -118,9 +132,7 @@ public class AddNoteActivity extends AppCompatActivity implements View.OnClickLi
                 if (isPinned) {
 
                 }
-
             }
-
         }
     };
 
@@ -415,13 +427,22 @@ public class AddNoteActivity extends AppCompatActivity implements View.OnClickLi
 
         switch (item.getItemId()) {
             case R.id.action_archive:
+                if (isEditMode) {
+                    AddNoteModel addNoteModel = new AddNoteModel(noteToEdit.getTitle(), noteToEdit.getDescription(),
+                            noteToEdit.getIsPinned(), noteToEdit.getIsArchived(), noteToEdit.getIsDeleted(),
+                            noteToEdit.getCreatedDate(), noteToEdit.getModifiedDate(), noteToEdit.getColor(),
+                            noteToEdit.getId(), noteToEdit.getUserId(), noteToEdit.getReminder());
+                    apiNoteViewModel.setArchiveToNote(addNoteModel);
+                    updateNoteToDB(addNoteModel);
+                } else {
 
-                String title = mTextTitle.getText().toString().trim();
-                String description = mTextDescription.getText().toString().trim();
-                Note note = new Note(title, description, noteColor, true,
-                        reminderStringBuilder.toString(), false, isTrashed);
-                addNoteToDb(note);
-                return true;
+                    String title = mTextTitle.getText().toString().trim();
+                    String description = mTextDescription.getText().toString().trim();
+                    Note note = new Note(title, description, noteColor, true,
+                            reminderStringBuilder.toString(), false, isTrashed);
+                    addNoteToDb(note);
+                    return true;
+                }
 
 
             case R.id.action_reminder:
@@ -463,8 +484,7 @@ public class AddNoteActivity extends AppCompatActivity implements View.OnClickLi
                             noteToEdit.getId(), noteToEdit.getUserId(), noteToEdit.getReminder());
                     apiNoteViewModel.pinUnpinToNote(addNoteModel);
                     updateNoteToDB(addNoteModel);
-                }
-                else{
+                } else {
                     Log.e(TAG, "");
                     String title_1 = mTextTitle.getText().toString().trim();
                     String description_1 = mTextDescription.getText().toString().trim();

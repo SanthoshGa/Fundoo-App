@@ -32,9 +32,12 @@ public interface NoteRestApiService {
     Call<Map<String, ResponseData>> setPinUnpinToNote(@Header("Authorization") String authKey,
                                                       @Body Map<String, Object> model);
 
+
     @POST("notes/archiveNotes")
     Call<Map<String, ResponseData>> setArchiveToNote(@Header("Authorization") String authKey,
                                                      @Body Map<String, Object> model);
+    @GET("notes/getArchiveNotesList")
+    Call<Map<String, ResponseData>> getArchiveNotesList(@Header("Authorization") String authKey);
 
 
     @POST("notes/trashNotes")
