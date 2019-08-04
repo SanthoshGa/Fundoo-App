@@ -10,11 +10,14 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.RadioButton;
@@ -70,7 +73,7 @@ public class AddNoteActivity extends AppCompatActivity implements View.OnClickLi
     private boolean isArchived = false;
     private boolean isPinned = false;
     private boolean isTrashed = false;
-    private boolean isChangeColor = false;
+//    private boolean isChangeColor = false;
     private AddNoteModel noteToEdit;
     private RadioGroup radioGroup;
     private StringBuilder reminderStringBuilder = new StringBuilder();
@@ -91,6 +94,24 @@ public class AddNoteActivity extends AppCompatActivity implements View.OnClickLi
         mButtonTime.setOnClickListener(this);
         notificationManagerCompat = NotificationManagerCompat.from(this);
         apiNoteViewModel = new RestApiNoteViewModel(this);
+        setClickToPinnedBtn();
+        registerLocalBroadcasts();
+    }
+
+    private void setClickToPinnedBtn() {
+        View pinnedView = LayoutInflater.from(this).inflate(R.layout.switch_item, null,
+                false);
+        CheckBox cbPinned = pinnedView.findViewById(R.id.cb_pinned);
+        cbPinned.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(AddNoteActivity.this, "Pinned Clicked", Toast.LENGTH_SHORT)
+                        .show();
+            }
+        });
+    }
+
+    private void registerLocalBroadcasts() {
 
         LocalBroadcastManager.getInstance(this).registerReceiver(addedNoteBroadcastReceiver,
                 new IntentFilter(ADD_NOTE_ACTION));
@@ -214,7 +235,6 @@ public class AddNoteActivity extends AppCompatActivity implements View.OnClickLi
         rootViewGroup = findViewById(R.id.root_add_note_activity);
         radioGroup = findViewById(R.id.radio_group);
         mArchive = findViewById(R.id.action_archive);
-        mPinned = findViewById(R.id.action_pinned);
         mReminder = findViewById(R.id.action_reminder);
         mTextDate = findViewById(R.id.et_date);
         mTextTime = findViewById(R.id.et_time);
@@ -295,8 +315,6 @@ public class AddNoteActivity extends AppCompatActivity implements View.OnClickLi
 //        RestApiNoteViewModel apiNoteViewModel = new RestApiNoteViewModel(this);
         apiNoteViewModel.updateNotes(noteToEdit);
         apiNoteViewModel.changeColorToNote(noteToEdit);
-
-
     }
 
 
@@ -445,7 +463,7 @@ public class AddNoteActivity extends AppCompatActivity implements View.OnClickLi
                 }
 
 
-            case R.id.action_reminder:
+//            case R.id.action_reminder:
 //                DialogFragment datePicker = new DatePickerFragment();
 //                datePicker.show(getSupportFragmentManager(), "date picker");
 //
@@ -474,26 +492,29 @@ public class AddNoteActivity extends AppCompatActivity implements View.OnClickLi
 //
 //                return true;
 
+//            case R.id.action_pinned:
+//                Log.e(TAG, "onOptionsItemSelected: action pinned clicked");
+//                isPinned = !isPinned;
+//                Toast.makeText(this, "Pinned : " + isPinned, Toast.LENGTH_SHORT).show();
 
-            case R.id.action_pinned:
-                if (isEditMode) {
-                    Log.e(TAG, "IF CLAUSE");
-                    AddNoteModel addNoteModel = new AddNoteModel(noteToEdit.getTitle(), noteToEdit.getDescription(),
-                            noteToEdit.getIsPinned(), noteToEdit.getIsArchived(), noteToEdit.getIsDeleted(),
-                            noteToEdit.getCreatedDate(), noteToEdit.getModifiedDate(), noteToEdit.getColor(),
-                            noteToEdit.getId(), noteToEdit.getUserId(), noteToEdit.getReminder());
-                    apiNoteViewModel.pinUnpinToNote(addNoteModel);
-                    updateNoteToDB(addNoteModel);
-                } else {
-                    Log.e(TAG, "");
-                    String title_1 = mTextTitle.getText().toString().trim();
-                    String description_1 = mTextDescription.getText().toString().trim();
-                    Note note1 = new Note(title_1, description_1, noteColor, false,
-                            reminderStringBuilder.toString(), true, false);
-                    addNoteToDb(note1);
-                }
+//                if (isEditMode) {
+//                    Log.e(TAG, "IF CLAUSE");
+//                    AddNoteModel addNoteModel = new AddNoteModel(noteToEdit.getTitle(), noteToEdit.getDescription(),
+//                            noteToEdit.getIsPinned(), noteToEdit.getIsArchived(), noteToEdit.getIsDeleted(),
+//                            noteToEdit.getCreatedDate(), noteToEdit.getModifiedDate(), noteToEdit.getColor(),
+//                            noteToEdit.getId(), noteToEdit.getUserId(), noteToEdit.getReminder());
+//                    apiNoteViewModel.pinUnpinToNote(addNoteModel);
+//                    updateNoteToDB(addNoteModel);
+//                } else {
+//                    Log.e(TAG, "");
+//                    String title_1 = mTextTitle.getText().toString().trim();
+//                    String description_1 = mTextDescription.getText().toString().trim();
+//                    Note note1 = new Note(title_1, description_1, noteColor, false,
+//                            reminderStringBuilder.toString(), true, false);
+//                    addNoteToDb(note1);
+//                }
+//                return true;
 
-                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }

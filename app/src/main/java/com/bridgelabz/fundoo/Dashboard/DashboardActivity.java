@@ -47,6 +47,7 @@ import java.util.List;
 
 import static com.bridgelabz.fundoo.Utility.AppConstants.FETCH_NOTE_ACTION;
 import static com.bridgelabz.fundoo.Utility.AppConstants.GET_ARCHIVE_NOTES_ACTION;
+import static com.bridgelabz.fundoo.Utility.AppConstants.TRASH_NOTE_ACTION;
 import static com.bridgelabz.fundoo.Utility.AppConstants.UPDATE_NOTE_ACTION;
 
 public class DashboardActivity extends AppCompatActivity implements
@@ -62,6 +63,8 @@ public class DashboardActivity extends AppCompatActivity implements
     RestApiNoteViewModel restApiNoteViewModel;
     NotesAdapter notesAdapter;
     NavigationView navigationView;
+    BaseNoteModel noteToDelete;
+    private BroadcastReceiver trashNotesBroadcastReceiver;
 //    Observable<List<BaseNoteModel>> observableNotes = new ObservableNotes(noteList);
 
     @Override
@@ -77,18 +80,39 @@ public class DashboardActivity extends AppCompatActivity implements
         setUpDrawer();
         setUpNavigationView();
         setOnClickTakeNote();
+
+        registerLocalBroadcasts();
+    }
+
+    private void registerLocalBroadcasts() {
         LocalBroadcastManager.getInstance(this).registerReceiver(getNotesBroadcastReceiver,
                 new IntentFilter(FETCH_NOTE_ACTION));
         LocalBroadcastManager.getInstance(this).registerReceiver(getArchiveNotesListBroadcastReceiver,
                 new IntentFilter(GET_ARCHIVE_NOTES_ACTION));
+        LocalBroadcastManager.getInstance(this).registerReceiver(trashNotesBroadcastReceiver,
+                new IntentFilter(TRASH_NOTE_ACTION));
 
 
     }
+//     BroadcastReceiver trashNotesBroadcastReceiver = new BroadcastReceiver() {
+//        @Override
+//        public void onReceive(Context context, Intent intent) {
+//            if(intent.hasExtra("trashNotes")){
+//                boolean trashNotes = intent.getBooleanExtra("trashNotes", false);
+//                Log.e(TAG, "onReceive:  we got the data of Archive " + trashNotes);
+//                if (trashNotes){
+//
+//                }
+//
+//            }
+//
+//        }
+//    };
 
     public BroadcastReceiver getArchiveNotesListBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if(intent.hasExtra("archiveNoteList")){
+            if (intent.hasExtra("archiveNoteList")) {
                 noteList = (List<NoteResponseModel>)
                         intent.getSerializableExtra("archiveNoteList");
                 notesAdapter.setNoteModelArrayList(noteList);
@@ -97,7 +121,6 @@ public class DashboardActivity extends AppCompatActivity implements
 
         }
     };
-
 
 
     private BroadcastReceiver getNotesBroadcastReceiver = new BroadcastReceiver() {
@@ -178,21 +201,39 @@ public class DashboardActivity extends AppCompatActivity implements
 
                 @Override
                 public void onSwiped(@NonNull RecyclerView.ViewHolder swipedViewHolder, int direction) {
-                    int adapterPosition = swipedViewHolder.getAdapterPosition();
+                    final int adapterPosition = swipedViewHolder.getAdapterPosition();
                     Log.e(TAG, "The adapter position is " + adapterPosition);
-                    BaseNoteModel noteToDelete = notesAdapter.getNoteAt(adapterPosition);
-                    boolean isDeleted = deleteNote(noteToDelete);
-                    if (isDeleted) {
-                        noteList.remove(noteToDelete);
-                        notesAdapter.notifyItemRemoved(adapterPosition);
-                        Toast.makeText(DashboardActivity.this, "Item Deleted",
-                                Toast.LENGTH_SHORT).show();
+                    noteToDelete = notesAdapter.getNoteAt(adapterPosition);
 
+                    trashNotesBroadcastReceiver = new BroadcastReceiver() {
+                        @Override
+                        public void onReceive(Context context, Intent intent) {
+                            if (intent.hasExtra("trashNotes")) {
+                                boolean trashNotes = intent.getBooleanExtra("trashNotes", false);
+                                Log.e(TAG, "onReceive: we got the data of trashNotes " + trashNotes);
+                                if (trashNotes) {
+                                    noteList.remove(noteToDelete);
+                                    notesAdapter.notifyItemRemoved(adapterPosition);
+                                    Toast.makeText(DashboardActivity.this, "Item Deleted",
+                                            Toast.LENGTH_SHORT).show();
+                                }
+                            }
 
-                    } else {
-                        Toast.makeText(DashboardActivity.this, "Item could not be deleted",
-                                Toast.LENGTH_SHORT).show();
-                    }
+                        }
+                    };
+
+//                    boolean isDeleted = deleteNote(noteToDelete);
+//                    if (isDeleted) {
+//                        noteList.remove(noteToDelete);
+//                        notesAdapter.notifyItemRemoved(adapterPosition);
+//                        Toast.makeText(DashboardActivity.this, "Item Deleted",
+//                                Toast.LENGTH_SHORT).show();
+//
+//
+//                    } else {
+//                        Toast.makeText(DashboardActivity.this, "Item could not be deleted",
+//                                Toast.LENGTH_SHORT).show();
+//                    }
                 }
             });
 
@@ -368,4 +409,9 @@ public class DashboardActivity extends AppCompatActivity implements
         LocalBroadcastManager.getInstance(this).unregisterReceiver(getNotesBroadcastReceiver);
         LocalBroadcastManager.getInstance(this).unregisterReceiver(getArchiveNotesListBroadcastReceiver);
     }
+
+
+    // Broadcast receivers
+
+
 }

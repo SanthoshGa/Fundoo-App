@@ -4,18 +4,21 @@
 
     <item
         android:id="@+id/action_archive"
-        android:title="@string/archive"
         android:icon="@drawable/archive"
+        android:title="@string/archive"
+        android:tooltipText="Archive"
         app:showAsAction="ifRoom|collapseActionView" />
     <item
-        android:id="@+id/action_reminder"
-        android:title="@string/reminder"
-        android:icon="@drawable/reminder"
-        app:showAsAction="ifRoom|collapseActionView"/>
-    <item
         android:id="@+id/action_pinned"
-        android:icon="@drawable/pinned"
-        android:title="@string/pinned"
+        android:title="Pin"
+        app:actionLayout="@layout/switch_item"
+        android:checkable="true"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/action_reminder"
+        android:icon="@drawable/reminder"
+        android:title="@string/reminder"
+        android:tooltipText="Reminder"
         app:showAsAction="ifRoom|collapseActionView" />
 
 </menu>

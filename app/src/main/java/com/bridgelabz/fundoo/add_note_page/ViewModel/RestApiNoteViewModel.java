@@ -21,6 +21,7 @@ import static com.bridgelabz.fundoo.Utility.AppConstants.FETCH_NOTE_ACTION;
 import static com.bridgelabz.fundoo.Utility.AppConstants.GET_ARCHIVE_NOTES_ACTION;
 import static com.bridgelabz.fundoo.Utility.AppConstants.PIN_UNPIN_TO_NOTE_ACTION;
 import static com.bridgelabz.fundoo.Utility.AppConstants.SET_ARCHIVE_ACTION;
+import static com.bridgelabz.fundoo.Utility.AppConstants.TRASH_NOTE_ACTION;
 import static com.bridgelabz.fundoo.Utility.AppConstants.UPDATE_NOTE_ACTION;
 
 public class RestApiNoteViewModel {
@@ -193,6 +194,27 @@ public class RestApiNoteViewModel {
                 isPinned = (data != null);
                 Log.e(TAG, "onResponse: isPinned" + isPinned);
                 localIntent.putExtra("isPinned", isPinned);
+                localBroadcastManager.sendBroadcast(localIntent);
+            }
+
+            @Override
+            public void onFailure(Throwable throwable) {
+                localIntent.putExtra("throwable", throwable);
+                localBroadcastManager.sendBroadcast(localIntent);
+            }
+        });
+    }
+
+    public void trashNotes(AddNoteModel addNoteModel){
+        restApiNoteDataManager.trashedNotes(addNoteModel, new RestApiNoteDataManager.ResponseCallback
+                <ResponseData, ResponseError>() {
+            Intent localIntent = new Intent(TRASH_NOTE_ACTION);
+            @Override
+            public void onResponse(ResponseData data, ResponseError error) {
+                boolean isTrashed;
+                isTrashed = (data != null);
+                Log.e(TAG, "onResponse: isTrashed" + isTrashed);
+                localIntent.putExtra("isTrashed", isTrashed);
                 localBroadcastManager.sendBroadcast(localIntent);
             }
 

@@ -327,6 +327,48 @@ public class RestApiNoteDataManager {
         });
     }
 
+    public void trashedNotes(AddNoteModel addNoteModel, final ResponseCallback responseCallback){
+        Retrofit retrofit = RetrofitRestApiConnection.openRetrofitConnection();
+        NoteRestApiService apiService = retrofit.create(NoteRestApiService.class);
+        String authKey = sharedPreferencesManager.getAccessToken();
+
+        List<String> noteIdList = new ArrayList<>();
+        noteIdList.add(addNoteModel.getId());
+        Map<String, Object> trashNoteMap = new HashMap<>();
+        trashNoteMap.put("isDeleted", addNoteModel.getIsDeleted());
+        trashNoteMap.put("noteIdList", noteIdList);
+        Call<Map<String, ResponseData>> responseDataCall = apiService.trashNotes(authKey, trashNoteMap);
+        responseDataCall.enqueue(new Callback<Map<String, ResponseData>>() {
+            @Override
+            public void onResponse(Call<Map<String, ResponseData>> call, Response<Map<String, ResponseData>> response) {
+                if(response.isSuccessful()){
+                    Log.e(TAG, "Response is Successful");
+                    Log.e(TAG, "onResponse: trashNote " + response.body().toString());
+                    ResponseData responseData = response.body().get("data");
+                    responseCallback.onResponse(responseData, null);
+                }
+                else{
+                    try {
+                        Log.e(TAG, "Error Response Model : trashNotes " + response.errorBody().string());
+                        responseCallback.onResponse(null, new ResponseError(response.code() + "",
+                                response.errorBody().string(),
+                                response.message(), null));
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<Map<String, ResponseData>> call, Throwable throwable) {
+                Log.e(TAG, "onFailure: trashNote " + throwable.getLocalizedMessage());
+                responseCallback.onFailure(throwable);
+
+            }
+        });
+    }
+
 
     public interface AddNoteCallback {
         void onResponse(ResponseData responseData, ResponseError responseError);
