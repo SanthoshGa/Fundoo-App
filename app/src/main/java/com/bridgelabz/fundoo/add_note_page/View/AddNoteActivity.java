@@ -1,5 +1,8 @@
 package com.bridgelabz.fundoo.add_note_page.View;
 
+import android.app.DatePickerDialog;
+import android.app.Dialog;
+import android.app.TimePickerDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -9,22 +12,28 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.NotificationManagerCompat;
+import androidx.fragment.app.DialogFragment;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.bridgelabz.fundoo.Dashboard.DashboardActivity;
 import com.bridgelabz.fundoo.R;
+import com.bridgelabz.fundoo.Utility.DatePickerFragment;
+import com.bridgelabz.fundoo.Utility.TimePickerFragment;
 import com.bridgelabz.fundoo.Utility.ValidationHelper;
 import com.bridgelabz.fundoo.add_note_page.Model.AddNoteModel;
 import com.bridgelabz.fundoo.add_note_page.Model.BaseNoteModel;
@@ -34,6 +43,7 @@ import com.bridgelabz.fundoo.add_note_page.ViewModel.NoteViewModel;
 import com.bridgelabz.fundoo.add_note_page.ViewModel.RestApiNoteViewModel;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
@@ -50,13 +60,18 @@ public class AddNoteActivity extends AppCompatActivity {
     private EditText mTextTitle;
     private EditText mTextDescription;
     private Button mButtonSave;
+    private ImageButton imgBtnReminder;
+    private ImageButton imgBtnArchive;
+    private CheckBox cbPinned;
     private EditText mTextDate;
     private EditText mTextTime;
-    private Button mButtonDate;
-    private Button mButtonTime;
-    MenuItem mArchive;
-    MenuItem mReminder;
-    MenuItem mPinned;
+    private TextView tvReminder;
+    private Calendar calendar = Calendar.getInstance();
+//    private Button mButtonDate;
+//    private Button mButtonTime;
+//    MenuItem mArchive;
+//    MenuItem mReminder;
+//    MenuItem mPinned;
     NoteViewModel noteViewModel;
     ConstraintLayout rootViewGroup;
     private String noteColor = "#ffffff";
@@ -88,6 +103,124 @@ public class AddNoteActivity extends AppCompatActivity {
         apiNoteViewModel = new RestApiNoteViewModel(this);
         setClickToPinnedBtn();
         registerLocalBroadcasts();
+        getSupportActionBar().hide();
+        setButtonListeners();
+    }
+
+    private void setButtonListeners() {
+        setPinnedButtonClickListener();
+        setReminderButtonClickListener();
+        setArchiveButtonClickListener();
+    }
+
+    private void setPinnedButtonClickListener() {
+
+    }
+    private void setReminderButtonClickListener(){
+        imgBtnReminder.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(AddNoteActivity.this, "Reminder button clicked",
+                        Toast.LENGTH_SHORT).show();
+                showReminderDialogBox();
+            }
+        });
+
+    }
+
+    private void showReminderDialogBox() {
+        final Dialog dialog = new Dialog(this);
+        View dialogView = LayoutInflater.from(getApplicationContext())
+                .inflate(R.layout.dialog_box_date_time_picker, null);
+        dialog.setContentView(dialogView);
+        dialog.setTitle("Date and Time Picker");
+        dialog.show();
+        setReminder(dialogView, dialog);
+    }
+
+    private void setReminder(View dialogView, Dialog dialog) {
+        setDateTextViewClickListener(dialogView);
+        setTimeTextViewClickListener(dialogView);
+        setCancelReminderButtonClickListener(dialog);
+        setSaveReminderButtonClickedListener(dialog);
+    }
+
+    private void setCancelReminderButtonClickListener(final Dialog dialog) {
+
+        Button btn_cancel = dialog.findViewById(R.id.btn_cancel);
+        btn_cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(AddNoteActivity.this, "Cancel Button Clicked", Toast.LENGTH_SHORT).show();
+                dialog.dismiss();
+            }
+        });
+    }
+    private void setSaveReminderButtonClickedListener(final Dialog dialog){
+        Button btn_save = dialog.findViewById(R.id.btn_save);
+        btn_save.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String reminderDate = mTextDate.getText().toString();
+                String reminderTime = mTextTime.getText().toString();
+                String reminder = reminderDate + " " + reminderTime;
+                tvReminder.setText(reminder);
+
+                Toast.makeText(AddNoteActivity.this, "Save Button Clicked", Toast.LENGTH_SHORT).show();
+                dialog.dismiss();
+            }
+        });
+    }
+    private void setDateTextViewClickListener(View dialogView) {
+        mTextDate = dialogView.findViewById(R.id.et_date);
+        mTextDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                DialogFragment datePickerFragment = new DatePickerFragment(
+                        new DatePickerDialog.OnDateSetListener() {
+
+                            @Override
+                            public void onDateSet(DatePicker datePicker, int year, int month,
+                                                  int day) {
+                                String reminderDate = day + "/" + (month + 1) + "/" + year;
+                                mTextDate.setText(reminderDate);
+
+                                calendar.set(Calendar.DAY_OF_MONTH, day);
+                                calendar.set(Calendar.MONTH, month);
+                                calendar.set(Calendar.YEAR, year);
+                            }
+                        });
+                datePickerFragment.show(getSupportFragmentManager(), "date picker");
+            }
+        });
+    }
+    private void setTimeTextViewClickListener(View dialogView){
+        mTextTime = dialogView.findViewById(R.id.et_time);
+        mTextTime.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                DialogFragment timePickerFragment = new TimePickerFragment(
+                        new TimePickerDialog.OnTimeSetListener() {
+
+                            @Override
+                            public void onTimeSet(TimePicker timePicker, int hour, int min) {
+                                String time = hour + " : " + min ;
+                                mTextTime.setText(time);
+//                              to notify alarm
+                                calendar.set(Calendar.HOUR_OF_DAY, hour);
+                                calendar.set(Calendar.MINUTE, min);
+                                calendar.set(Calendar.SECOND, 0);
+
+                            }
+                        });
+                timePickerFragment.show(getSupportFragmentManager(), "time picker");
+            }
+        });
+    }
+
+
+    private void setArchiveButtonClickListener(){
+
     }
 
     private void setClickToPinnedBtn() {
@@ -184,6 +317,7 @@ public class AddNoteActivity extends AppCompatActivity {
     private void setUpEditFields() {
         mTextTitle.setText(noteToEdit.getTitle());
         mTextDescription.setText(noteToEdit.getDescription());
+        tvReminder.setText(noteToEdit.getReminder());
         setColorRdButton(noteToEdit);
     }
 
@@ -226,12 +360,13 @@ public class AddNoteActivity extends AppCompatActivity {
         mButtonSave = findViewById(R.id.btn_save);
         rootViewGroup = findViewById(R.id.root_add_note_activity);
         radioGroup = findViewById(R.id.radio_group);
-        mArchive = findViewById(R.id.action_archive);
-        mReminder = findViewById(R.id.action_reminder);
+        imgBtnArchive = findViewById(R.id.img_btn_archive);
+        imgBtnReminder = findViewById(R.id.img_btn_reminder);
+        cbPinned = findViewById(R.id.cb_pin);
         mTextDate = findViewById(R.id.et_date);
         mTextTime = findViewById(R.id.et_time);
-        mButtonDate = findViewById(R.id.btn_date);
-        mButtonTime = findViewById(R.id.btn_time);
+//        mButtonDate = findViewById(R.id.btn_date);
+//        mButtonTime = findViewById(R.id.btn_time);
     }
 
     private void setOnClickSave() {
@@ -447,19 +582,19 @@ public class AddNoteActivity extends AppCompatActivity {
         return true;
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-
-        switch (item.getItemId()) {
-            case R.id.action_archive:
-                if (isEditMode) {
-                    AddNoteModel addNoteModel = new AddNoteModel(noteToEdit.getTitle(), noteToEdit.getDescription(),
-                            noteToEdit.getIsPinned(), noteToEdit.getIsArchived(), noteToEdit.getIsDeleted(),
-                            noteToEdit.getCreatedDate(), noteToEdit.getModifiedDate(), noteToEdit.getColor(),
-                            noteToEdit.getId(), noteToEdit.getUserId(), noteToEdit.getReminder());
-                    apiNoteViewModel.setArchiveToNote(addNoteModel);
-                    updateNoteToDB(addNoteModel);
-                } else {
+//    @Override
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//
+//        switch (item.getItemId()) {
+//            case R.id.action_archive:
+//                if (isEditMode) {
+//                    AddNoteModel addNoteModel = new AddNoteModel(noteToEdit.getTitle(), noteToEdit.getDescription(),
+//                            noteToEdit.getIsPinned(), noteToEdit.getIsArchived(), noteToEdit.getIsDeleted(),
+//                            noteToEdit.getCreatedDate(), noteToEdit.getModifiedDate(), noteToEdit.getColor(),
+//                            noteToEdit.getId(), noteToEdit.getUserId(), noteToEdit.getReminder());
+//                    apiNoteViewModel.setArchiveToNote(addNoteModel);
+//                    updateNoteToDB(addNoteModel);
+//                } else {
 
 //                    String title = mTextTitle.getText().toString().trim();
 //                    String description = mTextDescription.getText().toString().trim();
@@ -467,7 +602,7 @@ public class AddNoteActivity extends AppCompatActivity {
 //                            reminderStringBuilder.toString(), false, isTrashed);
 //                    addNoteToDb(note);
 //                    return true;
-                }
+//                }
 
 
 //            case R.id.action_reminder:
@@ -522,10 +657,10 @@ public class AddNoteActivity extends AppCompatActivity {
 //                }
 //                return true;
 
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
+//            default:
+//                return super.onOptionsItemSelected(item);
+//        }
+//    }
 
 //    @Override
 //    public void onClick(View v) {

@@ -10,6 +10,11 @@ import androidx.fragment.app.DialogFragment;
 import java.util.Calendar;
 
 public class DatePickerFragment extends DialogFragment {
+    private DatePickerDialog.OnDateSetListener dateSetListener;
+
+    public DatePickerFragment(DatePickerDialog.OnDateSetListener dateSetListener) {
+        this.dateSetListener = dateSetListener;
+    }
 
     @NonNull
     @Override

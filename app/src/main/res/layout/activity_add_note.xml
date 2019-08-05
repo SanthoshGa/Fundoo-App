@@ -8,8 +8,65 @@
     android:layout_height="match_parent"
     tools:details=".Dashboard.View.AddNoteActivity">
 
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar_createNote"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/margin_short"
+        android:elevation="4dp"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="?attr/actionBarTheme"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-    <EditText
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:layout_editor_absoluteX="16dp"
+            tools:layout_editor_absoluteY="12dp">
+            <CheckBox
+                android:id="@+id/cb_pin"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_marginEnd="24dp"
+                android:layout_marginRight="24dp"
+                android:button="@drawable/cbbtn_pinned"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/img_btn_reminder"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.55" />
+
+            <ImageButton
+                android:id="@+id/img_btn_archive"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginRight="16dp"
+                android:background="?attr/selectableItemBackground"
+                app:srcCompat="@drawable/archive"
+                app:layout_constraintBaseline_toBaselineOf="@+id/img_btn_reminder"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <ImageButton
+                android:id="@+id/img_btn_reminder"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_marginEnd="24dp"
+                android:layout_marginRight="24dp"
+                app:srcCompat="@drawable/ic_reminder"
+                android:background="?attr/selectableItemBackground"
+                app:layout_constraintBaseline_toBaselineOf="@+id/cb_pinned"
+                app:layout_constraintEnd_toStartOf="@+id/img_btn_archive"
+                tools:ignore="VectorDrawableCompat" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.appcompat.widget.Toolbar>
+
+
+
+        <EditText
         android:id="@+id/et_title"
         android:layout_width="match_parent"
         android:layout_height="80dp"
