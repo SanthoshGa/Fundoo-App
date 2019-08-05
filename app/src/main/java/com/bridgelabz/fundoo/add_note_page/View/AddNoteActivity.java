@@ -1,9 +1,5 @@
 package com.bridgelabz.fundoo.add_note_page.View;
 
-import android.app.AlarmManager;
-import android.app.DatePickerDialog;
-import android.app.PendingIntent;
-import android.app.TimePickerDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -17,12 +13,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.TimePicker;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -30,7 +23,6 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
-import com.bridgelabz.fundoo.BroadcastReceivers.ReminderReceiver;
 import com.bridgelabz.fundoo.Dashboard.DashboardActivity;
 import com.bridgelabz.fundoo.R;
 import com.bridgelabz.fundoo.Utility.ValidationHelper;
@@ -42,7 +34,6 @@ import com.bridgelabz.fundoo.add_note_page.ViewModel.NoteViewModel;
 import com.bridgelabz.fundoo.add_note_page.ViewModel.RestApiNoteViewModel;
 
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
@@ -52,7 +43,7 @@ import static com.bridgelabz.fundoo.Utility.AppConstants.PIN_UNPIN_TO_NOTE_ACTIO
 import static com.bridgelabz.fundoo.Utility.AppConstants.SET_ARCHIVE_ACTION;
 import static com.bridgelabz.fundoo.Utility.AppConstants.UPDATE_NOTE_ACTION;
 
-public class AddNoteActivity extends AppCompatActivity implements View.OnClickListener {
+public class AddNoteActivity extends AppCompatActivity {
 
 
     private static final String TAG = "AddNoteActivity";
@@ -73,12 +64,13 @@ public class AddNoteActivity extends AppCompatActivity implements View.OnClickLi
     private boolean isArchived = false;
     private boolean isPinned = false;
     private boolean isTrashed = false;
-//    private boolean isChangeColor = false;
+    //    private boolean isChangeColor = false;
     private AddNoteModel noteToEdit;
     private RadioGroup radioGroup;
     private StringBuilder reminderStringBuilder = new StringBuilder();
     private NotificationManagerCompat notificationManagerCompat;
     RestApiNoteViewModel apiNoteViewModel;
+    private boolean isColourChanged = false;
 //    private DatePickerDialog.OnDateSetListener mDateSetListener;
 //    private TimePickerDialog.OnTimeSetListener mTimeSetListener;
 
@@ -90,8 +82,8 @@ public class AddNoteActivity extends AppCompatActivity implements View.OnClickLi
         findViews();
         setOnClickSave();
         checkEditMode();
-        mButtonDate.setOnClickListener(this);
-        mButtonTime.setOnClickListener(this);
+//        mButtonDate.setOnClickListener(this);
+//        mButtonTime.setOnClickListener(this);
         notificationManagerCompat = NotificationManagerCompat.from(this);
         apiNoteViewModel = new RestApiNoteViewModel(this);
         setClickToPinnedBtn();
@@ -296,6 +288,9 @@ public class AddNoteActivity extends AppCompatActivity implements View.OnClickLi
                             Toast.LENGTH_SHORT).show();
                 }
 
+            } else if (intent.hasExtra("error")) {
+                Toast.makeText(AddNoteActivity.this, "Failed to connect to server",
+                        Toast.LENGTH_SHORT).show();
             }
 
         }
@@ -313,8 +308,11 @@ public class AddNoteActivity extends AppCompatActivity implements View.OnClickLi
 //            Toast.makeText(AddNoteActivity.this, "Unable to update", Toast.LENGTH_SHORT).show();
 //        }
 //        RestApiNoteViewModel apiNoteViewModel = new RestApiNoteViewModel(this);
+        if (isColourChanged) {
+            apiNoteViewModel.changeColorToNote(noteToEdit);
+        }
+
         apiNoteViewModel.updateNotes(noteToEdit);
-        apiNoteViewModel.changeColorToNote(noteToEdit);
     }
 
 
@@ -372,48 +370,56 @@ public class AddNoteActivity extends AppCompatActivity implements View.OnClickLi
                 if (checked) {
                     rootViewGroup.setBackgroundResource(R.color.white);
                     setNoteColor("#FFFFFF");
+                    isColourChanged = true;
                 }
                 break;
             case R.id.radio_white:
                 if (checked) {
                     rootViewGroup.setBackgroundResource(R.color.white);
                     setNoteColor("#FFFFFF");
+                    isColourChanged = true;
                 }
                 break;
             case R.id.radio_green:
                 if (checked) {
                     rootViewGroup.setBackgroundResource(R.color.yellowGreen);
                     setNoteColor("#9ACD32");
+                    isColourChanged = true;
                 }
                 break;
             case R.id.radio_olive:
                 if (checked) {
                     rootViewGroup.setBackgroundResource(R.color.olive);
                     setNoteColor("#808000");
+                    isColourChanged = true;
                 }
                 break;
             case R.id.radio_pink:
                 if (checked) {
                     rootViewGroup.setBackgroundResource(R.color.pink);
                     setNoteColor("#FFC0CB");
+                    isColourChanged = true;
                 }
                 break;
             case R.id.radio_purple:
                 if (checked) {
                     rootViewGroup.setBackgroundResource(R.color.purple);
                     setNoteColor("#800080");
+                    isColourChanged = true;
                 }
                 break;
             case R.id.radio_skyBlue:
                 if (checked) {
                     rootViewGroup.setBackgroundResource(R.color.skyBlue);
                     setNoteColor("#87CEEB");
+                    isColourChanged = true;
                 }
                 break;
             case R.id.radio_silver:
                 if (checked) {
                     rootViewGroup.setBackgroundResource(R.color.silver);
                     setNoteColor("#C0C0C0");
+                    isColourChanged = true;
                 }
                 break;
             case R.id.radio_yellow:
@@ -421,6 +427,7 @@ public class AddNoteActivity extends AppCompatActivity implements View.OnClickLi
                     rootViewGroup.setBackgroundResource(R.color.yellow);
                     setNoteColor("#FFFF00");
                     Log.e(TAG, "YELLOW ADDED");
+                    isColourChanged = true;
                 }
                 break;
             default:
@@ -454,12 +461,12 @@ public class AddNoteActivity extends AppCompatActivity implements View.OnClickLi
                     updateNoteToDB(addNoteModel);
                 } else {
 
-                    String title = mTextTitle.getText().toString().trim();
-                    String description = mTextDescription.getText().toString().trim();
-                    Note note = new Note(title, description, noteColor, true,
-                            reminderStringBuilder.toString(), false, isTrashed);
-                    addNoteToDb(note);
-                    return true;
+//                    String title = mTextTitle.getText().toString().trim();
+//                    String description = mTextDescription.getText().toString().trim();
+//                    Note note = new Note(title, description, noteColor, true,
+//                            reminderStringBuilder.toString(), false, isTrashed);
+//                    addNoteToDb(note);
+//                    return true;
                 }
 
 
@@ -520,70 +527,70 @@ public class AddNoteActivity extends AppCompatActivity implements View.OnClickLi
         }
     }
 
-    @Override
-    public void onClick(View v) {
-        if (v == mButtonDate) {
-
-            // Get Current Date
-            Calendar calender = Calendar.getInstance();
-            int mYear = calender.get(Calendar.YEAR);
-            int mMonth = calender.get(Calendar.MONTH);
-            int mDay = calender.get(Calendar.DAY_OF_MONTH);
-
-
-            DatePickerDialog datePickerDialog = new DatePickerDialog(this,
-                    new DatePickerDialog.OnDateSetListener() {
-
-                        @Override
-                        public void onDateSet(DatePicker view, int year,
-                                              int monthOfYear, int dayOfMonth) {
-
-                            mTextDate.setText(dayOfMonth + "-" + (monthOfYear + 1) + "-" + year);
-
-                        }
-                    }, mYear, mMonth, mDay);
-            datePickerDialog.show();
-
-
-            setDateTimeString("EEE, MMM d ", calender.getTime());
-        }
-        if (v == mButtonTime) {
-
-            // Get Current Time
-            final Calendar calender = Calendar.getInstance();
-            int mHour = calender.get(Calendar.HOUR_OF_DAY);
-            int mMinute = calender.get(Calendar.MINUTE);
-
-            // Launch Time Picker Dialog
-            TimePickerDialog timePickerDialog = new TimePickerDialog(this,
-                    new TimePickerDialog.OnTimeSetListener() {
-
-                        @Override
-                        public void onTimeSet(TimePicker view, int hourOfDay,
-                                              int minute) {
-
-                            mTextTime.setText(hourOfDay + ":" + minute);
-                        }
-                    }, mHour, mMinute, false);
-            timePickerDialog.show();
-            setDateTimeString(" hh:mm:ss", calender.getTime());
-        }
-
-    }
-
-    private void addReminder(Date date) {
-        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-
-
-        Intent notificationIntent = new Intent(this, ReminderReceiver.class);
-        notificationIntent.addCategory("android.intent.category.DEFAULT");
-
-        int requestCode = 100;
-        PendingIntent broadcast = PendingIntent.getBroadcast(this, requestCode,
-                notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-        alarmManager.set(AlarmManager.RTC_WAKEUP, date.getTime(), broadcast);
-    }
+//    @Override
+//    public void onClick(View v) {
+//        if (v == mButtonDate) {
+//
+//            // Get Current Date
+//            Calendar calender = Calendar.getInstance();
+//            int mYear = calender.get(Calendar.YEAR);
+//            int mMonth = calender.get(Calendar.MONTH);
+//            int mDay = calender.get(Calendar.DAY_OF_MONTH);
+//
+//
+//            DatePickerDialog datePickerDialog = new DatePickerDialog(this,
+//                    new DatePickerDialog.OnDateSetListener() {
+//
+//                        @Override
+//                        public void onDateSet(DatePicker view, int year,
+//                                              int monthOfYear, int dayOfMonth) {
+//
+//                            mTextDate.setText(dayOfMonth + "-" + (monthOfYear + 1) + "-" + year);
+//
+//                        }
+//                    }, mYear, mMonth, mDay);
+//            datePickerDialog.show();
+//
+//
+//            setDateTimeString("EEE, MMM d ", calender.getTime());
+//        }
+//        if (v == mButtonTime) {
+//
+//            // Get Current Time
+//            final Calendar calender = Calendar.getInstance();
+//            int mHour = calender.get(Calendar.HOUR_OF_DAY);
+//            int mMinute = calender.get(Calendar.MINUTE);
+//
+//            // Launch Time Picker Dialog
+//            TimePickerDialog timePickerDialog = new TimePickerDialog(this,
+//                    new TimePickerDialog.OnTimeSetListener() {
+//
+//                        @Override
+//                        public void onTimeSet(TimePicker view, int hourOfDay,
+//                                              int minute) {
+//
+//                            mTextTime.setText(hourOfDay + ":" + minute);
+//                        }
+//                    }, mHour, mMinute, false);
+//            timePickerDialog.show();
+//            setDateTimeString(" hh:mm:ss", calender.getTime());
+//        }
+//
+//    }
+//
+//    private void addReminder(Date date) {
+//        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+//
+//
+//        Intent notificationIntent = new Intent(this, ReminderReceiver.class);
+//        notificationIntent.addCategory("android.intent.category.DEFAULT");
+//
+//        int requestCode = 100;
+//        PendingIntent broadcast = PendingIntent.getBroadcast(this, requestCode,
+//                notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+//
+//        alarmManager.set(AlarmManager.RTC_WAKEUP, date.getTime(), broadcast);
+//    }
 
     //
 //    @Override
@@ -615,8 +622,15 @@ public class AddNoteActivity extends AppCompatActivity implements View.OnClickLi
 
     @Override
     protected void onDestroy() {
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(addedNoteBroadcastReceiver);
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(updateNotesBroadcastReceiver);
+        unregisterBroadcastReceivers();
         super.onDestroy();
+    }
+
+    private void unregisterBroadcastReceivers() {
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(addedNoteBroadcastReceiver);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(setArchiveNoteBroadcastReceiver);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(changeColorToNoteBroadcastReceiver);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(pinUnpinToNoteBroadcastReceiver);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(updateNotesBroadcastReceiver);
     }
 }

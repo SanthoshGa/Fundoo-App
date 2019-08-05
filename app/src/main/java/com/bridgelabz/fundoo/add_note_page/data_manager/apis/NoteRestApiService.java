@@ -20,7 +20,7 @@ public interface NoteRestApiService {
     Call<Map<String, ResponseData>> getNoteList(@Header("Authorization") String authKey);
 
     @POST("notes/updateNotes")
-    Call<Map<String, ResponseData>>  updateNotes(@Header("Authorization") String authKey,
+    Call<Map<String, ResponseData>> updateNotes(@Header("Authorization") String authKey,
                                                  @Body Map<String, String> model);
 
     @POST("notes/changesColorNotes")
@@ -43,9 +43,12 @@ public interface NoteRestApiService {
     @POST("notes/trashNotes")
     Call<Map<String, ResponseData>>  trashNotes(@Header("Authorization") String authKey,
                                                 @Body Map<String, Object> model);
+
+    @GET("notes/getTrashNotesList")
+    Call<Map<String, ResponseData>> getTrashNotesList(@Header("Authorization") String authKey);
+
     @POST("notes/addUpdateReminderNotes")
-    Call<Map<String, ResponseData>> addReminder();
-
-
+    Call<Map<String, ResponseData>> addReminder(@Header("Authorization") String authKey,
+                                                @Body Map<String, Object> model);
 
 }

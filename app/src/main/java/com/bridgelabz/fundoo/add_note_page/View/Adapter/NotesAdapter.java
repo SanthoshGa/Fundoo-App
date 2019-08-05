@@ -49,7 +49,7 @@ public class NotesAdapter extends RecyclerView.Adapter<NoteHolder> implements It
         return noteModelArrayList.size();
     }
 
-    public BaseNoteModel getNoteAt(int position){
+    public NoteResponseModel getNoteAt(int position){
         return noteModelArrayList.get(position);
     }
 

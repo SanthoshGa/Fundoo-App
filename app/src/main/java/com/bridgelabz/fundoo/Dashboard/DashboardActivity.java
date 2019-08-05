@@ -29,6 +29,7 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
+import com.bridgelabz.fundoo.add_note_page.Model.AddNoteModel;
 import com.bridgelabz.fundoo.add_note_page.View.AddNoteActivity;
 import com.bridgelabz.fundoo.add_note_page.Model.BaseNoteModel;
 import com.bridgelabz.fundoo.add_note_page.Model.NoteResponseModel;
@@ -47,6 +48,7 @@ import java.util.List;
 
 import static com.bridgelabz.fundoo.Utility.AppConstants.FETCH_NOTE_ACTION;
 import static com.bridgelabz.fundoo.Utility.AppConstants.GET_ARCHIVE_NOTES_ACTION;
+import static com.bridgelabz.fundoo.Utility.AppConstants.GET_TRASH_NOTES_LIST_ACTION;
 import static com.bridgelabz.fundoo.Utility.AppConstants.TRASH_NOTE_ACTION;
 import static com.bridgelabz.fundoo.Utility.AppConstants.UPDATE_NOTE_ACTION;
 
@@ -63,8 +65,7 @@ public class DashboardActivity extends AppCompatActivity implements
     RestApiNoteViewModel restApiNoteViewModel;
     NotesAdapter notesAdapter;
     NavigationView navigationView;
-    BaseNoteModel noteToDelete;
-    private BroadcastReceiver trashNotesBroadcastReceiver;
+    NoteResponseModel noteToDelete;
 //    Observable<List<BaseNoteModel>> observableNotes = new ObservableNotes(noteList);
 
     @Override
@@ -80,7 +81,6 @@ public class DashboardActivity extends AppCompatActivity implements
         setUpDrawer();
         setUpNavigationView();
         setOnClickTakeNote();
-
         registerLocalBroadcasts();
     }
 
@@ -91,9 +91,12 @@ public class DashboardActivity extends AppCompatActivity implements
                 new IntentFilter(GET_ARCHIVE_NOTES_ACTION));
         LocalBroadcastManager.getInstance(this).registerReceiver(trashNotesBroadcastReceiver,
                 new IntentFilter(TRASH_NOTE_ACTION));
+        LocalBroadcastManager.getInstance(this).registerReceiver(getTrashNotesListBroadcastReceiver,
+                new IntentFilter(GET_TRASH_NOTES_LIST_ACTION));
 
 
     }
+
 //     BroadcastReceiver trashNotesBroadcastReceiver = new BroadcastReceiver() {
 //        @Override
 //        public void onReceive(Context context, Intent intent) {
@@ -112,9 +115,24 @@ public class DashboardActivity extends AppCompatActivity implements
     public BroadcastReceiver getArchiveNotesListBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
+            Log.e(TAG, "onReceive: local broadcast working fot archive list");
+
             if (intent.hasExtra("archiveNoteList")) {
                 noteList = (List<NoteResponseModel>)
                         intent.getSerializableExtra("archiveNoteList");
+                notesAdapter.setNoteModelArrayList(noteList);
+                notesAdapter.notifyDataSetChanged();
+            }
+
+        }
+    };
+
+    public BroadcastReceiver getTrashNotesListBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.e(TAG, "onReceive: local broadcast working for trash notes list");
+            if(intent.hasExtra("trashNotesList")){
+                noteList = (List<NoteResponseModel>) intent.getSerializableExtra("trashNotesList");
                 notesAdapter.setNoteModelArrayList(noteList);
                 notesAdapter.notifyDataSetChanged();
             }
@@ -183,8 +201,26 @@ public class DashboardActivity extends AppCompatActivity implements
         noteItemTouchHelper.attachToRecyclerView(mRecyclerView);
     }
 
+    private BroadcastReceiver trashNotesBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.hasExtra("isTrashed")) {
+                boolean trashNotes = intent.getBooleanExtra("isTrashed", false);
+                Log.e(TAG, "onReceive: we got the data of trashNotes " + trashNotes);
+                if (trashNotes) {
+//                                    notesAdapter.notifyItemRemoved(adapterPosition);
+                    Toast.makeText(DashboardActivity.this, "Item Deleted",
+                            Toast.LENGTH_SHORT).show();
+                }
+            }
+
+        }
+    };
+
+
     private ItemTouchHelper noteItemTouchHelper = new ItemTouchHelper
-            (new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP | ItemTouchHelper.DOWN,
+            (new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP | ItemTouchHelper.DOWN |
+                    ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT,
                     ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
 
                 @Override
@@ -199,29 +235,19 @@ public class DashboardActivity extends AppCompatActivity implements
                     return false;
                 }
 
+
                 @Override
                 public void onSwiped(@NonNull RecyclerView.ViewHolder swipedViewHolder, int direction) {
                     final int adapterPosition = swipedViewHolder.getAdapterPosition();
                     Log.e(TAG, "The adapter position is " + adapterPosition);
                     noteToDelete = notesAdapter.getNoteAt(adapterPosition);
+                    restApiNoteViewModel.trashNotes(noteToDelete);
 
-                    trashNotesBroadcastReceiver = new BroadcastReceiver() {
-                        @Override
-                        public void onReceive(Context context, Intent intent) {
-                            if (intent.hasExtra("trashNotes")) {
-                                boolean trashNotes = intent.getBooleanExtra("trashNotes", false);
-                                Log.e(TAG, "onReceive: we got the data of trashNotes " + trashNotes);
-                                if (trashNotes) {
-                                    noteList.remove(noteToDelete);
-                                    notesAdapter.notifyItemRemoved(adapterPosition);
-                                    Toast.makeText(DashboardActivity.this, "Item Deleted",
-                                            Toast.LENGTH_SHORT).show();
-                                }
-                            }
-
-                        }
-                    };
-
+//                    new TrashBroadcastReceiver(adapterPosition, noteToDelete);
+//                    noteList.remove(noteToDelete);
+                    notesAdapter.onItemSwiped(adapterPosition);
+//
+//                    notesAdapter.notifyItemRemoved(adapterPosition);
 //                    boolean isDeleted = deleteNote(noteToDelete);
 //                    if (isDeleted) {
 //                        noteList.remove(noteToDelete);
@@ -248,7 +274,6 @@ public class DashboardActivity extends AppCompatActivity implements
             public void onClick(View v) {
                 Intent noteIntent = new Intent(DashboardActivity.this, AddNoteActivity.class);
                 startActivity(noteIntent);
-                finish();
             }
         });
     }
@@ -342,8 +367,6 @@ public class DashboardActivity extends AppCompatActivity implements
 //                noteList = noteViewModel.getArchivedNotes();          // TODO: change
                 restApiNoteViewModel.getArchiveNotesList();
                 Log.e(TAG, "Inside archive list method");
-                notesAdapter.setNoteModelArrayList(noteList);
-                notesAdapter.notifyDataSetChanged();
                 break;
 
             case R.id.drawer_menu_pinned:
@@ -368,8 +391,9 @@ public class DashboardActivity extends AppCompatActivity implements
                 closeFragmentIfShowing();
                 Toast.makeText(this, "Trashed drawer menu clicked!", Toast.LENGTH_SHORT).show();
 //                noteList = noteViewModel.getTrashedNotes();          // TODO: change
-                notesAdapter.setNoteModelArrayList(noteList);
-                notesAdapter.notifyDataSetChanged();
+                restApiNoteViewModel.getTrashNotesList();
+//                notesAdapter.setNoteModelArrayList(noteList);
+//                notesAdapter.notifyDataSetChanged();
                 break;
             case R.id.drawer_menu_signOut:
                 Toast.makeText(this, "Sign Out drawer menu clicked!", Toast.LENGTH_SHORT).show();
@@ -408,6 +432,7 @@ public class DashboardActivity extends AppCompatActivity implements
         super.onDestroy();
         LocalBroadcastManager.getInstance(this).unregisterReceiver(getNotesBroadcastReceiver);
         LocalBroadcastManager.getInstance(this).unregisterReceiver(getArchiveNotesListBroadcastReceiver);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(trashNotesBroadcastReceiver);
     }
 
 

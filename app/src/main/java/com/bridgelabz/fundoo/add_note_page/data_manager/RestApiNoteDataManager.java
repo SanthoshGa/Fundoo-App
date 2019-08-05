@@ -31,7 +31,8 @@ public class RestApiNoteDataManager {
         sharedPreferencesManager = new SharedPreferencesManager(context);
     }
 
-    public void addNote(AddNoteModel noteModel, final AddNoteCallback addNoteCallback) {
+    public void addNote(AddNoteModel noteModel, final ResponseCallback<ResponseData, ResponseError>
+            addNoteCallback) {
         Retrofit retrofit = RetrofitRestApiConnection.openRetrofitConnection();
         NoteRestApiService apiService = retrofit.create(NoteRestApiService.class);
         String authKey = sharedPreferencesManager.getAccessToken();
@@ -77,7 +78,8 @@ public class RestApiNoteDataManager {
 
     }
 
-    public void getNoteList(final GetNotesCallback getNotesCallback) {
+    public void getNoteList(final ResponseCallback<List<NoteResponseModel>, ResponseError>
+                                    getNotesCallback) {
         Retrofit retrofit = RetrofitRestApiConnection.openRetrofitConnection();
         NoteRestApiService apiService = retrofit.create(NoteRestApiService.class);
         String authKey = sharedPreferencesManager.getAccessToken();
@@ -116,7 +118,8 @@ public class RestApiNoteDataManager {
 
     }
 
-    public void getArchiveNotesList(final GetArchiveNotesCallback getArchiveNotesCallback){
+    public void getArchiveNotesList(final ResponseCallback<List<NoteResponseModel>, ResponseError>
+                                            getArchiveNotesCallback) {
         Retrofit retrofit = RetrofitRestApiConnection.openRetrofitConnection();
         NoteRestApiService apiService = retrofit.create(NoteRestApiService.class);
         String authKey = sharedPreferencesManager.getAccessToken();
@@ -125,18 +128,17 @@ public class RestApiNoteDataManager {
         responseDataCall.enqueue(new Callback<Map<String, ResponseData>>() {
             @Override
             public void onResponse(Call<Map<String, ResponseData>> call, Response<Map<String, ResponseData>> response) {
-                if(response.isSuccessful()){
+                if (response.isSuccessful()) {
                     Log.e(TAG, "onResponse: getArchiveNotesList" + response.body().toString());
                     ResponseData responseData = response.body().get("data");
                     Log.e(TAG, responseData.getNoteModelList() + "");
                     getArchiveNotesCallback.onResponse(responseData.getNoteModelList(), null);
-                }
-                else{
+                } else {
                     try {
-                        getArchiveNotesCallback.onResponse(null,  new ResponseError(
+                        getArchiveNotesCallback.onResponse(null, new ResponseError(
                                 response.code() + "", response.errorBody().string(),
                                 response.message(),
-                                null) );
+                                null));
                         Log.e(TAG, "onResponseError : getArchiveNotesList" + response.errorBody()
                                 .toString());
                     } catch (IOException e) {
@@ -155,7 +157,8 @@ public class RestApiNoteDataManager {
 
     }
 
-    public void setArchive(AddNoteModel noteModel, final SetArchiveCallback setArchiveCallback) {
+    public void setArchive(AddNoteModel noteModel, final ResponseCallback<ResponseData, ResponseError>
+            setArchiveCallback) {
         Retrofit retrofit = RetrofitRestApiConnection.openRetrofitConnection();
         NoteRestApiService apiService = retrofit.create(NoteRestApiService.class);
         String authKey = sharedPreferencesManager.getAccessToken();
@@ -198,7 +201,8 @@ public class RestApiNoteDataManager {
     }
 
 
-    public void updateNotes(AddNoteModel addNoteModel, final ResponseCallback responseCallback) {
+    public void updateNotes(AddNoteModel addNoteModel, final ResponseCallback<ResponseData,
+            ResponseError> responseCallback) {
         Retrofit retrofit = RetrofitRestApiConnection.openRetrofitConnection();
         NoteRestApiService apiService = retrofit.create(NoteRestApiService.class);
         String authKey = sharedPreferencesManager.getAccessToken();
@@ -243,7 +247,8 @@ public class RestApiNoteDataManager {
 
     }
 
-    public void changeColorToNotes(AddNoteModel addNoteModel, final ResponseCallback responseCallback) {
+    public void changeColorToNotes(AddNoteModel addNoteModel, final
+    ResponseCallback<ResponseData, ResponseError> colorResponseCallback) {
         Retrofit retrofit = RetrofitRestApiConnection.openRetrofitConnection();
         NoteRestApiService apiService = retrofit.create(NoteRestApiService.class);
         String authKey = sharedPreferencesManager.getAccessToken();
@@ -263,12 +268,12 @@ public class RestApiNoteDataManager {
                     Log.e(TAG, "Response is Successful");
                     Log.e(TAG, "onResponse: change color to note" + response.body().toString());
                     ResponseData responseData = response.body().get("data");
-                    responseCallback.onResponse(responseData, null);
+                    colorResponseCallback.onResponse(responseData, null);
 
                 } else {
                     try {
                         Log.e(TAG, "Error Response Model :" + response.errorBody().string());
-                        responseCallback.onResponse(null, new ResponseError(response.code() + "",
+                        colorResponseCallback.onResponse(null, new ResponseError(response.code() + "",
                                 response.errorBody().string(),
                                 response.message(), null));
                     } catch (IOException e) {
@@ -280,13 +285,14 @@ public class RestApiNoteDataManager {
             @Override
             public void onFailure(Call<Map<String, ResponseData>> call, Throwable throwable) {
                 Log.e(TAG, "onFailure: change color to note" + throwable.getLocalizedMessage());
-                responseCallback.onFailure(throwable);
+                colorResponseCallback.onFailure(throwable);
             }
         });
 
     }
 
-    public void pinUnpinToNote(AddNoteModel addNoteModel, final ResponseCallback responseCallback) {
+    public void pinUnpinToNote(AddNoteModel addNoteModel, final
+    ResponseCallback<ResponseData, ResponseError> responseCallback) {
         Retrofit retrofit = RetrofitRestApiConnection.openRetrofitConnection();
         NoteRestApiService apiService = retrofit.create(NoteRestApiService.class);
         String authKey = sharedPreferencesManager.getAccessToken();
@@ -327,27 +333,27 @@ public class RestApiNoteDataManager {
         });
     }
 
-    public void trashedNotes(AddNoteModel addNoteModel, final ResponseCallback responseCallback){
+    public void trashedNotes(NoteResponseModel responseModel, final
+    ResponseCallback<ResponseData, ResponseError> responseCallback) {
         Retrofit retrofit = RetrofitRestApiConnection.openRetrofitConnection();
         NoteRestApiService apiService = retrofit.create(NoteRestApiService.class);
         String authKey = sharedPreferencesManager.getAccessToken();
 
         List<String> noteIdList = new ArrayList<>();
-        noteIdList.add(addNoteModel.getId());
+        noteIdList.add(responseModel.getId());
         Map<String, Object> trashNoteMap = new HashMap<>();
-        trashNoteMap.put("isDeleted", addNoteModel.getIsDeleted());
+        trashNoteMap.put("isDeleted", responseModel.getIsDeleted());
         trashNoteMap.put("noteIdList", noteIdList);
         Call<Map<String, ResponseData>> responseDataCall = apiService.trashNotes(authKey, trashNoteMap);
         responseDataCall.enqueue(new Callback<Map<String, ResponseData>>() {
             @Override
             public void onResponse(Call<Map<String, ResponseData>> call, Response<Map<String, ResponseData>> response) {
-                if(response.isSuccessful()){
+                if (response.isSuccessful()) {
                     Log.e(TAG, "Response is Successful");
-                    Log.e(TAG, "onResponse: trashNote " + response.body().toString());
+                    Log.e(TAG, "onResponse: trashNotes " + response.body().toString());
                     ResponseData responseData = response.body().get("data");
                     responseCallback.onResponse(responseData, null);
-                }
-                else{
+                } else {
                     try {
                         Log.e(TAG, "Error Response Model : trashNotes " + response.errorBody().string());
                         responseCallback.onResponse(null, new ResponseError(response.code() + "",
@@ -362,19 +368,107 @@ public class RestApiNoteDataManager {
 
             @Override
             public void onFailure(Call<Map<String, ResponseData>> call, Throwable throwable) {
-                Log.e(TAG, "onFailure: trashNote " + throwable.getLocalizedMessage());
+                Log.e(TAG, "onFailure: trashNotes " + throwable.getLocalizedMessage());
                 responseCallback.onFailure(throwable);
 
             }
         });
     }
 
+    public void  getTrashNotesList(final  ResponseCallback<List<NoteResponseModel>, ResponseError>
+                                   getTrashNotesCallback){
+        Retrofit retrofit = RetrofitRestApiConnection.openRetrofitConnection();
+        NoteRestApiService apiService = retrofit.create(NoteRestApiService.class);
+        String authKey = sharedPreferencesManager.getAccessToken();
 
-    public interface AddNoteCallback {
-        void onResponse(ResponseData responseData, ResponseError responseError);
+        Call<Map<String, ResponseData>> responseDataCall = apiService.getTrashNotesList(authKey);
+        responseDataCall.enqueue(new Callback<Map<String, ResponseData>>() {
+            @Override
+            public void onResponse(Call<Map<String, ResponseData>> call, Response<Map<String,
+                    ResponseData>> response) {
+                if(response.isSuccessful()){
+                    Log.e(TAG, "onResponseSuccessful : getTrashNoteList " + response.body());
+                    ResponseData responseData = response.body().get("data");
+                    Log.e(TAG, responseData.getNoteModelList() + "");
+                    getTrashNotesCallback.onResponse(responseData.getNoteModelList(), null);
 
-        void onFailure(Throwable throwable);
+                }
+                else{
+                    try {
+                        getTrashNotesCallback.onResponse(null, new ResponseError(
+                                response.code() + "", response.errorBody().string(),
+                                response.message(),
+                                null));
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    Log.e(TAG, "onResponseError: getNotesList - " + response.errorBody().toString());
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<Map<String, ResponseData>> call, Throwable throwable) {
+                Log.e(TAG, "Throwable: getNotesList - " + throwable.getLocalizedMessage());
+                getTrashNotesCallback.onFailure(throwable);
+
+            }
+        });
     }
+
+    public void  addReminder(AddNoteModel addNoteModel, final ResponseCallback<ResponseData,
+            ResponseError> addReminderCallback){
+        Retrofit retrofit = RetrofitRestApiConnection.openRetrofitConnection();
+        NoteRestApiService apiService = retrofit.create(NoteRestApiService.class);
+        String authKey = sharedPreferencesManager.getAccessToken();
+
+        List<String> noteIdList = new ArrayList<>();
+        noteIdList.add(addNoteModel.getId());
+        Map<String, Object> reminderMap = new HashMap<>();
+        reminderMap.put("noteIdList", noteIdList);
+        reminderMap.put("reminder", addNoteModel.getReminder());
+
+        Call<Map<String, ResponseData>> responseDataCall = apiService.addReminder(authKey, reminderMap);
+        responseDataCall.enqueue(new Callback<Map<String, ResponseData>>() {
+            @Override
+            public void onResponse(Call<Map<String, ResponseData>> call, Response<Map<String, ResponseData>> response) {
+                if(response.isSuccessful()){
+                    Log.e(TAG, "Response is Successful");
+                    Log.e(TAG, "onResponse: addReminderToNotes" + response.body().toString());
+                    ResponseData responseData = response.body().get("data");
+                    addReminderCallback.onResponse(responseData, null);
+
+                }
+                else{
+                    try {
+                        Log.e(TAG, "Error Response Model : addReminderToNotes " + response.errorBody().string());
+                        addReminderCallback.onResponse(null, new ResponseError(response.code() + "",
+                                response.errorBody().string(),
+                                response.message(), null));
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Map<String, ResponseData>> call, Throwable throwable) {
+                Log.e(TAG, "onFailure: trashNotes " + throwable.getLocalizedMessage());
+                addReminderCallback.onFailure(throwable);
+
+            }
+        });
+
+
+    }
+
+
+//    public interface AddNoteCallback {
+//        void onResponse(ResponseData responseData, ResponseError responseError);
+//
+//        void onFailure(Throwable throwable);
+//    }
 
     public interface ResponseCallback<T, E> {
         void onResponse(T data, E error);
@@ -382,24 +476,24 @@ public class RestApiNoteDataManager {
         void onFailure(Throwable throwable);
     }
 
+//
+//    public interface GetNotesCallback {
+//        void onResponse(List<NoteResponseModel> noteModelList, ResponseError responseError);
+//
+//        void onFailure(Throwable throwable);
+//    }
 
-    public interface GetNotesCallback {
-        void onResponse(List<NoteResponseModel> noteModelList, ResponseError responseError);
-
-        void onFailure(Throwable throwable);
-    }
-
-    public interface  GetArchiveNotesCallback{
-        void onResponse(List<NoteResponseModel> noteModelList, ResponseError responseError);
-
-        void onFailure(Throwable throwable);
-    }
-
-    public interface SetArchiveCallback {
-        void onResponse(ResponseData responseData, ResponseError responseError);
-
-        void onFailure(Throwable throwable);
-    }
+//    public interface  GetArchiveNotesCallback{
+//        void onResponse(List<NoteResponseModel> noteModelList, ResponseError responseError);
+//
+//        void onFailure(Throwable throwable);
+//    }
+//
+//    public interface SetArchiveCallback {
+//        void onResponse(ResponseData responseData, ResponseError responseError);
+//
+//        void onFailure(Throwable throwable);
+//    }
 
 //    public interface UpdateNoteCallback{
 //        void  onResponse(ResponseData responseData, ResponseError responseError);

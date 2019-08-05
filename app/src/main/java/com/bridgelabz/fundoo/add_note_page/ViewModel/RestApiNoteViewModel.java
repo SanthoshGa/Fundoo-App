@@ -16,9 +16,11 @@ import java.io.Serializable;
 import java.util.List;
 
 import static com.bridgelabz.fundoo.Utility.AppConstants.ADD_NOTE_ACTION;
+import static com.bridgelabz.fundoo.Utility.AppConstants.ADD_REMINDER_TO_NOTES_ACTION;
 import static com.bridgelabz.fundoo.Utility.AppConstants.CHANGE_COLOR_TO_NOTE_ACTION;
 import static com.bridgelabz.fundoo.Utility.AppConstants.FETCH_NOTE_ACTION;
 import static com.bridgelabz.fundoo.Utility.AppConstants.GET_ARCHIVE_NOTES_ACTION;
+import static com.bridgelabz.fundoo.Utility.AppConstants.GET_TRASH_NOTES_LIST_ACTION;
 import static com.bridgelabz.fundoo.Utility.AppConstants.PIN_UNPIN_TO_NOTE_ACTION;
 import static com.bridgelabz.fundoo.Utility.AppConstants.SET_ARCHIVE_ACTION;
 import static com.bridgelabz.fundoo.Utility.AppConstants.TRASH_NOTE_ACTION;
@@ -37,7 +39,8 @@ public class RestApiNoteViewModel {
 
 
     public void addNotes(AddNoteModel noteModel) {
-        restApiNoteDataManager.addNote(noteModel, new RestApiNoteDataManager.AddNoteCallback() {
+        restApiNoteDataManager.addNote(noteModel, new RestApiNoteDataManager.
+                ResponseCallback<ResponseData, ResponseError>() {
             Intent localIntent = new Intent(ADD_NOTE_ACTION);
 
             @Override
@@ -63,7 +66,8 @@ public class RestApiNoteViewModel {
     }
 
     public void fetchNoteList() {
-        restApiNoteDataManager.getNoteList(new RestApiNoteDataManager.GetNotesCallback() {
+        restApiNoteDataManager.getNoteList(new RestApiNoteDataManager.
+                ResponseCallback<List<NoteResponseModel>, ResponseError>() {
             Intent localIntent = new Intent(FETCH_NOTE_ACTION);
 
             @Override
@@ -87,18 +91,20 @@ public class RestApiNoteViewModel {
         });
 
     }
-    public void  getArchiveNotesList(){
-        restApiNoteDataManager.getArchiveNotesList(new RestApiNoteDataManager.GetArchiveNotesCallback() {
+
+    public void getArchiveNotesList() {
+        restApiNoteDataManager.getArchiveNotesList(new RestApiNoteDataManager.
+                ResponseCallback<List<NoteResponseModel>, ResponseError>() {
             Intent localIntent = new Intent(GET_ARCHIVE_NOTES_ACTION);
+
             @Override
             public void onResponse(List<NoteResponseModel> noteModelList, ResponseError responseError) {
-                if(noteModelList != null){
+                if (noteModelList != null) {
                     Log.e(TAG, "onResponse : archiveList Successful");
 
-                    localIntent.putExtra("archiveNoteList ", (Serializable) noteModelList);
+                    localIntent.putExtra("archiveNoteList", (Serializable) noteModelList);
                     localBroadcastManager.sendBroadcast(localIntent);
-                }
-                else {
+                } else {
                     Log.e(TAG, "onResponse: archiveList Unsuccessful");
                     Log.e(TAG, "onResponse: archive " + responseError.getStatusCode());
                 }
@@ -114,7 +120,8 @@ public class RestApiNoteViewModel {
 
 
     public void setArchiveToNote(AddNoteModel addNoteModel) {
-        restApiNoteDataManager.setArchive(addNoteModel, new RestApiNoteDataManager.SetArchiveCallback() {
+        restApiNoteDataManager.setArchive(addNoteModel, new RestApiNoteDataManager.
+                ResponseCallback<ResponseData, ResponseError>() {
             Intent localIntent = new Intent(SET_ARCHIVE_ACTION);
 
             @Override
@@ -137,11 +144,12 @@ public class RestApiNoteViewModel {
         });
     }
 
-    public void updateNotes(AddNoteModel addNoteModel){
+    public void updateNotes(AddNoteModel addNoteModel) {
         restApiNoteDataManager.updateNotes(addNoteModel, new RestApiNoteDataManager.ResponseCallback
                 <ResponseData, ResponseError>() {
 
             Intent localIntent = new Intent(UPDATE_NOTE_ACTION);
+
             @Override
             public void onResponse(ResponseData data, ResponseError error) {
                 boolean isNoteEdit;
@@ -154,17 +162,18 @@ public class RestApiNoteViewModel {
 
             @Override
             public void onFailure(Throwable throwable) {
-                localIntent.putExtra("throwable", throwable);
+                localIntent.putExtra("error", throwable.getLocalizedMessage());
                 localBroadcastManager.sendBroadcast(localIntent);
 
             }
         });
     }
 
-    public void changeColorToNote(AddNoteModel addNoteModel){
+    public void changeColorToNote(AddNoteModel addNoteModel) {
         restApiNoteDataManager.changeColorToNotes(addNoteModel, new RestApiNoteDataManager.ResponseCallback
                 <ResponseData, ResponseError>() {
             Intent localIntent = new Intent(CHANGE_COLOR_TO_NOTE_ACTION);
+
             @Override
             public void onResponse(ResponseData data, ResponseError error) {
                 boolean isColorEdit;
@@ -184,10 +193,11 @@ public class RestApiNoteViewModel {
         });
     }
 
-    public void  pinUnpinToNote(AddNoteModel addNoteModel){
+    public void pinUnpinToNote(AddNoteModel addNoteModel) {
         restApiNoteDataManager.pinUnpinToNote(addNoteModel, new RestApiNoteDataManager.ResponseCallback
                 <ResponseData, ResponseError>() {
             Intent localIntent = new Intent(PIN_UNPIN_TO_NOTE_ACTION);
+
             @Override
             public void onResponse(ResponseData data, ResponseError error) {
                 boolean isPinned;
@@ -205,10 +215,11 @@ public class RestApiNoteViewModel {
         });
     }
 
-    public void trashNotes(AddNoteModel addNoteModel){
-        restApiNoteDataManager.trashedNotes(addNoteModel, new RestApiNoteDataManager.ResponseCallback
+    public void trashNotes(NoteResponseModel noteResponseModel) {
+        restApiNoteDataManager.trashedNotes(noteResponseModel, new RestApiNoteDataManager.ResponseCallback
                 <ResponseData, ResponseError>() {
             Intent localIntent = new Intent(TRASH_NOTE_ACTION);
+
             @Override
             public void onResponse(ResponseData data, ResponseError error) {
                 boolean isTrashed;
@@ -216,6 +227,54 @@ public class RestApiNoteViewModel {
                 Log.e(TAG, "onResponse: isTrashed" + isTrashed);
                 localIntent.putExtra("isTrashed", isTrashed);
                 localBroadcastManager.sendBroadcast(localIntent);
+            }
+
+            @Override
+            public void onFailure(Throwable throwable) {
+                localIntent.putExtra("throwable", throwable);
+                localBroadcastManager.sendBroadcast(localIntent);
+            }
+        });
+    }
+
+    public void getTrashNotesList(){
+        restApiNoteDataManager.getTrashNotesList(new RestApiNoteDataManager.
+                ResponseCallback<List<NoteResponseModel>, ResponseError>() {
+            Intent localIntent = new Intent(GET_TRASH_NOTES_LIST_ACTION);
+            @Override
+            public void onResponse(List<NoteResponseModel> noteModelList, ResponseError responseError) {
+                if (noteModelList != null) {
+                    Log.e(TAG, "onResponseTrashNotesList: successful");
+                    localIntent.putExtra("trashNotesList", (Serializable) noteModelList);
+                    localBroadcastManager.sendBroadcast(localIntent);
+                } else {
+                    Log.e(TAG, "onResponseTrashNotesList: unsuccessful");
+                    Log.e(TAG, "onResponse: " + responseError.getStatusCode());
+                }
+
+            }
+
+            @Override
+            public void onFailure(Throwable throwable) {
+                localIntent.putExtra("throwable", throwable);
+                localBroadcastManager.sendBroadcast(localIntent);
+
+            }
+        });
+    }
+
+    public void addReminderToNotes(AddNoteModel addNoteModel){
+        restApiNoteDataManager.addReminder(addNoteModel, new RestApiNoteDataManager.
+                ResponseCallback<ResponseData, ResponseError>() {
+            Intent localIntent = new Intent(ADD_REMINDER_TO_NOTES_ACTION);
+            @Override
+            public void onResponse(ResponseData data, ResponseError error) {
+                boolean addReminder;
+                addReminder = (data != null);
+                Log.e(TAG, "onResponse: addReminder" + addReminder);
+                localIntent.putExtra("addReminder", addReminder);
+                localBroadcastManager.sendBroadcast(localIntent);
+
             }
 
             @Override

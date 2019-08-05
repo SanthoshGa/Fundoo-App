@@ -67,6 +67,10 @@
     <string name="lastName">lastName</string>
     <string name="firstName">firstName</string>
     <string name="pinned1">Pinned</string>
+    <string name="time">Time</string>
+    <string name="date">Date</string>
+    <string name="save1">SAVE</string>
+    <string name="cancel">CANCEL</string>
 
 
 </resources>

@@ -10,4 +10,6 @@ public class AppConstants {
     public static final String PIN_UNPIN_TO_NOTE_ACTION = "com.bridgelabz.fundoo.pin_unpin_to_note_action";
     public static final String GET_ARCHIVE_NOTES_ACTION = "com.bridgelabz.fundoo.get_archive_notes_action";
     public static final String TRASH_NOTE_ACTION = "com.bridgelabz.fundoo.trash_note_action";
+    public static final String GET_TRASH_NOTES_LIST_ACTION = "com.bridgelabz.fundoo.get.trash_notes_list_action";
+    public static final String ADD_REMINDER_TO_NOTES_ACTION = "com.bridgelabz.fundoo.add_reminder_to_notes_action";
 }
