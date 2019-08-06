@@ -274,7 +274,6 @@ public class RestApiNoteViewModel {
                 Log.e(TAG, "onResponse: addReminder" + addReminder);
                 localIntent.putExtra("addReminder", addReminder);
                 localBroadcastManager.sendBroadcast(localIntent);
-
             }
 
             @Override

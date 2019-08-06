@@ -15,6 +15,7 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -48,13 +49,13 @@ import java.util.Date;
 import java.util.Locale;
 
 import static com.bridgelabz.fundoo.Utility.AppConstants.ADD_NOTE_ACTION;
+import static com.bridgelabz.fundoo.Utility.AppConstants.ADD_REMINDER_TO_NOTES_ACTION;
 import static com.bridgelabz.fundoo.Utility.AppConstants.CHANGE_COLOR_TO_NOTE_ACTION;
 import static com.bridgelabz.fundoo.Utility.AppConstants.PIN_UNPIN_TO_NOTE_ACTION;
 import static com.bridgelabz.fundoo.Utility.AppConstants.SET_ARCHIVE_ACTION;
 import static com.bridgelabz.fundoo.Utility.AppConstants.UPDATE_NOTE_ACTION;
 
 public class AddNoteActivity extends AppCompatActivity {
-
 
     private static final String TAG = "AddNoteActivity";
     private EditText mTextTitle;
@@ -65,13 +66,8 @@ public class AddNoteActivity extends AppCompatActivity {
     private CheckBox cbPinned;
     private EditText mTextDate;
     private EditText mTextTime;
-    private TextView tvReminder;
+    private TextView mReminder;
     private Calendar calendar = Calendar.getInstance();
-//    private Button mButtonDate;
-//    private Button mButtonTime;
-//    MenuItem mArchive;
-//    MenuItem mReminder;
-//    MenuItem mPinned;
     NoteViewModel noteViewModel;
     ConstraintLayout rootViewGroup;
     private String noteColor = "#ffffff";
@@ -86,8 +82,6 @@ public class AddNoteActivity extends AppCompatActivity {
     private NotificationManagerCompat notificationManagerCompat;
     RestApiNoteViewModel apiNoteViewModel;
     private boolean isColourChanged = false;
-//    private DatePickerDialog.OnDateSetListener mDateSetListener;
-//    private TimePickerDialog.OnTimeSetListener mTimeSetListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,8 +91,6 @@ public class AddNoteActivity extends AppCompatActivity {
         findViews();
         setOnClickSave();
         checkEditMode();
-//        mButtonDate.setOnClickListener(this);
-//        mButtonTime.setOnClickListener(this);
         notificationManagerCompat = NotificationManagerCompat.from(this);
         apiNoteViewModel = new RestApiNoteViewModel(this);
         setClickToPinnedBtn();
@@ -107,21 +99,84 @@ public class AddNoteActivity extends AppCompatActivity {
         setButtonListeners();
     }
 
+    private void findViews() {
+        mTextTitle = findViewById(R.id.et_title);
+        mTextDescription = findViewById(R.id.et_description);
+        mButtonSave = findViewById(R.id.btn_save);
+        rootViewGroup = findViewById(R.id.root_add_note_activity);
+        radioGroup = findViewById(R.id.radio_group);
+        imgBtnArchive = findViewById(R.id.img_btn_archive);
+        imgBtnReminder = findViewById(R.id.img_btn_reminder);
+        cbPinned = findViewById(R.id.cb_pin);
+        mTextDate = findViewById(R.id.et_date);
+        mTextTime = findViewById(R.id.et_time);
+        mReminder = findViewById(R.id.tv_reminder);
+    }
+
+    private boolean checkEditMode() {
+        Intent intent = getIntent();
+        if (intent.hasExtra("noteToEdit")) {
+            NoteResponseModel noteResponseModel = (NoteResponseModel) intent.
+                    getSerializableExtra("noteToEdit");
+            if (noteResponseModel.getReminder().isEmpty())
+                noteToEdit = AddNoteModel.getNoteFromResponse(noteResponseModel);
+            Log.e(TAG, "note is available");
+            System.out.println(noteToEdit.toString());
+            isEditMode = true;
+            setUpEditFields();
+        } else {
+            isEditMode = false;
+        }
+        return true;
+    }
+
     private void setButtonListeners() {
         setPinnedButtonClickListener();
         setReminderButtonClickListener();
         setArchiveButtonClickListener();
     }
 
-    private void setPinnedButtonClickListener() {
+    private void setArchiveButtonClickListener() {
+        imgBtnArchive.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(AddNoteActivity.this, "Archive Button", Toast.LENGTH_SHORT).show();
+                if (isEditMode) {
+                    AddNoteModel addNoteModel = new AddNoteModel(noteToEdit.getTitle(), noteToEdit.getDescription(),
+                            noteToEdit.getIsPinned(), noteToEdit.getIsArchived(), noteToEdit.getIsDeleted(),
+                            noteToEdit.getCreatedDate(), noteToEdit.getModifiedDate(), noteToEdit.getColor(),
+                            noteToEdit.getId(), noteToEdit.getUserId(), noteToEdit.getReminder());
+                    apiNoteViewModel.setArchiveToNote(addNoteModel);
+                    updateNoteToDB(addNoteModel);
+                }
+            }
+        });
 
     }
-    private void setReminderButtonClickListener(){
+
+    private void setPinnedButtonClickListener() {
+        cbPinned.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+                Toast.makeText(AddNoteActivity.this, "Pinned Button clicked :" + isChecked,
+                        Toast.LENGTH_SHORT).show();
+                if (isEditMode) {
+                    noteToEdit.setIsPinned(isChecked);
+                    apiNoteViewModel.pinUnpinToNote(noteToEdit);
+                }
+            }
+        });
+
+    }
+
+    private void setReminderButtonClickListener() {
         imgBtnReminder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Toast.makeText(AddNoteActivity.this, "Reminder button clicked",
                         Toast.LENGTH_SHORT).show();
+
+//                apiNoteViewModel.addReminderToNotes(addNoteModel);
                 showReminderDialogBox();
             }
         });
@@ -156,7 +211,8 @@ public class AddNoteActivity extends AppCompatActivity {
             }
         });
     }
-    private void setSaveReminderButtonClickedListener(final Dialog dialog){
+
+    private void setSaveReminderButtonClickedListener(final Dialog dialog) {
         Button btn_save = dialog.findViewById(R.id.btn_save);
         btn_save.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -164,13 +220,14 @@ public class AddNoteActivity extends AppCompatActivity {
                 String reminderDate = mTextDate.getText().toString();
                 String reminderTime = mTextTime.getText().toString();
                 String reminder = reminderDate + " " + reminderTime;
-                tvReminder.setText(reminder);
-
+                mReminder.setText(reminder);
+                apiNoteViewModel.addReminderToNotes(noteToEdit);
                 Toast.makeText(AddNoteActivity.this, "Save Button Clicked", Toast.LENGTH_SHORT).show();
                 dialog.dismiss();
             }
         });
     }
+
     private void setDateTextViewClickListener(View dialogView) {
         mTextDate = dialogView.findViewById(R.id.et_date);
         mTextDate.setOnClickListener(new View.OnClickListener() {
@@ -184,7 +241,6 @@ public class AddNoteActivity extends AppCompatActivity {
                                                   int day) {
                                 String reminderDate = day + "/" + (month + 1) + "/" + year;
                                 mTextDate.setText(reminderDate);
-
                                 calendar.set(Calendar.DAY_OF_MONTH, day);
                                 calendar.set(Calendar.MONTH, month);
                                 calendar.set(Calendar.YEAR, year);
@@ -194,7 +250,8 @@ public class AddNoteActivity extends AppCompatActivity {
             }
         });
     }
-    private void setTimeTextViewClickListener(View dialogView){
+
+    private void setTimeTextViewClickListener(View dialogView) {
         mTextTime = dialogView.findViewById(R.id.et_time);
         mTextTime.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -204,7 +261,7 @@ public class AddNoteActivity extends AppCompatActivity {
 
                             @Override
                             public void onTimeSet(TimePicker timePicker, int hour, int min) {
-                                String time = hour + " : " + min ;
+                                String time = hour + " : " + min;
                                 mTextTime.setText(time);
 //                              to notify alarm
                                 calendar.set(Calendar.HOUR_OF_DAY, hour);
@@ -216,11 +273,6 @@ public class AddNoteActivity extends AppCompatActivity {
                 timePickerFragment.show(getSupportFragmentManager(), "time picker");
             }
         });
-    }
-
-
-    private void setArchiveButtonClickListener(){
-
     }
 
     private void setClickToPinnedBtn() {
@@ -252,7 +304,22 @@ public class AddNoteActivity extends AppCompatActivity {
 
         LocalBroadcastManager.getInstance(this).registerReceiver(pinUnpinToNoteBroadcastReceiver,
                 new IntentFilter(PIN_UNPIN_TO_NOTE_ACTION));
+        LocalBroadcastManager.getInstance(this).registerReceiver(addReminderToNotesBroadcastReceiver,
+                new IntentFilter(ADD_REMINDER_TO_NOTES_ACTION));
     }
+
+    public BroadcastReceiver addReminderToNotesBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.hasExtra("addReminder")) {
+                boolean addReminder = intent.getBooleanExtra("addReminder", false);
+                Log.e(TAG, "onReceive: we got the data of Reminder " + addReminder);
+                if (addReminder) {
+                }
+            }
+
+        }
+    };
 
     public static BroadcastReceiver setArchiveNoteBroadcastReceiver = new BroadcastReceiver() {
         @Override
@@ -297,27 +364,10 @@ public class AddNoteActivity extends AppCompatActivity {
         }
     };
 
-    private boolean checkEditMode() {
-        Intent intent = getIntent();
-        if (intent.hasExtra("noteToEdit")) {
-            NoteResponseModel noteResponseModel = (NoteResponseModel) intent.
-                    getSerializableExtra("noteToEdit");
-            if (noteResponseModel.getReminder().isEmpty())
-                noteToEdit = AddNoteModel.getNoteFromResponse(noteResponseModel);
-            Log.e(TAG, "note is available");
-            System.out.println(noteToEdit.toString());
-            isEditMode = true;
-            setUpEditFields();
-        } else {
-            isEditMode = false;
-        }
-        return true;
-    }
 
     private void setUpEditFields() {
         mTextTitle.setText(noteToEdit.getTitle());
         mTextDescription.setText(noteToEdit.getDescription());
-        tvReminder.setText(noteToEdit.getReminder());
         setColorRdButton(noteToEdit);
     }
 
@@ -354,20 +404,6 @@ public class AddNoteActivity extends AppCompatActivity {
         }
     }
 
-    private void findViews() {
-        mTextTitle = findViewById(R.id.et_title);
-        mTextDescription = findViewById(R.id.et_description);
-        mButtonSave = findViewById(R.id.btn_save);
-        rootViewGroup = findViewById(R.id.root_add_note_activity);
-        radioGroup = findViewById(R.id.radio_group);
-        imgBtnArchive = findViewById(R.id.img_btn_archive);
-        imgBtnReminder = findViewById(R.id.img_btn_reminder);
-        cbPinned = findViewById(R.id.cb_pin);
-        mTextDate = findViewById(R.id.et_date);
-        mTextTime = findViewById(R.id.et_time);
-//        mButtonDate = findViewById(R.id.btn_date);
-//        mButtonTime = findViewById(R.id.btn_time);
-    }
 
     private void setOnClickSave() {
         mButtonSave.setOnClickListener(new View.OnClickListener() {

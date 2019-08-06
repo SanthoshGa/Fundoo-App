@@ -15,10 +15,10 @@
         <!--<activity android:name=".Dashboard.View.TestActivity">-->
         <!--</activity>-->
         <activity android:name=".add_note_page.View.AddNoteActivity">
-
-            android:theme = "NoTitleBar"
         </activity>
-        <activity android:name=".Dashboard.DashboardActivity"></activity>
+        <activity android:name=".Dashboard.DashboardActivity">
+
+        </activity>
         <activity android:name=".LoginSignup.View.RegisterActivity">
 
         </activity>

@@ -47,6 +47,10 @@ public interface NoteRestApiService {
     @GET("notes/getTrashNotesList")
     Call<Map<String, ResponseData>> getTrashNotesList(@Header("Authorization") String authKey);
 
+    @POST("notes/deleteForeverNotes")
+        Call<Map<String, ResponseData>> deleteForeverNOtes(@Header("Authorization") String authKey,
+                                                           @Body Map<String, Object> model);
+
     @POST("notes/addUpdateReminderNotes")
     Call<Map<String, ResponseData>> addReminder(@Header("Authorization") String authKey,
                                                 @Body Map<String, Object> model);

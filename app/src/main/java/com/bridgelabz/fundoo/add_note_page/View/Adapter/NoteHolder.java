@@ -45,21 +45,32 @@ public class NoteHolder extends RecyclerView.ViewHolder {
     public void bindNoteToCard(NoteResponseModel note) {
         mTitle.setText(note.getTitle());
         mDescription.setText(note.getDescription());
-//        if (!note.getReminder().equals("")) {
-//            // show the card
-//            reminderCard.setCardBackgroundColor(Color.LTGRAY);
-//            // set the reminder date to reminder text view
-//            mReminder.setText((CharSequence) note.getReminder());
-//            reminderCard.setVisibility(View.VISIBLE);
-//        } else {
-//             // hide the card
-//            reminderCard.setVisibility(View.GONE);
-//        }
-
+//        setReminderView(note);
+        if (!note.getReminder().isEmpty()) {
+            // show the card
+            reminderCard.setCardBackgroundColor(Color.LTGRAY);
+            // set the reminder date to reminder text view
+            mReminder.setText(note.getReminder().get(0));
+            reminderCard.setVisibility(View.VISIBLE);
+        } else {
+             // hide the card
+            reminderCard.setVisibility(View.GONE);
+        }
+//
         if (note.getColor() != null && !note.getColor().isEmpty()) {
             noteCard.setCardBackgroundColor(Color.parseColor(note.getColor()));
         } else {
             noteCard.setCardBackgroundColor(Color.WHITE);
         }
     }
-}
+
+//    private void setReminderView(NoteResponseModel note) {
+//        if(note.getReminder() == null){
+//            mReminder.setVisibility(View.GONE);
+//        }
+//        else{
+//            mReminder.setText(note.getReminder());
+//            mReminder.setBackgroundColor(Color.parseColor(note.getColor()));
+//        }
+    }
+//}
