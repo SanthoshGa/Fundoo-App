@@ -221,8 +221,10 @@ public class AddNoteActivity extends AppCompatActivity {
                 String reminderTime = mTextTime.getText().toString();
                 String reminder = reminderDate + " " + reminderTime;
                 mReminder.setText(reminder);
-                apiNoteViewModel.addReminderToNotes(noteToEdit);
-                Toast.makeText(AddNoteActivity.this, "Save Button Clicked", Toast.LENGTH_SHORT).show();
+                if(isEditMode) {
+                    apiNoteViewModel.addReminderToNotes(noteToEdit);
+                    Toast.makeText(AddNoteActivity.this, "Save Button Clicked", Toast.LENGTH_SHORT).show();
+                }
                 dialog.dismiss();
             }
         });

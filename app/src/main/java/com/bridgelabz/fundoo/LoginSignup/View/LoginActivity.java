@@ -65,7 +65,10 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         sharedPreferencesManager = new SharedPreferencesManager(this);
-
+        if( sharedPreferencesManager.isLoggedIn()){
+            Intent intent = new Intent(this, DashboardActivity.class);
+            startActivity(intent);
+        }
 
         findViews();
         onClickRegister();
@@ -143,6 +146,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
             public void onClick(View v) {
                 final String email = mTextEmail.getText().toString().trim();
                 String password = mTextPassword.getText().toString().trim();
+                sharedPreferencesManager.saveLoginDetails(email, password);
 //                boolean res = userViewModel.checkUser(email, password);
                 Log.e(TAG, "onClick: login button click");
 

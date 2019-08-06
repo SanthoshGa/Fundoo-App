@@ -12,23 +12,17 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <!--<activity android:name=".Dashboard.View.TestActivity">-->
-        <!--</activity>-->
-        <activity android:name=".add_note_page.View.AddNoteActivity">
-        </activity>
-        <activity android:name=".Dashboard.DashboardActivity">
-
-        </activity>
-        <activity android:name=".LoginSignup.View.RegisterActivity">
-
-        </activity>
-        <activity android:name=".LoginSignup.View.LoginActivity">
+        <activity android:name=".SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".add_note_page.View.AddNoteActivity"></activity>
+        <activity android:name=".Dashboard.DashboardActivity"></activity>
+        <activity android:name=".LoginSignup.View.RegisterActivity"></activity>
+        <activity android:name=".LoginSignup.View.LoginActivity"></activity>
 
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
@@ -53,7 +47,7 @@
 
         <receiver
             android:name=".BroadcastReceivers.ReminderReceiver"
-            android:exported="true"></receiver>
+            android:exported="true" />
     </application>
 
 </manifest>

@@ -51,6 +51,7 @@ public class NoteHolder extends RecyclerView.ViewHolder {
             reminderCard.setCardBackgroundColor(Color.LTGRAY);
             // set the reminder date to reminder text view
             mReminder.setText(note.getReminder().get(0));
+            Log.e(TAG, "bindNoteToCard: reminder");
             reminderCard.setVisibility(View.VISIBLE);
         } else {
              // hide the card
