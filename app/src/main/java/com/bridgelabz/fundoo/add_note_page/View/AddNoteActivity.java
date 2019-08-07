@@ -1,12 +1,15 @@
 package com.bridgelabz.fundoo.add_note_page.View;
 
+import android.app.AlarmManager;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
+import android.app.PendingIntent;
 import android.app.TimePickerDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -31,6 +34,7 @@ import androidx.core.app.NotificationManagerCompat;
 import androidx.fragment.app.DialogFragment;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
+import com.bridgelabz.fundoo.BroadcastReceivers.ReminderReceiver;
 import com.bridgelabz.fundoo.Dashboard.DashboardActivity;
 import com.bridgelabz.fundoo.R;
 import com.bridgelabz.fundoo.Utility.DatePickerFragment;
@@ -44,6 +48,7 @@ import com.bridgelabz.fundoo.add_note_page.ViewModel.NoteViewModel;
 import com.bridgelabz.fundoo.add_note_page.ViewModel.RestApiNoteViewModel;
 
 import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
@@ -222,6 +227,7 @@ public class AddNoteActivity extends AppCompatActivity {
                 String reminder = reminderDate + " " + reminderTime;
                 mReminder.setText(reminder);
                 if(isEditMode) {
+                    noteToEdit.setReminder(reminderStringBuilder.toString());
                     apiNoteViewModel.addReminderToNotes(noteToEdit);
                     Toast.makeText(AddNoteActivity.this, "Save Button Clicked", Toast.LENGTH_SHORT).show();
                 }
@@ -241,11 +247,12 @@ public class AddNoteActivity extends AppCompatActivity {
                             @Override
                             public void onDateSet(DatePicker datePicker, int year, int month,
                                                   int day) {
-                                String reminderDate = day + "/" + (month + 1) + "/" + year;
+                                String reminderDate =  day + "/" + (month + 1) + "/" + year;
                                 mTextDate.setText(reminderDate);
                                 calendar.set(Calendar.DAY_OF_MONTH, day);
                                 calendar.set(Calendar.MONTH, month);
                                 calendar.set(Calendar.YEAR, year);
+                                setDateTimeString( "yyyy-MM-dd", calendar.getTime());
                             }
                         });
                 datePickerFragment.show(getSupportFragmentManager(), "date picker");
@@ -269,6 +276,7 @@ public class AddNoteActivity extends AppCompatActivity {
                                 calendar.set(Calendar.HOUR_OF_DAY, hour);
                                 calendar.set(Calendar.MINUTE, min);
                                 calendar.set(Calendar.SECOND, 0);
+                                setDateTimeString( "'T'HH:mm:ss.SSS'Z'", calendar.getTime());
 
                             }
                         });
@@ -310,61 +318,7 @@ public class AddNoteActivity extends AppCompatActivity {
                 new IntentFilter(ADD_REMINDER_TO_NOTES_ACTION));
     }
 
-    public BroadcastReceiver addReminderToNotesBroadcastReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if (intent.hasExtra("addReminder")) {
-                boolean addReminder = intent.getBooleanExtra("addReminder", false);
-                Log.e(TAG, "onReceive: we got the data of Reminder " + addReminder);
-                if (addReminder) {
-                }
-            }
 
-        }
-    };
-
-    public static BroadcastReceiver setArchiveNoteBroadcastReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if (intent.hasExtra("isNoteArchived")) {
-                boolean isNoteArchived = intent.getBooleanExtra("isNoteArchived", false);
-                Log.e(TAG, "onReceive:  we got the data of Archive " + isNoteArchived);
-                if (isNoteArchived) {
-
-
-                }
-            }
-
-        }
-    };
-
-    public BroadcastReceiver pinUnpinToNoteBroadcastReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if (intent.hasExtra("isPinned")) {
-                boolean isPinned = intent.getBooleanExtra("isPinned", false);
-                Log.e(TAG, "onReceive: Yes we got the data!!!!!!!!!!! " + isPinned);
-                if (isPinned) {
-
-                }
-            }
-        }
-    };
-
-    public BroadcastReceiver changeColorToNoteBroadcastReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if (intent.hasExtra("isColorEdit")) {
-                boolean isColorEdit = intent.getBooleanExtra("isColorEdit", false);
-                Log.e(TAG, "onReceive: Yes we got the data!!!! " + isColorEdit);
-                if (isColorEdit) {
-
-                }
-
-            }
-
-        }
-    };
 
 
     private void setUpEditFields() {
@@ -454,7 +408,15 @@ public class AddNoteActivity extends AppCompatActivity {
                 if (isNoteEdit) {
                     Toast.makeText(AddNoteActivity.this, "Note updated", Toast.LENGTH_SHORT).show();
 
-                    Intent editNoteIntent = new Intent(AddNoteActivity.this, DashboardActivity.class);
+                    if(reminderStringBuilder.toString().isEmpty()){
+                        Toast.makeText(AddNoteActivity.this, "not added the reminder", Toast.LENGTH_SHORT).show();
+                      }
+                      else{
+                        addReminder();
+                       }
+
+
+                        Intent editNoteIntent = new Intent(AddNoteActivity.this, DashboardActivity.class);
                     startActivity(editNoteIntent);
                 } else {
                     Toast.makeText(AddNoteActivity.this, "Something went wrong",
@@ -509,7 +471,12 @@ public class AddNoteActivity extends AppCompatActivity {
 //                      else{
 //                        addReminder(new Date());
 //                       }
-
+                    if(reminderStringBuilder.toString().isEmpty()){
+                        Toast.makeText(AddNoteActivity.this, "not added the reminder", Toast.LENGTH_SHORT).show();
+                    }
+                    else {
+                        addReminder();
+                    }
                     Intent data = new Intent(AddNoteActivity.this, DashboardActivity.class);
                     startActivity(data);
                     finish();
@@ -751,19 +718,21 @@ public class AddNoteActivity extends AppCompatActivity {
 //
 //    }
 //
-//    private void addReminder(Date date) {
-//        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-//
-//
-//        Intent notificationIntent = new Intent(this, ReminderReceiver.class);
-//        notificationIntent.addCategory("android.intent.category.DEFAULT");
-//
-//        int requestCode = 100;
-//        PendingIntent broadcast = PendingIntent.getBroadcast(this, requestCode,
-//                notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-//
-//        alarmManager.set(AlarmManager.RTC_WAKEUP, date.getTime(), broadcast);
-//    }
+    private void addReminder() {
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+
+
+        Intent notificationIntent = new Intent(this, ReminderReceiver.class);
+        notificationIntent.addCategory("android.intent.category.DEFAULT");
+
+        int requestCode = 100;
+        PendingIntent broadcast = PendingIntent.getBroadcast(this, requestCode,
+                notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), broadcast);
+        }
+    }
 
     //
 //    @Override
@@ -789,8 +758,11 @@ public class AddNoteActivity extends AppCompatActivity {
 //    }
 //
     private void setDateTimeString(String pattern, Date date) {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern, Locale.getDefault());
-        reminderStringBuilder.append(simpleDateFormat.format(date)).append(" ");
+
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern, Locale.ENGLISH);
+        reminderStringBuilder.append(simpleDateFormat.format(date));
+
+        Log.e(TAG, "setDateTimeString: " + reminderStringBuilder.toString() );
     }
 
     @Override
@@ -806,4 +778,62 @@ public class AddNoteActivity extends AppCompatActivity {
         LocalBroadcastManager.getInstance(this).unregisterReceiver(pinUnpinToNoteBroadcastReceiver);
         LocalBroadcastManager.getInstance(this).unregisterReceiver(updateNotesBroadcastReceiver);
     }
+
+    //BroadcastReceivers
+
+    public BroadcastReceiver addReminderToNotesBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.hasExtra("addReminder")) {
+                boolean addReminder = intent.getBooleanExtra("addReminder", false);
+                Log.e(TAG, "onReceive: we got the data of Reminder " + addReminder);
+                if (addReminder) {
+                }
+            }
+
+        }
+    };
+
+    public static BroadcastReceiver setArchiveNoteBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.hasExtra("isNoteArchived")) {
+                boolean isNoteArchived = intent.getBooleanExtra("isNoteArchived", false);
+                Log.e(TAG, "onReceive:  we got the data of Archive " + isNoteArchived);
+                if (isNoteArchived) {
+
+
+                }
+            }
+
+        }
+    };
+
+    public BroadcastReceiver pinUnpinToNoteBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.hasExtra("isPinned")) {
+                boolean isPinned = intent.getBooleanExtra("isPinned", false);
+                Log.e(TAG, "onReceive: Yes we got the data!!!!!!!!!!! " + isPinned);
+                if (isPinned) {
+
+                }
+            }
+        }
+    };
+
+    public BroadcastReceiver changeColorToNoteBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.hasExtra("isColorEdit")) {
+                boolean isColorEdit = intent.getBooleanExtra("isColorEdit", false);
+                Log.e(TAG, "onReceive: Yes we got the data!!!! " + isColorEdit);
+                if (isColorEdit) {
+
+                }
+
+            }
+
+        }
+    };
 }

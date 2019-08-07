@@ -30,7 +30,7 @@ public class SplashActivity extends AppCompatActivity {
 
     private void openActivity() {
         Intent intent;
-        if(sharedPreferencesManager.isLoggedIn()){
+        if(sharedPreferencesManager.isLoggedOut()){
             intent = new Intent(this, LoginActivity.class);
             startActivity(intent);
             finish();

@@ -30,7 +30,7 @@ public class NoteDatabaseManager {
     private static final String TAG = "DatabaseHelper.class";
 
     private SQLiteDatabaseHelper databaseHelper;
-   List<Note> noteList;
+    List<Note> noteList;
 //    NotesAdapter notesAdapter;
 
 
@@ -38,7 +38,6 @@ public class NoteDatabaseManager {
         databaseHelper = SQLiteDatabaseHelper.getDatabaseHelper(context);
     }
 
-    // new comment
     public boolean addNote(Note note) {
         SQLiteDatabase db = databaseHelper.openDb();
         ContentValues contentValues = new ContentValues();
@@ -57,24 +56,23 @@ public class NoteDatabaseManager {
         return res > 0;
 
     }
-    public boolean deleteNote(Note note)
-    {
+
+    public boolean deleteNote(Note note) {
         SQLiteDatabase db = databaseHelper.openDb();
-        long res = db.delete(NOTE_TABLE_NAME ,
-                SQLiteDatabaseHelper.NOTE_TABLE_COL_ID + " = ? " ,
-                new String[]{String.valueOf(note.getId())} );
+        long res = db.delete(NOTE_TABLE_NAME,
+                SQLiteDatabaseHelper.NOTE_TABLE_COL_ID + " = ? ",
+                new String[]{String.valueOf(note.getId())});
         Log.e(TAG, "item deleted");
 
-        return  res > 0;
+        return res > 0;
     }
 
-    public List<Note> getAllNoteData()
-    {
+    public List<Note> getAllNoteData() {
         List<Note> noteList = new ArrayList<>();
         SQLiteDatabase db = databaseHelper.openDb();
-        Cursor cursor = db.rawQuery(" SELECT * FROM " + NOTE_TABLE_NAME + " ; " , null);
+        Cursor cursor = db.rawQuery(" SELECT * FROM " + NOTE_TABLE_NAME + " ; ", null);
         Note note;
-        while (cursor.moveToNext()){
+        while (cursor.moveToNext()) {
             int id = cursor.getInt(cursor.getColumnIndexOrThrow(NOTE_TABLE_COL_ID));
             String title = cursor.getString(cursor.getColumnIndexOrThrow(NOTE_TABLE_COL_TITLE));
 
@@ -99,13 +97,14 @@ public class NoteDatabaseManager {
         cursor.close();
         return noteList;
     }
-    public List<Note> getArchivedNotes(){
+
+    public List<Note> getArchivedNotes() {
         List<Note> noteList = new ArrayList<>();
         SQLiteDatabase db = databaseHelper.openDb();
         Cursor cursor = db.rawQuery("SELECT * FROM " + NOTE_TABLE_NAME +
                 " WHERE " + SQLiteDatabaseHelper.NOTE_TABLE_COL_ARCHIVE + "= 1", null);
         Note note;
-        while (cursor.moveToNext()){
+        while (cursor.moveToNext()) {
             int id = cursor.getInt(cursor.getColumnIndexOrThrow(NOTE_TABLE_COL_ID));
             String title = cursor.getString(cursor.getColumnIndexOrThrow(NOTE_TABLE_COL_TITLE));
             String description = cursor.getString(cursor.getColumnIndexOrThrow(NOTE_TABLE_COL_DESCRIPTION));
@@ -114,25 +113,26 @@ public class NoteDatabaseManager {
             boolean isPinned = Boolean.parseBoolean(cursor.getString(cursor.getColumnIndexOrThrow(NOTE_TABLE_COL_PINNED)));
             boolean isTrashed = Boolean.parseBoolean(cursor.getString(cursor.getColumnIndexOrThrow(NOTE_TABLE_COL_TRASHED)));
             String ifReminder = cursor.getString(cursor.getColumnIndexOrThrow(NOTE_TABLE_COL_REMINDER));
-            note = new Note(title,description,color,isArchived,ifReminder,isPinned,isTrashed);
+            note = new Note(title, description, color, isArchived, ifReminder, isPinned, isTrashed);
             note.setId(id);
             noteList.add(note);
 
-            for (Note newNote : noteList){
+            for (Note newNote : noteList) {
                 System.out.println(newNote.toString());
             }
 
         }
         cursor.close();
-        return  noteList;
+        return noteList;
     }
-    public List<Note> getPinnedNotes(){
+
+    public List<Note> getPinnedNotes() {
         List<Note> noteList = new ArrayList<>();
         SQLiteDatabase db = databaseHelper.openDb();
         Cursor cursor = db.rawQuery("SELECT * FROM " + NOTE_TABLE_NAME +
-                " WHERE " + NOTE_TABLE_COL_PINNED + "= 1" , null);
+                " WHERE " + NOTE_TABLE_COL_PINNED + "= 1", null);
         Note note;
-        while (cursor.moveToNext()){
+        while (cursor.moveToNext()) {
             int id = cursor.getInt(cursor.getColumnIndexOrThrow(NOTE_TABLE_COL_ID));
             String title = cursor.getString(cursor.getColumnIndexOrThrow(NOTE_TABLE_COL_TITLE));
             String description = cursor.getString(cursor.getColumnIndexOrThrow(NOTE_TABLE_COL_DESCRIPTION));
@@ -141,27 +141,27 @@ public class NoteDatabaseManager {
             boolean isPinned = Boolean.parseBoolean(cursor.getString(cursor.getColumnIndexOrThrow(NOTE_TABLE_COL_PINNED)));
             boolean isTrashed = Boolean.parseBoolean(cursor.getString(cursor.getColumnIndexOrThrow(NOTE_TABLE_COL_TRASHED)));
             String ifReminder = cursor.getString(cursor.getColumnIndexOrThrow(NOTE_TABLE_COL_REMINDER));
-            note = new Note(title,description,color,isArchived,ifReminder,isPinned,isTrashed);
+            note = new Note(title, description, color, isArchived, ifReminder, isPinned, isTrashed);
             note.setId(id);
             noteList.add(note);
 
-            for (Note newNote : noteList){
+            for (Note newNote : noteList) {
                 System.out.println(newNote.toString());
             }
 
         }
         cursor.close();
-        return  noteList;
+        return noteList;
     }
 
-    public  List<Note> getReminderNotes(){
+    public List<Note> getReminderNotes() {
         List<Note> noteList = new ArrayList<>();
         SQLiteDatabase db = databaseHelper.openDb();
         Cursor cursor = db.rawQuery("SELECT * FROM " + NOTE_TABLE_NAME +
-                " WHERE " + NOTE_TABLE_COL_REMINDER + " != \"\"" , null );
+                " WHERE " + NOTE_TABLE_COL_REMINDER + " != \"\"", null);
 
         Note note = null;
-        while (cursor.moveToNext()){
+        while (cursor.moveToNext()) {
             int id = cursor.getInt(cursor.getColumnIndexOrThrow(NOTE_TABLE_COL_ID));
             String title = cursor.getString(cursor.getColumnIndexOrThrow(NOTE_TABLE_COL_TITLE));
             String description = cursor.getString(cursor.getColumnIndexOrThrow(NOTE_TABLE_COL_DESCRIPTION));
@@ -170,27 +170,27 @@ public class NoteDatabaseManager {
             boolean isPinned = Boolean.parseBoolean(cursor.getString(cursor.getColumnIndexOrThrow(NOTE_TABLE_COL_PINNED)));
             boolean isTrashed = Boolean.parseBoolean(cursor.getString(cursor.getColumnIndexOrThrow(NOTE_TABLE_COL_TRASHED)));
             String ifReminder = cursor.getString(cursor.getColumnIndexOrThrow(NOTE_TABLE_COL_REMINDER));
-            note = new Note(title,description,color,isArchived,ifReminder,isPinned,isTrashed);
+            note = new Note(title, description, color, isArchived, ifReminder, isPinned, isTrashed);
             note.setId(id);
             noteList.add(note);
 
-            for (Note newNote : noteList){
+            for (Note newNote : noteList) {
                 System.out.println(newNote.toString());
             }
 
         }
         cursor.close();
-        return  noteList;
+        return noteList;
     }
 
-    public List<Note> getTrashedNotes(){
+    public List<Note> getTrashedNotes() {
         List<Note> noteList = new ArrayList<>();
         SQLiteDatabase db = databaseHelper.openDb();
         Cursor cursor = db.rawQuery("SELECT * FROM " + NOTE_TABLE_NAME +
                 " WHERE " + NOTE_TABLE_COL_TRASHED + " = 1", null);
 
         Note note = null;
-        while (cursor.moveToNext()){
+        while (cursor.moveToNext()) {
             int id = cursor.getInt(cursor.getColumnIndexOrThrow(NOTE_TABLE_COL_ID));
             String title = cursor.getString(cursor.getColumnIndexOrThrow(NOTE_TABLE_COL_TITLE));
             String description = cursor.getString(cursor.getColumnIndexOrThrow(NOTE_TABLE_COL_DESCRIPTION));
@@ -199,20 +199,20 @@ public class NoteDatabaseManager {
             boolean isPinned = Boolean.parseBoolean(cursor.getString(cursor.getColumnIndexOrThrow(NOTE_TABLE_COL_PINNED)));
             boolean isTrashed = Boolean.parseBoolean(cursor.getString(cursor.getColumnIndexOrThrow(NOTE_TABLE_COL_TRASHED)));
             String ifReminder = cursor.getString(cursor.getColumnIndexOrThrow(NOTE_TABLE_COL_REMINDER));
-            note = new Note(title,description,color,isArchived,ifReminder,isPinned,isTrashed);
+            note = new Note(title, description, color, isArchived, ifReminder, isPinned, isTrashed);
             note.setId(id);
             noteList.add(note);
 
-            for (Note newNote : noteList){
+            for (Note newNote : noteList) {
                 System.out.println(newNote.toString());
             }
 
         }
         cursor.close();
-        return  noteList;
+        return noteList;
     }
 
-    public boolean updateNote(AddNoteModel noteToEdit){
+    public boolean updateNote(AddNoteModel noteToEdit) {
         SQLiteDatabase db = databaseHelper.openDb();
         ContentValues contentValues = new ContentValues();
         contentValues.put(NOTE_TABLE_COL_TITLE, noteToEdit.getTitle());
@@ -231,7 +231,7 @@ public class NoteDatabaseManager {
 
     public boolean deleteAllNotes() {
         SQLiteDatabase db = databaseHelper.openDb();
-        Cursor cursor = db.rawQuery(" DELETE  FROM " + NOTE_TABLE_NAME + " ; " , null);
+        Cursor cursor = db.rawQuery(" DELETE  FROM " + NOTE_TABLE_NAME + " ; ", null);
 
         boolean isDeleted = cursor.getCount() > 0;
         cursor.close();

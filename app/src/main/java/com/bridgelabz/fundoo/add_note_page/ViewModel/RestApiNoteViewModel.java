@@ -20,6 +20,7 @@ import static com.bridgelabz.fundoo.Utility.AppConstants.ADD_REMINDER_TO_NOTES_A
 import static com.bridgelabz.fundoo.Utility.AppConstants.CHANGE_COLOR_TO_NOTE_ACTION;
 import static com.bridgelabz.fundoo.Utility.AppConstants.FETCH_NOTE_ACTION;
 import static com.bridgelabz.fundoo.Utility.AppConstants.GET_ARCHIVE_NOTES_ACTION;
+import static com.bridgelabz.fundoo.Utility.AppConstants.GET_REMINDER_NOTES_LIST_ACTION;
 import static com.bridgelabz.fundoo.Utility.AppConstants.GET_TRASH_NOTES_LIST_ACTION;
 import static com.bridgelabz.fundoo.Utility.AppConstants.PIN_UNPIN_TO_NOTE_ACTION;
 import static com.bridgelabz.fundoo.Utility.AppConstants.SET_ARCHIVE_ACTION;
@@ -262,8 +263,34 @@ public class RestApiNoteViewModel {
             }
         });
     }
+    public void getReminderNotesList(){
+        restApiNoteDataManager.getReminderNotesList(new RestApiNoteDataManager.
+                ResponseCallback<List<NoteResponseModel>, ResponseError>() {
+            Intent localIntent = new Intent(GET_REMINDER_NOTES_LIST_ACTION);
+            @Override
+            public void onResponse(List<NoteResponseModel> noteModelList, ResponseError responseError) {
+                if (noteModelList != null){
+                    Log.e(TAG, "onResponse: getReminderNotesList Successful");
+                    localIntent.putExtra("reminderNotesList", (Serializable) noteModelList);
+                    localBroadcastManager.sendBroadcast(localIntent);
+                }else {
+                    Log.e(TAG, "onResponseReminderNotesList: unsuccessful");
+                    Log.e(TAG, "onResponse: " + responseError.getStatusCode());
+                }
+
+            }
+
+            @Override
+            public void onFailure(Throwable throwable) {
+                localIntent.putExtra("throwable", throwable);
+                localBroadcastManager.sendBroadcast(localIntent);
+            }
+        });
+    }
 
     public void addReminderToNotes(AddNoteModel addNoteModel){
+        Log.e(TAG, "addReminderToNotes: " +  addNoteModel.getReminder());
+
         restApiNoteDataManager.addReminder(addNoteModel, new RestApiNoteDataManager.
                 ResponseCallback<ResponseData, ResponseError>() {
             Intent localIntent = new Intent(ADD_REMINDER_TO_NOTES_ACTION);

@@ -65,10 +65,6 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         sharedPreferencesManager = new SharedPreferencesManager(this);
-        if( sharedPreferencesManager.isLoggedIn()){
-            Intent intent = new Intent(this, DashboardActivity.class);
-            startActivity(intent);
-        }
 
         findViews();
         onClickRegister();

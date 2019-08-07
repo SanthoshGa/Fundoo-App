@@ -51,13 +51,11 @@ public class NoteHolder extends RecyclerView.ViewHolder {
             reminderCard.setCardBackgroundColor(Color.LTGRAY);
             // set the reminder date to reminder text view
             mReminder.setText(note.getReminder().get(0));
-            Log.e(TAG, "bindNoteToCard: reminder");
             reminderCard.setVisibility(View.VISIBLE);
         } else {
              // hide the card
             reminderCard.setVisibility(View.GONE);
         }
-//
         if (note.getColor() != null && !note.getColor().isEmpty()) {
             noteCard.setCardBackgroundColor(Color.parseColor(note.getColor()));
         } else {
@@ -66,12 +64,12 @@ public class NoteHolder extends RecyclerView.ViewHolder {
     }
 
 //    private void setReminderView(NoteResponseModel note) {
-//        if(note.getReminder() == null){
+//       if(!note.getReminder().isEmpty()){
 //            mReminder.setVisibility(View.GONE);
-//        }
+//       }
 //        else{
-//            mReminder.setText(note.getReminder());
+//            mReminder.setText(note.getReminder().get(0));
 //            mReminder.setBackgroundColor(Color.parseColor(note.getColor()));
-//        }
-    }
-//}
+//      }
+//  }
+}

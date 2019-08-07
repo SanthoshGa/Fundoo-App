@@ -55,4 +55,8 @@ public interface NoteRestApiService {
     Call<Map<String, ResponseData>> addReminder(@Header("Authorization") String authKey,
                                                 @Body Map<String, Object> model);
 
+    @GET("notes/getReminderNotesList")
+        Call<Map<String, ResponseData>> getReminderNotesList(@Header("Authorization") String authKey);
+
+
 }

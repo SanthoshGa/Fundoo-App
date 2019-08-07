@@ -28,7 +28,7 @@ public class SharedPreferencesManager {
         editor.clear();
         editor.commit();
     }
-    public boolean isLoggedIn(){
+    public boolean isLoggedOut(){
         return sharedPreferences.getAll().isEmpty();
     }
 

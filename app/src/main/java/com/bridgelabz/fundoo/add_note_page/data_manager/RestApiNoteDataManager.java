@@ -463,6 +463,46 @@ public class RestApiNoteDataManager {
 
     }
 
+    public void getReminderNotesList(final ResponseCallback<List<NoteResponseModel>, ResponseError>
+                                     getReminderNotesCallback){
+        Retrofit retrofit = RetrofitRestApiConnection.openRetrofitConnection();
+        NoteRestApiService apiService = retrofit.create(NoteRestApiService.class);
+        String authKey = sharedPreferencesManager.getAccessToken();
+
+        Call<Map<String, ResponseData>> responseDataCall = apiService.getReminderNotesList(authKey);
+        responseDataCall.enqueue(new Callback<Map<String, ResponseData>>() {
+            @Override
+            public void onResponse(Call<Map<String, ResponseData>> call, Response<Map<String,
+                    ResponseData>> response) {
+                if(response.isSuccessful()){
+                    Log.e(TAG, "onResponse: getReminderNotesList" + response.body());
+                    ResponseData responseData = response.body().get("data");
+                    Log.e(TAG, responseData.getNoteModelList() + "");
+                    getReminderNotesCallback.onResponse(responseData.getNoteModelList(), null);
+
+                }
+                else{
+                    try {
+                        getReminderNotesCallback.onResponse(null, new ResponseError(response.code() + " ",
+                               response.errorBody().string(),
+                                response.message(), null));
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    Log.e(TAG, "onResponseError: getReminderNotesList  " + response.errorBody().toString());
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<Map<String, ResponseData>> call, Throwable throwable) {
+                Log.e(TAG, "Throwable: getReminderNotesList - " + throwable.getLocalizedMessage());
+            }
+        });
+
+
+    }
+
 
 //    public interface AddNoteCallback {
 //        void onResponse(ResponseData responseData, ResponseError responseError);

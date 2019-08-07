@@ -39,6 +39,7 @@ import com.bridgelabz.fundoo.add_note_page.ViewModel.RestApiNoteViewModel;
 import com.bridgelabz.fundoo.LoginSignup.View.LoginActivity;
 import com.bridgelabz.fundoo.R;
 import com.bridgelabz.fundoo.add_label_page.view.AddLabelFragment;
+import com.bridgelabz.fundoo.common.SharedPreferencesManager;
 import com.bumptech.glide.Glide;
 import com.google.android.material.navigation.NavigationView;
 
@@ -48,6 +49,7 @@ import java.util.List;
 
 import static com.bridgelabz.fundoo.Utility.AppConstants.FETCH_NOTE_ACTION;
 import static com.bridgelabz.fundoo.Utility.AppConstants.GET_ARCHIVE_NOTES_ACTION;
+import static com.bridgelabz.fundoo.Utility.AppConstants.GET_REMINDER_NOTES_LIST_ACTION;
 import static com.bridgelabz.fundoo.Utility.AppConstants.GET_TRASH_NOTES_LIST_ACTION;
 import static com.bridgelabz.fundoo.Utility.AppConstants.TRASH_NOTE_ACTION;
 import static com.bridgelabz.fundoo.Utility.AppConstants.UPDATE_NOTE_ACTION;
@@ -66,6 +68,7 @@ public class DashboardActivity extends AppCompatActivity implements
     NotesAdapter notesAdapter;
     NavigationView navigationView;
     NoteResponseModel noteToDelete;
+    private SharedPreferencesManager sharedPreferencesManager;
 //    Observable<List<BaseNoteModel>> observableNotes = new ObservableNotes(noteList);
 
     @Override
@@ -75,6 +78,7 @@ public class DashboardActivity extends AppCompatActivity implements
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 //        noteViewModel = new NoteViewModel(this);
         restApiNoteViewModel = new RestApiNoteViewModel(this);
+        sharedPreferencesManager = new SharedPreferencesManager(this);
         prepareRecyclerView();
 //        registerObserverForNotes();
         setNavigationViewListener();
@@ -93,70 +97,11 @@ public class DashboardActivity extends AppCompatActivity implements
                 new IntentFilter(TRASH_NOTE_ACTION));
         LocalBroadcastManager.getInstance(this).registerReceiver(getTrashNotesListBroadcastReceiver,
                 new IntentFilter(GET_TRASH_NOTES_LIST_ACTION));
+        LocalBroadcastManager.getInstance(this).registerReceiver(getReminderNotesListBroadcastReceiver,
+                new IntentFilter(GET_REMINDER_NOTES_LIST_ACTION));
 
 
     }
-
-//     BroadcastReceiver trashNotesBroadcastReceiver = new BroadcastReceiver() {
-//        @Override
-//        public void onReceive(Context context, Intent intent) {
-//            if(intent.hasExtra("trashNotes")){
-//                boolean trashNotes = intent.getBooleanExtra("trashNotes", false);
-//                Log.e(TAG, "onReceive:  we got the data of Archive " + trashNotes);
-//                if (trashNotes){
-//
-//                }
-//
-//            }
-//
-//        }
-//    };
-
-    public BroadcastReceiver getArchiveNotesListBroadcastReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            Log.e(TAG, "onReceive: local broadcast working fot archive list");
-
-            if (intent.hasExtra("archiveNoteList")) {
-                noteList = (List<NoteResponseModel>)
-                        intent.getSerializableExtra("archiveNoteList");
-                notesAdapter.setNoteModelArrayList(noteList);
-                notesAdapter.notifyDataSetChanged();
-            }
-
-        }
-    };
-
-    public BroadcastReceiver getTrashNotesListBroadcastReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            Log.e(TAG, "onReceive: local broadcast working for trash notes list");
-            if(intent.hasExtra("trashNotesList")){
-                noteList = (List<NoteResponseModel>) intent.getSerializableExtra("trashNotesList");
-                notesAdapter.setNoteModelArrayList(noteList);
-                notesAdapter.notifyDataSetChanged();
-            }
-
-        }
-    };
-
-
-    private BroadcastReceiver getNotesBroadcastReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            Log.e(TAG, "Local Broadcast is working in dashboard");
-            if (intent.hasExtra("noteList")) {
-                noteList = (List<NoteResponseModel>)
-                        intent.getSerializableExtra("noteList");
-                notesAdapter.setNoteModelArrayList(noteList);
-                notesAdapter.notifyDataSetChanged();
-            }
-        }
-    };
-
-//    private void registerObserverForNotes() {
-//        observableNotes.registerObserver(this);
-//    }
 
     private void setUpDrawer() {
         mDrawerLayout = findViewById(R.id.drawer_layout_dashboard);
@@ -246,6 +191,7 @@ public class DashboardActivity extends AppCompatActivity implements
 //                    new TrashBroadcastReceiver(adapterPosition, noteToDelete);
 //                    noteList.remove(noteToDelete);
                     notesAdapter.onItemSwiped(adapterPosition);
+                    notesAdapter.notifyItemRemoved(adapterPosition);
 //
 //                    notesAdapter.notifyItemRemoved(adapterPosition);
 //                    boolean isDeleted = deleteNote(noteToDelete);
@@ -357,8 +303,9 @@ public class DashboardActivity extends AppCompatActivity implements
                 closeFragmentIfShowing();
                 Toast.makeText(this, "Reminders drawer menu clicked!", Toast.LENGTH_SHORT).show();
 //                noteList = noteViewModel.getReminderNotes();          // TODO: change
-                notesAdapter.setNoteModelArrayList(noteList);
-                notesAdapter.notifyDataSetChanged();
+                restApiNoteViewModel.getReminderNotesList();
+//                notesAdapter.setNoteModelArrayList(noteList);
+//                notesAdapter.notifyDataSetChanged();
                 break;
             case R.id.drawer_menu_archives:
                 closeDrawer();
@@ -397,6 +344,7 @@ public class DashboardActivity extends AppCompatActivity implements
                 break;
             case R.id.drawer_menu_signOut:
                 Toast.makeText(this, "Sign Out drawer menu clicked!", Toast.LENGTH_SHORT).show();
+                sharedPreferencesManager.removeLoginDetails();
                 Intent intent = new Intent(DashboardActivity.this, LoginActivity.class);
                 startActivity(intent);
                 finish();
@@ -433,10 +381,67 @@ public class DashboardActivity extends AppCompatActivity implements
         LocalBroadcastManager.getInstance(this).unregisterReceiver(getNotesBroadcastReceiver);
         LocalBroadcastManager.getInstance(this).unregisterReceiver(getArchiveNotesListBroadcastReceiver);
         LocalBroadcastManager.getInstance(this).unregisterReceiver(trashNotesBroadcastReceiver);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(getReminderNotesListBroadcastReceiver);
     }
 
 
     // Broadcast receivers
+    public BroadcastReceiver getArchiveNotesListBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.e(TAG, "onReceive: local broadcast working fot archive list");
+
+            if (intent.hasExtra("archiveNoteList")) {
+                noteList = (List<NoteResponseModel>)
+                        intent.getSerializableExtra("archiveNoteList");
+                notesAdapter.setNoteModelArrayList(noteList);
+                notesAdapter.notifyDataSetChanged();
+            }
+
+        }
+    };
+
+    public BroadcastReceiver getTrashNotesListBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.e(TAG, "onReceive: local broadcast working for trash notes list");
+            if(intent.hasExtra("trashNotesList")){
+                noteList = (List<NoteResponseModel>) intent.getSerializableExtra("trashNotesList");
+                notesAdapter.setNoteModelArrayList(noteList);
+                notesAdapter.notifyDataSetChanged();
+            }
+
+        }
+    };
+
+
+    private BroadcastReceiver getNotesBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.e(TAG, "Local Broadcast is working in dashboard");
+            if (intent.hasExtra("noteList")) {
+                noteList = (List<NoteResponseModel>)
+                        intent.getSerializableExtra("noteList");
+                notesAdapter.setNoteModelArrayList(noteList);
+                notesAdapter.notifyDataSetChanged();
+            }
+        }
+    };
+
+    private BroadcastReceiver getReminderNotesListBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.e(TAG, "Local Broadcast is working for Reminders List");
+            if(intent.hasExtra("reminderNotesList")){
+                noteList = (List<NoteResponseModel>)
+                        intent.getSerializableExtra("reminderNotesList");
+                notesAdapter.setNoteModelArrayList(noteList);
+                notesAdapter.notifyDataSetChanged();
+            }
+
+        }
+    };
+
 
 
 }
