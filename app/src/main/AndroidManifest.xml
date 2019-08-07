@@ -3,6 +3,7 @@
     package="com.bridgelabz.fundoo">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
 
     <application
         android:name=".application.MyApplicationClass"
@@ -12,6 +13,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
         <activity android:name=".SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -19,10 +21,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".add_note_page.View.AddNoteActivity"></activity>
-        <activity android:name=".Dashboard.DashboardActivity"></activity>
-        <activity android:name=".LoginSignup.View.RegisterActivity"></activity>
-        <activity android:name=".LoginSignup.View.LoginActivity"></activity>
+        <activity android:name=".add_note_page.View.AddNoteActivity" />
+        <activity android:name=".Dashboard.DashboardActivity" />
+        <activity android:name=".LoginSignup.View.RegisterActivity" />
+        <activity android:name=".LoginSignup.View.LoginActivity" />
 
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
@@ -48,8 +50,7 @@
         <receiver
             android:name=".BroadcastReceivers.ReminderReceiver"
             android:exported="true" />
-
-        <service android:name=".MyFirebaseMessagingService">
+        <service android:name=".MyFirebaseMsgService">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>

@@ -20,6 +20,7 @@ import com.bridgelabz.fundoo.LoginSignup.Model.UserLoginModel;
 import com.bridgelabz.fundoo.LoginSignup.Model.UserModel;
 import com.bridgelabz.fundoo.LoginSignup.ViewModel.UserViewModel;
 import com.bridgelabz.fundoo.R;
+import com.bridgelabz.fundoo.Utility.AppConstants;
 import com.bridgelabz.fundoo.common.SharedPreferencesManager;
 import com.bridgelabz.fundoo.firebase_auth_service.FirebaseAuthManager;
 import com.facebook.AccessToken;
@@ -142,6 +143,8 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
             public void onClick(View v) {
                 final String email = mTextEmail.getText().toString().trim();
                 String password = mTextPassword.getText().toString().trim();
+                final String imageUrl = AppConstants.IMAGE_URL;
+
                 sharedPreferencesManager.saveLoginDetails(email, password);
 //                boolean res = userViewModel.checkUser(email, password);
                 Log.e(TAG, "onClick: login button click");
@@ -158,6 +161,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                         sharedPreferencesManager.setAccessToken(token);
                         Intent intent = new Intent(LoginActivity.this, DashboardActivity.class);
                         intent.putExtra("email", email);
+                        intent.putExtra("imageUrl", imageUrl);
                         startActivity(intent);
                     }
 

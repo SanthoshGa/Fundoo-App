@@ -17,4 +17,6 @@ public class AppConstants {
     public static final String EMAIL = "Email";
     public static final String PASSWORD = "Password";
     public static final String IS_USER_LOGIN = "IsUserLogin";
+
+    public static final String IMAGE_URL = " https://lh3.googleusercontent.com/a-/AAuE7mDwBs-qKbsx1Jl_y0PCZZPbjZQwpJJM4WFuWGP_eg";
 }

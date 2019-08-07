@@ -149,7 +149,7 @@ public class UserModel {
         stringBuilder.append("firstName : ").append(firstName).append("\n")
                 .append("lastName : ").append(lastName).append("\n")
                 .append("phoneNumber ").append(phoneNumber).append("\n")
-                .append("imageUrl ").append(imageUrl).append("\n")
+                .append("imageUrl :").append(imageUrl).append("\n")
                 .append("role : ").append(role).append("\n")
                 .append("service : ").append(service).append("\n")
                 .append("emailId : ").append(emailId).append("\n")

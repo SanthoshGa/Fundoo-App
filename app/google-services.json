@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "190710932121-ncbbngdeg5gdk7eqnien5e5ncmuk5rds.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.bridgelabz.fundoo",
+            "certificate_hash": "ae859b3f8a8d2e20c849faacc91b1986e2d88a9c"
+          }
+        },
+        {
           "client_id": "190710932121-6630sh8e3ivlvtv308f3edamhqplck56.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
