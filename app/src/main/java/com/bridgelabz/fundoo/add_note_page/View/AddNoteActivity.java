@@ -123,7 +123,7 @@ public class AddNoteActivity extends AppCompatActivity {
         if (intent.hasExtra("noteToEdit")) {
             NoteResponseModel noteResponseModel = (NoteResponseModel) intent.
                     getSerializableExtra("noteToEdit");
-            if (noteResponseModel.getReminder().isEmpty())
+//            if (noteResponseModel.getReminder().isEmpty())
                 noteToEdit = AddNoteModel.getNoteFromResponse(noteResponseModel);
             Log.e(TAG, "note is available");
             System.out.println(noteToEdit.toString());

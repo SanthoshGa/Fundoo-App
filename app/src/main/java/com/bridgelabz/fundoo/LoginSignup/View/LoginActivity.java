@@ -143,7 +143,6 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
             public void onClick(View v) {
                 final String email = mTextEmail.getText().toString().trim();
                 String password = mTextPassword.getText().toString().trim();
-                final String imageUrl = AppConstants.IMAGE_URL;
 
                 sharedPreferencesManager.saveLoginDetails(email, password);
 //                boolean res = userViewModel.checkUser(email, password);
@@ -159,10 +158,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                         Log.e(TAG, "onResponse: " + userModel.toString());
                         String token = userModel.getId();
                         sharedPreferencesManager.setAccessToken(token);
-                        Intent intent = new Intent(LoginActivity.this, DashboardActivity.class);
-                        intent.putExtra("email", email);
-                        intent.putExtra("imageUrl", imageUrl);
-                        startActivity(intent);
+                        openDashBoardActivity(email,null);
                     }
 
                     @Override
@@ -171,6 +167,13 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
 
                     }
                 });
+            }
+            void openDashBoardActivity(String email, String image_url){
+                Intent intent = new Intent(LoginActivity.this, DashboardActivity.class);
+                intent.putExtra("email", email);
+                intent.putExtra("imageUrl", image_url);
+                startActivity(intent);
+
             }
         });
     }

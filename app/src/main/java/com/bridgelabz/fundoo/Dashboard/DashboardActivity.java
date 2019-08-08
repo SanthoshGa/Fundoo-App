@@ -4,18 +4,23 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
@@ -47,6 +52,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import okhttp3.internal.Util;
+
 import static com.bridgelabz.fundoo.Utility.AppConstants.FETCH_NOTE_ACTION;
 import static com.bridgelabz.fundoo.Utility.AppConstants.GET_ARCHIVE_NOTES_ACTION;
 import static com.bridgelabz.fundoo.Utility.AppConstants.GET_REMINDER_NOTES_LIST_ACTION;
@@ -60,7 +67,10 @@ public class DashboardActivity extends AppCompatActivity implements
     private static final String TAG = "DashboardActivity";
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mToggle;
-    TextView mTextTakeNote;
+    private TextView mTextTakeNote;
+    private ImageView imageProfile;
+    private TextView tvEmail;
+    public static final int PICK_REQUEST_CODE = 10;
     RecyclerView mRecyclerView;
     private List<NoteResponseModel> noteList = new ArrayList<>();
     NoteViewModel noteViewModel;
@@ -69,6 +79,7 @@ public class DashboardActivity extends AppCompatActivity implements
     NavigationView navigationView;
     NoteResponseModel noteToDelete;
     private SharedPreferencesManager sharedPreferencesManager;
+    Animation animZoomOut;
 //    Observable<List<BaseNoteModel>> observableNotes = new ObservableNotes(noteList);
 
     @Override
@@ -86,6 +97,34 @@ public class DashboardActivity extends AppCompatActivity implements
         setUpNavigationView();
         setOnClickTakeNote();
         registerLocalBroadcasts();
+        setOnClickListenerToProfile();
+
+    }
+
+    private void setOnClickListenerToProfile() {
+        navigationView = findViewById(R.id.nav_view);
+        imageProfile = navigationView.getHeaderView(0).findViewById(R.id.profile_pic);
+        imageProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(DashboardActivity.this, "profile clicked", Toast.LENGTH_SHORT).show();
+                Intent galleryIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI);
+                galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
+                galleryIntent.setType("image/*");
+                startActivityForResult(galleryIntent, PICK_REQUEST_CODE);
+
+            }
+        });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == PICK_REQUEST_CODE){
+            Uri imageUri = data.getData();
+            Log.e(TAG, "onActivityResult: " + imageUri.toString());
+            Glide.with(this).load(imageUri).circleCrop().into(imageProfile);
+        }
     }
 
     private void registerLocalBroadcasts() {
@@ -136,6 +175,26 @@ public class DashboardActivity extends AppCompatActivity implements
         notesAdapter = new NotesAdapter(noteList, new NotesAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int notePosition) {
+
+                animZoomOut = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.zoom_out);
+                animZoomOut.setAnimationListener(new Animation.AnimationListener() {
+                    @Override
+                    public void onAnimationStart(Animation animation) {
+                        Toast.makeText(DashboardActivity.this, "animation start",
+                                Toast.LENGTH_SHORT).show();
+
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animation animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animation animation) {
+
+                    }
+                });
                 Intent intent = new Intent(DashboardActivity.this, AddNoteActivity.class);
                 intent.putExtra("noteToEdit", noteList.get(notePosition));
                 startActivity(intent);
@@ -232,13 +291,18 @@ public class DashboardActivity extends AppCompatActivity implements
             Log.e("Dashboard", emailId);
 
             navigationView = findViewById(R.id.nav_view);
-            TextView tvEmail = navigationView.getHeaderView(0).findViewById(R.id.tv_email);
-            ImageView imageProfile = navigationView.getHeaderView(0).findViewById(R.id.profile_pic);
+            tvEmail = navigationView.getHeaderView(0).findViewById(R.id.tv_email);
+            imageProfile = navigationView.getHeaderView(0).findViewById(R.id.profile_pic);
             tvEmail.setText(emailId);
-            Glide.with(this).load(imageUrl).circleCrop().into(imageProfile);
+            if(imageUrl == null){
+                Glide.with(this).load(R.drawable.icon1).into(imageProfile);
+            }else {
+                Glide.with(this).load(imageUrl).circleCrop().into(imageProfile);
+            }
         } else {
             Log.e(TAG, "intent does not have extra string \"email id\" ");
         }
+
 
     }
 
