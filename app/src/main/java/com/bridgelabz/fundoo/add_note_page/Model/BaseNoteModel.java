@@ -139,7 +139,8 @@ public class BaseNoteModel implements Serializable {
         return userId;
     }
 
-    public void setUserId(String userId) {
+    public void setUserId(String userId)
+    {
         this.userId = userId;
     }
 

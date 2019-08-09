@@ -4,6 +4,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -35,6 +37,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import com.bridgelabz.fundoo.add_note_page.Model.AddNoteModel;
+import com.bridgelabz.fundoo.add_note_page.Model.Note;
 import com.bridgelabz.fundoo.add_note_page.View.AddNoteActivity;
 import com.bridgelabz.fundoo.add_note_page.Model.BaseNoteModel;
 import com.bridgelabz.fundoo.add_note_page.Model.NoteResponseModel;
@@ -87,7 +90,7 @@ public class DashboardActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-//        noteViewModel = new NoteViewModel(this);
+        noteViewModel = new NoteViewModel(this);
         restApiNoteViewModel = new RestApiNoteViewModel(this);
         sharedPreferencesManager = new SharedPreferencesManager(this);
         prepareRecyclerView();
@@ -161,7 +164,8 @@ public class DashboardActivity extends AppCompatActivity implements
 //        noteList = noteViewModel.getAllNoteData();
         mRecyclerView = findViewById(R.id.recycleView);
         mRecyclerView.setHasFixedSize(true);
-        restApiNoteViewModel.fetchNoteList();
+        showList();
+//        restApiNoteViewModel.fetchNoteList();
 
 
         // for Staggered Grid View
@@ -176,25 +180,25 @@ public class DashboardActivity extends AppCompatActivity implements
             @Override
             public void onItemClick(int notePosition) {
 
-                animZoomOut = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.zoom_out);
-                animZoomOut.setAnimationListener(new Animation.AnimationListener() {
-                    @Override
-                    public void onAnimationStart(Animation animation) {
-                        Toast.makeText(DashboardActivity.this, "animation start",
-                                Toast.LENGTH_SHORT).show();
-
-                    }
-
-                    @Override
-                    public void onAnimationEnd(Animation animation) {
-
-                    }
-
-                    @Override
-                    public void onAnimationRepeat(Animation animation) {
-
-                    }
-                });
+//                animZoomOut = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.zoom_out);
+//                animZoomOut.setAnimationListener(new Animation.AnimationListener() {
+//                    @Override
+//                    public void onAnimationStart(Animation animation) {
+//                        Toast.makeText(DashboardActivity.this, "animation start",
+//                                Toast.LENGTH_SHORT).show();
+//
+//                    }
+//
+//                    @Override
+//                    public void onAnimationEnd(Animation animation) {
+//
+//                    }
+//
+//                    @Override
+//                    public void onAnimationRepeat(Animation animation) {
+//
+//                    }
+//                });
                 Intent intent = new Intent(DashboardActivity.this, AddNoteActivity.class);
                 intent.putExtra("noteToEdit", noteList.get(notePosition));
                 startActivity(intent);
@@ -203,6 +207,23 @@ public class DashboardActivity extends AppCompatActivity implements
         });
         mRecyclerView.setAdapter(notesAdapter);
         noteItemTouchHelper.attachToRecyclerView(mRecyclerView);
+    }
+
+    private void showList() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) getApplicationContext()
+                .getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork = connectivityManager.getActiveNetworkInfo();
+        boolean isConnected = activeNetwork != null &&
+                activeNetwork.isConnectedOrConnecting();
+        if(isConnected){
+            restApiNoteViewModel.fetchNoteList();
+            noteViewModel.deleteAllNotes();
+            noteViewModel.addListOfNote(noteList);
+            Log.e(TAG, "showList: " + noteList);
+        }
+        else{
+            Log.e(TAG, "showList: Not connected!!!!!");
+        }
     }
 
     private BroadcastReceiver trashNotesBroadcastReceiver = new BroadcastReceiver() {
@@ -486,6 +507,7 @@ public class DashboardActivity extends AppCompatActivity implements
             if (intent.hasExtra("noteList")) {
                 noteList = (List<NoteResponseModel>)
                         intent.getSerializableExtra("noteList");
+
                 notesAdapter.setNoteModelArrayList(noteList);
                 notesAdapter.notifyDataSetChanged();
             }
@@ -505,7 +527,4 @@ public class DashboardActivity extends AppCompatActivity implements
 
         }
     };
-
-
-
 }

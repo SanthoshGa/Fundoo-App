@@ -48,7 +48,6 @@ import com.bridgelabz.fundoo.add_note_page.ViewModel.NoteViewModel;
 import com.bridgelabz.fundoo.add_note_page.ViewModel.RestApiNoteViewModel;
 
 import java.text.SimpleDateFormat;
-import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
@@ -383,7 +382,8 @@ public class AddNoteActivity extends AppCompatActivity {
                                     reminderStringBuilder.toString(), isPinned, isTrashed);
 
                             Log.e(TAG, note.toString());
-                            addNoteToDb(note);
+                            addNoteToServer(note);
+//                            addNoteToDb(note);
                         }
 
                     } else {
@@ -406,7 +406,7 @@ public class AddNoteActivity extends AppCompatActivity {
                 boolean isNoteEdit = intent.getBooleanExtra("isNoteEdit", false);
                 Log.e(TAG, "onReceive: Yes we got the data " + isNoteEdit);
                 if (isNoteEdit) {
-                    Toast.makeText(AddNoteActivity.this, "Note updated", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(AddNoteActivity.this, "Note updated", Toast.LENGTH_LONG).show();
 
                     if(reminderStringBuilder.toString().isEmpty()){
                         Toast.makeText(AddNoteActivity.this, "not added the reminder", Toast.LENGTH_SHORT).show();
@@ -463,7 +463,7 @@ public class AddNoteActivity extends AppCompatActivity {
 
                 if (isNoteAdded) {
                     Toast.makeText(AddNoteActivity.this, " Note is Successfully Saved",
-                            Toast.LENGTH_SHORT).show();
+                            Toast.LENGTH_LONG).show();
 //                      Log.e(TAG, note.toString());
 //                      if(reminderStringBuilder.toString().isEmpty()){
 //                        Toast.makeText(this, "not added the reminder", Toast.LENGTH_SHORT).show();
@@ -489,7 +489,7 @@ public class AddNoteActivity extends AppCompatActivity {
     };
 
 
-    protected void addNoteToDb(Note note) {
+    protected void addNoteToServer(Note note) {
         //TODO :
 
         BaseNoteModel noteModel = new AddNoteModel(note.getTitle(), note.getDescription(),
@@ -502,6 +502,16 @@ public class AddNoteActivity extends AppCompatActivity {
 //        boolean isNoteAdd = noteViewModel.addNote(note);
 
     }
+//    protected void addNoteToDb(Note note){
+//        boolean isNoteAdd = noteViewModel.addNote(note);
+//        if(isNoteAdd){
+//            Toast.makeText(AddNoteActivity.this, "Note Successfully saved to db",
+//                    Toast.LENGTH_SHORT).show();
+//            Intent data = new Intent(AddNoteActivity.this, DashboardActivity.class);
+//            startActivity(data);
+//            finish();
+//        }
+//    }
 
     public void onRadioButtonClicked(View radioButtonView) {
         boolean checked = ((RadioButton) radioButtonView).isChecked();
@@ -605,7 +615,7 @@ public class AddNoteActivity extends AppCompatActivity {
 //                    String description = mTextDescription.getText().toString().trim();
 //                    Note note = new Note(title, description, noteColor, true,
 //                            reminderStringBuilder.toString(), false, isTrashed);
-//                    addNoteToDb(note);
+//                    addNoteToServer(note);
 //                    return true;
 //                }
 
@@ -658,7 +668,7 @@ public class AddNoteActivity extends AppCompatActivity {
 //                    String description_1 = mTextDescription.getText().toString().trim();
 //                    Note note1 = new Note(title_1, description_1, noteColor, false,
 //                            reminderStringBuilder.toString(), true, false);
-//                    addNoteToDb(note1);
+//                    addNoteToServer(note1);
 //                }
 //                return true;
 

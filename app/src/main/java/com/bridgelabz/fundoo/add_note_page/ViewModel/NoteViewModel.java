@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.bridgelabz.fundoo.add_note_page.Model.AddNoteModel;
 import com.bridgelabz.fundoo.add_note_page.Model.Note;
+import com.bridgelabz.fundoo.add_note_page.Model.NoteResponseModel;
 import com.bridgelabz.fundoo.add_note_page.data_manager.NoteDatabaseManager;
 import com.bridgelabz.fundoo.ObserverPattern.Observable;
 
@@ -17,17 +18,20 @@ public class NoteViewModel
     public NoteViewModel(Context context){
         noteDbManager = new NoteDatabaseManager(context);
 //        List<Note> listOfNotes = noteDbManager.getAllNoteData();
-        this.observableNotes = noteDbManager.getAllObservableNotes();
+//        this.observableNotes = noteDbManager.getAllObservableNotes();
     }
 
-    public  boolean addNote(Note note){
+    public  boolean addNote(NoteResponseModel note){
         return noteDbManager.addNote(note);
+    }
+    public boolean addListOfNote(List<NoteResponseModel> noteList){
+        return noteDbManager.addListOfNote(noteList);
     }
     public boolean deleteNote(Note note){
        return  noteDbManager.deleteNote(note);
     }
 // test
-    public List<Note> getAllNoteData() {
+    public List<NoteResponseModel> getAllNoteData() {
         return noteDbManager.getAllNoteData();
     }
     public List<Note> getArchivedNotes(){

@@ -5,6 +5,13 @@ import com.google.gson.annotations.SerializedName;
 import java.util.List;
 
 public class NoteResponseModel extends BaseNoteModel {
+//    String title;
+//    String description;
+//    boolean isPinned;
+//    boolean isArchived;
+//    boolean isDeleted;
+
+
     public NoteResponseModel(String title, String description, boolean isPinned, boolean isArchived,
                              boolean isDeleted, String createdDate, String modifiedDate, String color,
                              String id, String userId, List<String> reminder) {
