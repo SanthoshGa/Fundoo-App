@@ -53,15 +53,17 @@ public class NoteDatabaseManager {
 
     public boolean addListOfNote(List<NoteResponseModel> noteList) {
         SQLiteDatabase db = databaseHelper.openDb();
-        long res = -1;
+        long res = 0;
         for (NoteResponseModel model :
                 noteList) {
+
             ContentValues contentValues = getContentValuesFromNote(model);
             res = db.insert(NOTE_TABLE_NAME, null, contentValues);
+
         }
+        Log.e(TAG, "addListOfNote: loop" + noteList.toString());
 
         db.close();
-
         Log.e(TAG, "res is " + res);
         return res > 0;
 

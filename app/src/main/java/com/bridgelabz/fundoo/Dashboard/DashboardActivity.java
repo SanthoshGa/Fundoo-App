@@ -1,5 +1,6 @@
 package com.bridgelabz.fundoo.Dashboard;
 
+import android.app.ActivityOptions;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -7,6 +8,7 @@ import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
@@ -123,7 +125,7 @@ public class DashboardActivity extends AppCompatActivity implements
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == PICK_REQUEST_CODE){
+        if (requestCode == PICK_REQUEST_CODE) {
             Uri imageUri = data.getData();
             Log.e(TAG, "onActivityResult: " + imageUri.toString());
             Glide.with(this).load(imageUri).circleCrop().into(imageProfile);
@@ -180,7 +182,7 @@ public class DashboardActivity extends AppCompatActivity implements
             @Override
             public void onItemClick(int notePosition) {
 
-//                animZoomOut = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.zoom_out);
+//                animZoomOut = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.zoom_in);
 //                animZoomOut.setAnimationListener(new Animation.AnimationListener() {
 //                    @Override
 //                    public void onAnimationStart(Animation animation) {
@@ -201,7 +203,12 @@ public class DashboardActivity extends AppCompatActivity implements
 //                });
                 Intent intent = new Intent(DashboardActivity.this, AddNoteActivity.class);
                 intent.putExtra("noteToEdit", noteList.get(notePosition));
-                startActivity(intent);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        startActivity(intent, ActivityOptions.makeSceneTransitionAnimation
+                                (DashboardActivity.this).toBundle());
+                    }
+                }
                 Log.e(TAG, "the position of note is " + notePosition);
             }
         });
@@ -215,13 +222,11 @@ public class DashboardActivity extends AppCompatActivity implements
         NetworkInfo activeNetwork = connectivityManager.getActiveNetworkInfo();
         boolean isConnected = activeNetwork != null &&
                 activeNetwork.isConnectedOrConnecting();
-        if(isConnected){
+        if (isConnected) {
             restApiNoteViewModel.fetchNoteList();
             noteViewModel.deleteAllNotes();
-            noteViewModel.addListOfNote(noteList);
             Log.e(TAG, "showList: " + noteList);
-        }
-        else{
+        } else {
             Log.e(TAG, "showList: Not connected!!!!!");
         }
     }
@@ -272,6 +277,7 @@ public class DashboardActivity extends AppCompatActivity implements
 //                    noteList.remove(noteToDelete);
                     notesAdapter.onItemSwiped(adapterPosition);
                     notesAdapter.notifyItemRemoved(adapterPosition);
+                    Toast.makeText(DashboardActivity.this, "Item Deleted", Toast.LENGTH_SHORT).show();
 //
 //                    notesAdapter.notifyItemRemoved(adapterPosition);
 //                    boolean isDeleted = deleteNote(noteToDelete);
@@ -315,9 +321,9 @@ public class DashboardActivity extends AppCompatActivity implements
             tvEmail = navigationView.getHeaderView(0).findViewById(R.id.tv_email);
             imageProfile = navigationView.getHeaderView(0).findViewById(R.id.profile_pic);
             tvEmail.setText(emailId);
-            if(imageUrl == null){
+            if (imageUrl == null) {
                 Glide.with(this).load(R.drawable.icon1).into(imageProfile);
-            }else {
+            } else {
                 Glide.with(this).load(imageUrl).circleCrop().into(imageProfile);
             }
         } else {
@@ -490,7 +496,7 @@ public class DashboardActivity extends AppCompatActivity implements
         @Override
         public void onReceive(Context context, Intent intent) {
             Log.e(TAG, "onReceive: local broadcast working for trash notes list");
-            if(intent.hasExtra("trashNotesList")){
+            if (intent.hasExtra("trashNotesList")) {
                 noteList = (List<NoteResponseModel>) intent.getSerializableExtra("trashNotesList");
                 notesAdapter.setNoteModelArrayList(noteList);
                 notesAdapter.notifyDataSetChanged();
@@ -507,8 +513,9 @@ public class DashboardActivity extends AppCompatActivity implements
             if (intent.hasExtra("noteList")) {
                 noteList = (List<NoteResponseModel>)
                         intent.getSerializableExtra("noteList");
-
-                notesAdapter.setNoteModelArrayList(noteList);
+                noteViewModel.addListOfNote(noteList);
+                notesAdapter.setNoteModelArrayList(noteViewModel.getAllNoteData());
+                Log.e(TAG, "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!: " + noteList);
                 notesAdapter.notifyDataSetChanged();
             }
         }
@@ -518,7 +525,7 @@ public class DashboardActivity extends AppCompatActivity implements
         @Override
         public void onReceive(Context context, Intent intent) {
             Log.e(TAG, "Local Broadcast is working for Reminders List");
-            if(intent.hasExtra("reminderNotesList")){
+            if (intent.hasExtra("reminderNotesList")) {
                 noteList = (List<NoteResponseModel>)
                         intent.getSerializableExtra("reminderNotesList");
                 notesAdapter.setNoteModelArrayList(noteList);

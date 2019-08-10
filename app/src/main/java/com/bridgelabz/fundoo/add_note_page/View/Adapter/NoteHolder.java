@@ -3,9 +3,12 @@ package com.bridgelabz.fundoo.add_note_page.View.Adapter;
 import android.graphics.Color;
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.TextView;
 
 import com.bridgelabz.fundoo.add_note_page.Model.NoteResponseModel;
@@ -18,21 +21,27 @@ public class NoteHolder extends RecyclerView.ViewHolder {
     private TextView mReminder;
     private CardView noteCard;
     private CardView reminderCard;
+    private ConstraintLayout noteContainerLayout;
     private NotesAdapter.OnItemClickListener listener;
+    Animation animFade;
 
-    public NoteHolder(@NonNull View itemView, NotesAdapter.OnItemClickListener onItemClickListener) {
+    public NoteHolder(@NonNull final View itemView, NotesAdapter.OnItemClickListener onItemClickListener) {
         super(itemView);
         mTitle = itemView.findViewById(R.id.tv_title);
         mDescription = itemView.findViewById(R.id.tv_description);
         mReminder = itemView.findViewById(R.id.tv_reminder);
         noteCard = itemView.findViewById(R.id.noteItemCard);
+        noteContainerLayout = itemView.findViewById(R.id.layout_item_container);
         reminderCard = itemView.findViewById(R.id.reminderItemCard);
         this.listener = onItemClickListener;
 
         itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 int position = getAdapterPosition();
+                animFade = AnimationUtils.loadAnimation(itemView.getContext(), R.anim.zoom_in_expand);
+                noteContainerLayout.startAnimation(animFade);
                 if (listener != null) {
                     listener.onItemClick(position);
                 }else {
@@ -43,6 +52,8 @@ public class NoteHolder extends RecyclerView.ViewHolder {
     }
 
     public void bindNoteToCard(NoteResponseModel note) {
+//        animFade = AnimationUtils.loadAnimation(itemView.getContext(), R.anim.zoom_in);
+//        noteContainerLayout.startAnimation(animFade);
         mTitle.setText(note.getTitle());
         mDescription.setText(note.getDescription());
 //        setReminderView(note);

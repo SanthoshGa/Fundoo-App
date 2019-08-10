@@ -90,6 +90,7 @@ public class AddNoteActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        overridePendingTransition(R.anim.zoom_in, R.anim.zoom_in_expand);
         setContentView(R.layout.activity_add_note);
         noteViewModel = new NoteViewModel(this);
         findViews();
@@ -227,7 +228,7 @@ public class AddNoteActivity extends AppCompatActivity {
                 mReminder.setText(reminder);
                 if(isEditMode) {
                     noteToEdit.setReminder(reminderStringBuilder.toString());
-                    apiNoteViewModel.addReminderToNotes(noteToEdit);
+                    apiNoteViewModel. addReminderToNotes(noteToEdit);
                     Toast.makeText(AddNoteActivity.this, "Save Button Clicked", Toast.LENGTH_SHORT).show();
                 }
                 dialog.dismiss();
@@ -409,14 +410,16 @@ public class AddNoteActivity extends AppCompatActivity {
                     Toast.makeText(AddNoteActivity.this, "Note updated", Toast.LENGTH_LONG).show();
 
                     if(reminderStringBuilder.toString().isEmpty()){
-                        Toast.makeText(AddNoteActivity.this, "not added the reminder", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(AddNoteActivity.this, "not added the reminder",
+                                Toast.LENGTH_SHORT).show();
                       }
                       else{
                         addReminder();
                        }
 
 
-                        Intent editNoteIntent = new Intent(AddNoteActivity.this, DashboardActivity.class);
+                        Intent editNoteIntent = new Intent(AddNoteActivity.this,
+                                DashboardActivity.class);
                     startActivity(editNoteIntent);
                 } else {
                     Toast.makeText(AddNoteActivity.this, "Something went wrong",

@@ -27,7 +27,8 @@ public class NoteViewModel
     public boolean addListOfNote(List<NoteResponseModel> noteList){
         return noteDbManager.addListOfNote(noteList);
     }
-    public boolean deleteNote(Note note){
+    public boolean deleteNote(Note note)
+    {
        return  noteDbManager.deleteNote(note);
     }
 // test
