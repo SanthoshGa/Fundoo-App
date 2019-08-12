@@ -1,4 +1,4 @@
-package com.bridgelabz.fundoo.Utility;
+package com.bridgelabz.fundoo.common.Utility;
 
 import android.app.DatePickerDialog;
 import android.app.Dialog;

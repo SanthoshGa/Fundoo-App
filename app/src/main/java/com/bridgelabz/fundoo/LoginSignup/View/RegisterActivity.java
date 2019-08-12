@@ -18,7 +18,7 @@ import com.bridgelabz.fundoo.LoginSignup.Model.UserModel;
 import com.bridgelabz.fundoo.LoginSignup.Model.User;
 import com.bridgelabz.fundoo.LoginSignup.ViewModel.UserViewModel;
 import com.bridgelabz.fundoo.R;
-import com.bridgelabz.fundoo.Utility.ValidationHelper;
+import com.bridgelabz.fundoo.common.Utility.ValidationHelper;
 
 public class RegisterActivity extends AppCompatActivity {
 

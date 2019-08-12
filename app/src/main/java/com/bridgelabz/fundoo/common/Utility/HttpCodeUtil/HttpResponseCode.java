@@ -1,4 +1,4 @@
-package com.bridgelabz.fundoo.Utility.HttpCodeUtil;
+package com.bridgelabz.fundoo.common.Utility.HttpCodeUtil;
 
 public enum HttpResponseCode {
     SUCCESS(200, "Success"),

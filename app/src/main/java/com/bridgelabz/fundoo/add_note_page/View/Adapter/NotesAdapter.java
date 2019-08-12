@@ -11,7 +11,7 @@ import android.widget.Filterable;
 import com.bridgelabz.fundoo.add_note_page.Model.BaseNoteModel;
 import com.bridgelabz.fundoo.add_note_page.Model.NoteResponseModel;
 import com.bridgelabz.fundoo.R;
-import com.bridgelabz.fundoo.Utility.ItemTouchHelperAdapter;
+import com.bridgelabz.fundoo.common.Utility.ItemTouchHelperAdapter;
 
 import java.util.ArrayList;
 import java.util.List;

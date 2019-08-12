@@ -1,4 +1,4 @@
-package com.bridgelabz.fundoo.Utility;
+package com.bridgelabz.fundoo.common.Utility;
 
 import java.util.regex.Pattern;
 

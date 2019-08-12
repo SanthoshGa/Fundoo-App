@@ -8,7 +8,7 @@ import com.bridgelabz.fundoo.add_note_page.Model.NoteResponseModel;
 import com.bridgelabz.fundoo.add_note_page.data_manager.apis.NoteRestApiService;
 import com.bridgelabz.fundoo.LoginSignup.Model.Response.ResponseData;
 import com.bridgelabz.fundoo.LoginSignup.Model.Response.ResponseError;
-import com.bridgelabz.fundoo.Utility.RetrofitRestApiConnection;
+import com.bridgelabz.fundoo.common.Utility.RetrofitRestApiConnection;
 import com.bridgelabz.fundoo.common.SharedPreferencesManager;
 
 import java.io.IOException;

@@ -1,4 +1,4 @@
-package com.bridgelabz.fundoo.Utility;
+package com.bridgelabz.fundoo.common.Utility;
 
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;

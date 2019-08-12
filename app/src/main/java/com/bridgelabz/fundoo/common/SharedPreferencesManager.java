@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
 
-import com.bridgelabz.fundoo.Utility.AppConstants;
+import com.bridgelabz.fundoo.common.Utility.AppConstants;
 
 public class SharedPreferencesManager {
 

@@ -20,7 +20,6 @@ import com.bridgelabz.fundoo.LoginSignup.Model.UserLoginModel;
 import com.bridgelabz.fundoo.LoginSignup.Model.UserModel;
 import com.bridgelabz.fundoo.LoginSignup.ViewModel.UserViewModel;
 import com.bridgelabz.fundoo.R;
-import com.bridgelabz.fundoo.Utility.AppConstants;
 import com.bridgelabz.fundoo.common.SharedPreferencesManager;
 import com.bridgelabz.fundoo.firebase_auth_service.FirebaseAuthManager;
 import com.facebook.AccessToken;
@@ -60,12 +59,14 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
     public static final int REQUEST_CODE = 9001;
     FirebaseAuthManager firebaseAuthManager;
     SharedPreferencesManager sharedPreferencesManager;
+    RestApiUserDataManager apiUserDataManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         sharedPreferencesManager = new SharedPreferencesManager(this);
+        apiUserDataManager = new RestApiUserDataManager();
 
         findViews();
         onClickRegister();
@@ -149,8 +150,6 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                 Log.e(TAG, "onClick: login button click");
 
                 UserLoginModel loginModel = new UserLoginModel(email, password);
-
-                RestApiUserDataManager apiUserDataManager = new RestApiUserDataManager();
 
                 apiUserDataManager.checkUser(loginModel, new RestApiUserDataManager.SignInCallback() {
                     @Override

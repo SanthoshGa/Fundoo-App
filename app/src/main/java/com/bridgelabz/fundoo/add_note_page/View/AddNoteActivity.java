@@ -37,9 +37,9 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import com.bridgelabz.fundoo.BroadcastReceivers.ReminderReceiver;
 import com.bridgelabz.fundoo.Dashboard.DashboardActivity;
 import com.bridgelabz.fundoo.R;
-import com.bridgelabz.fundoo.Utility.DatePickerFragment;
-import com.bridgelabz.fundoo.Utility.TimePickerFragment;
-import com.bridgelabz.fundoo.Utility.ValidationHelper;
+import com.bridgelabz.fundoo.common.Utility.DatePickerFragment;
+import com.bridgelabz.fundoo.common.Utility.TimePickerFragment;
+import com.bridgelabz.fundoo.common.Utility.ValidationHelper;
 import com.bridgelabz.fundoo.add_note_page.Model.AddNoteModel;
 import com.bridgelabz.fundoo.add_note_page.Model.BaseNoteModel;
 import com.bridgelabz.fundoo.add_note_page.Model.Note;
@@ -52,12 +52,12 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-import static com.bridgelabz.fundoo.Utility.AppConstants.ADD_NOTE_ACTION;
-import static com.bridgelabz.fundoo.Utility.AppConstants.ADD_REMINDER_TO_NOTES_ACTION;
-import static com.bridgelabz.fundoo.Utility.AppConstants.CHANGE_COLOR_TO_NOTE_ACTION;
-import static com.bridgelabz.fundoo.Utility.AppConstants.PIN_UNPIN_TO_NOTE_ACTION;
-import static com.bridgelabz.fundoo.Utility.AppConstants.SET_ARCHIVE_ACTION;
-import static com.bridgelabz.fundoo.Utility.AppConstants.UPDATE_NOTE_ACTION;
+import static com.bridgelabz.fundoo.common.Utility.AppConstants.ADD_NOTE_ACTION;
+import static com.bridgelabz.fundoo.common.Utility.AppConstants.ADD_REMINDER_TO_NOTES_ACTION;
+import static com.bridgelabz.fundoo.common.Utility.AppConstants.CHANGE_COLOR_TO_NOTE_ACTION;
+import static com.bridgelabz.fundoo.common.Utility.AppConstants.PIN_UNPIN_TO_NOTE_ACTION;
+import static com.bridgelabz.fundoo.common.Utility.AppConstants.SET_ARCHIVE_ACTION;
+import static com.bridgelabz.fundoo.common.Utility.AppConstants.UPDATE_NOTE_ACTION;
 
 public class AddNoteActivity extends AppCompatActivity {
 

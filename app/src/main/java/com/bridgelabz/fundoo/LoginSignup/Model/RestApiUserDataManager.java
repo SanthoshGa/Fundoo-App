@@ -6,8 +6,9 @@ import android.util.Log;
 import com.bridgelabz.fundoo.LoginSignup.Model.Response.ResponseData;
 import com.bridgelabz.fundoo.LoginSignup.Model.Response.ResponseError;
 import com.bridgelabz.fundoo.LoginSignup.Model.RestApiService.UserRestApiService;
-import com.bridgelabz.fundoo.Utility.RetrofitRestApiConnection;
+import com.bridgelabz.fundoo.common.Utility.RetrofitRestApiConnection;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 
@@ -94,6 +95,35 @@ public class RestApiUserDataManager {
 
     }
 
+    public void  uploadImage(File file, final UploadImageCallback uploadImageCallback){
+        Retrofit retrofit = RetrofitRestApiConnection.openRetrofitConnection();
+        UserRestApiService apiService = retrofit.create(UserRestApiService.class);
+        Call<UserModel> responseDataCall = apiService.uploadImage(file);
+        responseDataCall.enqueue(new Callback<UserModel>() {
+            @Override
+            public void onResponse(Call<UserModel> call, Response<UserModel> response) {
+                if(response.isSuccessful()){
+                    UserModel userModel = response.body();
+                    Log.e(TAG, " ResponseModel :" +  response.body() + "");
+                    uploadImageCallback.onResponse(userModel, null);
+                }
+                else{
+                    try {
+                        Log.e(TAG, "ERROR ResponseModel :" + response.errorBody().string() + "");
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<UserModel> call, Throwable throwable) {
+                Log.e(TAG, throwable.getLocalizedMessage());
+                uploadImageCallback.onFailure(throwable);
+            }
+        });
+    }
+
 
     public interface SignUpCallback {
         void onResponse(ResponseData responseData, ResponseError responseError);
@@ -104,6 +134,10 @@ public class RestApiUserDataManager {
     public interface SignInCallback {
         void onResponse(UserModel userModel, ResponseError responseError);
 
+        void onFailure(Throwable throwable);
+    }
+    public interface UploadImageCallback{
+        void onResponse(UserModel userModel, ResponseError responseError);
         void onFailure(Throwable throwable);
     }
 }

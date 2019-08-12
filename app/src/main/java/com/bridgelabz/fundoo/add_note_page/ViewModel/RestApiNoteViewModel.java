@@ -15,17 +15,17 @@ import com.bridgelabz.fundoo.LoginSignup.Model.Response.ResponseError;
 import java.io.Serializable;
 import java.util.List;
 
-import static com.bridgelabz.fundoo.Utility.AppConstants.ADD_NOTE_ACTION;
-import static com.bridgelabz.fundoo.Utility.AppConstants.ADD_REMINDER_TO_NOTES_ACTION;
-import static com.bridgelabz.fundoo.Utility.AppConstants.CHANGE_COLOR_TO_NOTE_ACTION;
-import static com.bridgelabz.fundoo.Utility.AppConstants.FETCH_NOTE_ACTION;
-import static com.bridgelabz.fundoo.Utility.AppConstants.GET_ARCHIVE_NOTES_ACTION;
-import static com.bridgelabz.fundoo.Utility.AppConstants.GET_REMINDER_NOTES_LIST_ACTION;
-import static com.bridgelabz.fundoo.Utility.AppConstants.GET_TRASH_NOTES_LIST_ACTION;
-import static com.bridgelabz.fundoo.Utility.AppConstants.PIN_UNPIN_TO_NOTE_ACTION;
-import static com.bridgelabz.fundoo.Utility.AppConstants.SET_ARCHIVE_ACTION;
-import static com.bridgelabz.fundoo.Utility.AppConstants.TRASH_NOTE_ACTION;
-import static com.bridgelabz.fundoo.Utility.AppConstants.UPDATE_NOTE_ACTION;
+import static com.bridgelabz.fundoo.common.Utility.AppConstants.ADD_NOTE_ACTION;
+import static com.bridgelabz.fundoo.common.Utility.AppConstants.ADD_REMINDER_TO_NOTES_ACTION;
+import static com.bridgelabz.fundoo.common.Utility.AppConstants.CHANGE_COLOR_TO_NOTE_ACTION;
+import static com.bridgelabz.fundoo.common.Utility.AppConstants.FETCH_NOTE_ACTION;
+import static com.bridgelabz.fundoo.common.Utility.AppConstants.GET_ARCHIVE_NOTES_ACTION;
+import static com.bridgelabz.fundoo.common.Utility.AppConstants.GET_REMINDER_NOTES_LIST_ACTION;
+import static com.bridgelabz.fundoo.common.Utility.AppConstants.GET_TRASH_NOTES_LIST_ACTION;
+import static com.bridgelabz.fundoo.common.Utility.AppConstants.PIN_UNPIN_TO_NOTE_ACTION;
+import static com.bridgelabz.fundoo.common.Utility.AppConstants.SET_ARCHIVE_ACTION;
+import static com.bridgelabz.fundoo.common.Utility.AppConstants.TRASH_NOTE_ACTION;
+import static com.bridgelabz.fundoo.common.Utility.AppConstants.UPDATE_NOTE_ACTION;
 
 public class RestApiNoteViewModel {
     private static final String TAG = "RestApiNoteViewModel";

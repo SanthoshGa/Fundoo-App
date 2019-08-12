@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -17,7 +18,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.TextView;
@@ -32,14 +32,16 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.loader.content.CursorLoader;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
-import com.bridgelabz.fundoo.add_note_page.Model.AddNoteModel;
-import com.bridgelabz.fundoo.add_note_page.Model.Note;
+import com.bridgelabz.fundoo.LoginSignup.Model.Response.ResponseError;
+import com.bridgelabz.fundoo.LoginSignup.Model.RestApiUserDataManager;
+import com.bridgelabz.fundoo.LoginSignup.Model.UserModel;
 import com.bridgelabz.fundoo.add_note_page.View.AddNoteActivity;
 import com.bridgelabz.fundoo.add_note_page.Model.BaseNoteModel;
 import com.bridgelabz.fundoo.add_note_page.Model.NoteResponseModel;
@@ -53,18 +55,20 @@ import com.bridgelabz.fundoo.common.SharedPreferencesManager;
 import com.bumptech.glide.Glide;
 import com.google.android.material.navigation.NavigationView;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import okhttp3.internal.Util;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 
-import static com.bridgelabz.fundoo.Utility.AppConstants.FETCH_NOTE_ACTION;
-import static com.bridgelabz.fundoo.Utility.AppConstants.GET_ARCHIVE_NOTES_ACTION;
-import static com.bridgelabz.fundoo.Utility.AppConstants.GET_REMINDER_NOTES_LIST_ACTION;
-import static com.bridgelabz.fundoo.Utility.AppConstants.GET_TRASH_NOTES_LIST_ACTION;
-import static com.bridgelabz.fundoo.Utility.AppConstants.TRASH_NOTE_ACTION;
-import static com.bridgelabz.fundoo.Utility.AppConstants.UPDATE_NOTE_ACTION;
+import static com.bridgelabz.fundoo.common.Utility.AppConstants.FETCH_NOTE_ACTION;
+import static com.bridgelabz.fundoo.common.Utility.AppConstants.GET_ARCHIVE_NOTES_ACTION;
+import static com.bridgelabz.fundoo.common.Utility.AppConstants.GET_REMINDER_NOTES_LIST_ACTION;
+import static com.bridgelabz.fundoo.common.Utility.AppConstants.GET_TRASH_NOTES_LIST_ACTION;
+import static com.bridgelabz.fundoo.common.Utility.AppConstants.TRASH_NOTE_ACTION;
 
 public class DashboardActivity extends AppCompatActivity implements
         NavigationView.OnNavigationItemSelectedListener {
@@ -84,7 +88,10 @@ public class DashboardActivity extends AppCompatActivity implements
     NavigationView navigationView;
     NoteResponseModel noteToDelete;
     private SharedPreferencesManager sharedPreferencesManager;
+    RestApiUserDataManager apiUserDataManager;
+
     Animation animZoomOut;
+    public String imagePath;
 //    Observable<List<BaseNoteModel>> observableNotes = new ObservableNotes(noteList);
 
     @Override
@@ -95,6 +102,7 @@ public class DashboardActivity extends AppCompatActivity implements
         noteViewModel = new NoteViewModel(this);
         restApiNoteViewModel = new RestApiNoteViewModel(this);
         sharedPreferencesManager = new SharedPreferencesManager(this);
+        apiUserDataManager = new RestApiUserDataManager();
         prepareRecyclerView();
 //        registerObserverForNotes();
         setNavigationViewListener();
@@ -127,9 +135,37 @@ public class DashboardActivity extends AppCompatActivity implements
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == PICK_REQUEST_CODE) {
             Uri imageUri = data.getData();
+            imagePath = getRealPathFromUri(imageUri);
+            File file = new File(imagePath);
+            RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form_data"), file);
+            MultipartBody.Part body = MultipartBody.Part.createFormData("file", file.getName(), requestBody);
+            apiUserDataManager.uploadImage(file, new RestApiUserDataManager.UploadImageCallback() {
+                @Override
+                public void onResponse(UserModel userModel, ResponseError responseError) {
+                    Toast.makeText(DashboardActivity.this, "Image Uploaded Successfully",
+                            Toast.LENGTH_SHORT).show();
+                }
+
+                @Override
+                public void onFailure(Throwable throwable) {
+                    Toast.makeText(DashboardActivity.this, "Error" +throwable.getMessage(), Toast.LENGTH_SHORT).show();
+
+                }
+            });
             Log.e(TAG, "onActivityResult: " + imageUri.toString());
             Glide.with(this).load(imageUri).circleCrop().into(imageProfile);
         }
+    }
+    public String getRealPathFromUri(Uri uri){
+        String[] projection = {MediaStore.Images.Media.DATA};
+        CursorLoader loader = new CursorLoader(getApplicationContext(), uri, projection,
+                null, null, null);
+        Cursor cursor = loader.loadInBackground();
+        int column_idx = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+        cursor.moveToFirst();
+        String result = cursor.getString(column_idx);
+        cursor.close();
+        return result;
     }
 
     private void registerLocalBroadcasts() {

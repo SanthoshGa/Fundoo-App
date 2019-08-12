@@ -4,12 +4,15 @@ import com.bridgelabz.fundoo.LoginSignup.Model.Response.ResponseData;
 import com.bridgelabz.fundoo.LoginSignup.Model.UserLoginModel;
 import com.bridgelabz.fundoo.LoginSignup.Model.UserModel;
 
+import java.io.File;
 import java.util.List;
 import java.util.Map;
 
+import okhttp3.MultipartBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
+import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 
 public interface UserRestApiService {
@@ -22,4 +25,8 @@ public interface UserRestApiService {
 
     @POST("user/login")
     Call<UserModel> logInUser(@Body UserLoginModel loginModel);
+
+    @Multipart
+    @POST("user/uploadProfileImage")
+    Call<UserModel> uploadImage(@Body File file);
 }
