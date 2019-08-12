@@ -95,34 +95,34 @@ public class RestApiUserDataManager {
 
     }
 
-    public void  uploadImage(File file, final UploadImageCallback uploadImageCallback){
-        Retrofit retrofit = RetrofitRestApiConnection.openRetrofitConnection();
-        UserRestApiService apiService = retrofit.create(UserRestApiService.class);
-        Call<UserModel> responseDataCall = apiService.uploadImage(file);
-        responseDataCall.enqueue(new Callback<UserModel>() {
-            @Override
-            public void onResponse(Call<UserModel> call, Response<UserModel> response) {
-                if(response.isSuccessful()){
-                    UserModel userModel = response.body();
-                    Log.e(TAG, " ResponseModel :" +  response.body() + "");
-                    uploadImageCallback.onResponse(userModel, null);
-                }
-                else{
-                    try {
-                        Log.e(TAG, "ERROR ResponseModel :" + response.errorBody().string() + "");
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(Call<UserModel> call, Throwable throwable) {
-                Log.e(TAG, throwable.getLocalizedMessage());
-                uploadImageCallback.onFailure(throwable);
-            }
-        });
-    }
+//    public void  uploadImage(File file, final UploadImageCallback uploadImageCallback){
+//        Retrofit retrofit = RetrofitRestApiConnection.openRetrofitConnection();
+//        UserRestApiService apiService = retrofit.create(UserRestApiService.class);
+//        Call<UserModel> responseDataCall = apiService.uploadImage(file);
+//        responseDataCall.enqueue(new Callback<UserModel>() {
+//            @Override
+//            public void onResponse(Call<UserModel> call, Response<UserModel> response) {
+//                if(response.isSuccessful()){
+//                    UserModel userModel = response.body();
+//                    Log.e(TAG, " ResponseModel :" +  response.body() + "");
+//                    uploadImageCallback.onResponse(userModel, null);
+//                }
+//                else{
+//                    try {
+//                        Log.e(TAG, "ERROR ResponseModel :" + response.errorBody().string() + "");
+//                    } catch (IOException e) {
+//                        e.printStackTrace();
+//                    }
+//                }
+//            }
+//
+//            @Override
+//            public void onFailure(Call<UserModel> call, Throwable throwable) {
+//                Log.e(TAG, throwable.getLocalizedMessage());
+//                uploadImageCallback.onFailure(throwable);
+//            }
+//        });
+//    }
 
 
     public interface SignUpCallback {
@@ -136,10 +136,10 @@ public class RestApiUserDataManager {
 
         void onFailure(Throwable throwable);
     }
-    public interface UploadImageCallback{
-        void onResponse(UserModel userModel, ResponseError responseError);
-        void onFailure(Throwable throwable);
-    }
+//    public interface UploadImageCallback{
+//        void onResponse(UserModel userModel, ResponseError responseError);
+//        void onFailure(Throwable throwable);
+//    }
 }
 
 //

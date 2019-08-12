@@ -1,5 +1,8 @@
 package com.bridgelabz.fundoo.common.Utility;
 
+import java.util.concurrent.TimeUnit;
+
+import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -11,9 +14,17 @@ public class RetrofitRestApiConnection {
 
     public static Retrofit openRetrofitConnection() {
 
+        OkHttpClient okHttpClient = new OkHttpClient.Builder()
+                .connectTimeout(5, TimeUnit.MINUTES)
+                .readTimeout(5, TimeUnit.MINUTES)
+                .writeTimeout(5, TimeUnit.MINUTES)
+                .build();
+
         if(retrofitInstance == null) {
             retrofitInstance = new Retrofit.Builder().baseUrl(BASE_URL)
-                    .addConverterFactory(GsonConverterFactory.create()).build();
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .client(okHttpClient)
+                    .build();
         }
         return retrofitInstance;
     }

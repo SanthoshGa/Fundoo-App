@@ -11,6 +11,7 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Menu;
@@ -18,7 +19,9 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
+import android.widget.AbsListView;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -36,6 +39,7 @@ import androidx.loader.content.CursorLoader;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
@@ -80,17 +84,24 @@ public class DashboardActivity extends AppCompatActivity implements
     private ImageView imageProfile;
     private TextView tvEmail;
     public static final int PICK_REQUEST_CODE = 10;
-    RecyclerView mRecyclerView;
     private List<NoteResponseModel> noteList = new ArrayList<>();
     NoteViewModel noteViewModel;
     RestApiNoteViewModel restApiNoteViewModel;
     NotesAdapter notesAdapter;
+    RecyclerView mRecyclerView;
+    LinearLayoutManager manager;
+    Boolean isScrolling = false;
+    private  int OFFSET = 0;
+    private  int LIMIT = 10;
+
+
+    int currentItems, totalItems,  scrollOutItems;
+    ProgressBar progressBar;
     NavigationView navigationView;
     NoteResponseModel noteToDelete;
     private SharedPreferencesManager sharedPreferencesManager;
     RestApiUserDataManager apiUserDataManager;
 
-    Animation animZoomOut;
     public String imagePath;
 //    Observable<List<BaseNoteModel>> observableNotes = new ObservableNotes(noteList);
 
@@ -103,6 +114,8 @@ public class DashboardActivity extends AppCompatActivity implements
         restApiNoteViewModel = new RestApiNoteViewModel(this);
         sharedPreferencesManager = new SharedPreferencesManager(this);
         apiUserDataManager = new RestApiUserDataManager();
+        manager = new LinearLayoutManager(this);
+        progressBar = findViewById(R.id.progress_bar);
         prepareRecyclerView();
 //        registerObserverForNotes();
         setNavigationViewListener();
@@ -135,38 +148,38 @@ public class DashboardActivity extends AppCompatActivity implements
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == PICK_REQUEST_CODE) {
             Uri imageUri = data.getData();
-            imagePath = getRealPathFromUri(imageUri);
-            File file = new File(imagePath);
-            RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form_data"), file);
-            MultipartBody.Part body = MultipartBody.Part.createFormData("file", file.getName(), requestBody);
-            apiUserDataManager.uploadImage(file, new RestApiUserDataManager.UploadImageCallback() {
-                @Override
-                public void onResponse(UserModel userModel, ResponseError responseError) {
-                    Toast.makeText(DashboardActivity.this, "Image Uploaded Successfully",
-                            Toast.LENGTH_SHORT).show();
-                }
-
-                @Override
-                public void onFailure(Throwable throwable) {
-                    Toast.makeText(DashboardActivity.this, "Error" +throwable.getMessage(), Toast.LENGTH_SHORT).show();
-
-                }
-            });
+//            imagePath = getRealPathFromUri(imageUri);
+//            File file = new File(imagePath);
+//            RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form_data"), file);
+//            MultipartBody.Part body = MultipartBody.Part.createFormData("file", file.getName(), requestBody);
+//            apiUserDataManager.uploadImage(file, new RestApiUserDataManager.UploadImageCallback() {
+//                @Override
+//                public void onResponse(UserModel userModel, ResponseError responseError) {
+//                    Toast.makeText(DashboardActivity.this, "Image Uploaded Successfully",
+//                            Toast.LENGTH_SHORT).show();
+//                }
+//
+//                @Override
+//                public void onFailure(Throwable throwable) {
+//                    Toast.makeText(DashboardActivity.this, "Error" +throwable.getMessage(), Toast.LENGTH_SHORT).show();
+//
+//                }
+//            });
             Log.e(TAG, "onActivityResult: " + imageUri.toString());
             Glide.with(this).load(imageUri).circleCrop().into(imageProfile);
         }
     }
-    public String getRealPathFromUri(Uri uri){
-        String[] projection = {MediaStore.Images.Media.DATA};
-        CursorLoader loader = new CursorLoader(getApplicationContext(), uri, projection,
-                null, null, null);
-        Cursor cursor = loader.loadInBackground();
-        int column_idx = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-        cursor.moveToFirst();
-        String result = cursor.getString(column_idx);
-        cursor.close();
-        return result;
-    }
+//    public String getRealPathFromUri(Uri uri){
+//        String[] projection = {MediaStore.Images.Media.DATA};
+//        CursorLoader loader = new CursorLoader(getApplicationContext(), uri, projection,
+//                null, null, null);
+//        Cursor cursor = loader.loadInBackground();
+//        int column_idx = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+//        cursor.moveToFirst();
+//        String result = cursor.getString(column_idx);
+//        cursor.close();
+//        return result;
+//    }
 
     private void registerLocalBroadcasts() {
         LocalBroadcastManager.getInstance(this).registerReceiver(getNotesBroadcastReceiver,
@@ -207,36 +220,16 @@ public class DashboardActivity extends AppCompatActivity implements
 
 
         // for Staggered Grid View
-        mRecyclerView.setLayoutManager(
-                new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
+//        mRecyclerView.setLayoutManager(
+//                new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
 
         // for Recycler view
-//        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mRecyclerView.setLayoutManager(manager);
 
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         notesAdapter = new NotesAdapter(noteList, new NotesAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int notePosition) {
-
-//                animZoomOut = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.zoom_in);
-//                animZoomOut.setAnimationListener(new Animation.AnimationListener() {
-//                    @Override
-//                    public void onAnimationStart(Animation animation) {
-//                        Toast.makeText(DashboardActivity.this, "animation start",
-//                                Toast.LENGTH_SHORT).show();
-//
-//                    }
-//
-//                    @Override
-//                    public void onAnimationEnd(Animation animation) {
-//
-//                    }
-//
-//                    @Override
-//                    public void onAnimationRepeat(Animation animation) {
-//
-//                    }
-//                });
                 Intent intent = new Intent(DashboardActivity.this, AddNoteActivity.class);
                 intent.putExtra("noteToEdit", noteList.get(notePosition));
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
@@ -250,6 +243,44 @@ public class DashboardActivity extends AppCompatActivity implements
         });
         mRecyclerView.setAdapter(notesAdapter);
         noteItemTouchHelper.attachToRecyclerView(mRecyclerView);
+        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                if(newState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL){
+                    isScrolling = true;
+                }
+            }
+
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                currentItems = manager.getChildCount();
+                totalItems = manager.getItemCount();
+                scrollOutItems = manager.findFirstVisibleItemPosition();
+
+                if(isScrolling && (currentItems + scrollOutItems == totalItems)){
+                    //fetch data.......
+                    isScrolling = false;
+                    fetchData();
+                }
+            }
+        });
+    }
+
+    private void fetchData() {
+        Toast.makeText(this, "fetch data", Toast.LENGTH_SHORT).show();
+        progressBar.setVisibility(View.VISIBLE);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                for(int i = 0; i < 6 ; i++ ){
+                   noteList.add(noteViewModel.getAllNoteData().get(0));
+                   notesAdapter.notifyDataSetChanged();
+                }
+
+            }
+        }, 5000);
     }
 
     private void showList() {
@@ -267,21 +298,6 @@ public class DashboardActivity extends AppCompatActivity implements
         }
     }
 
-    private BroadcastReceiver trashNotesBroadcastReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if (intent.hasExtra("isTrashed")) {
-                boolean trashNotes = intent.getBooleanExtra("isTrashed", false);
-                Log.e(TAG, "onReceive: we got the data of trashNotes " + trashNotes);
-                if (trashNotes) {
-//                                    notesAdapter.notifyItemRemoved(adapterPosition);
-                    Toast.makeText(DashboardActivity.this, "Item Deleted",
-                            Toast.LENGTH_SHORT).show();
-                }
-            }
-
-        }
-    };
 
 
     private ItemTouchHelper noteItemTouchHelper = new ItemTouchHelper
@@ -421,7 +437,8 @@ public class DashboardActivity extends AppCompatActivity implements
                 closeFragmentIfShowing();
                 Toast.makeText(this, "Notes drawer menu clicked!", Toast.LENGTH_SHORT).show();
 //                noteList = noteViewModel.getAllNoteData();            // TODO: change
-                restApiNoteViewModel.fetchNoteList();
+//                restApiNoteViewModel.fetchNoteList();
+                noteViewModel.fetchAllNotes();
                 notesAdapter.setNoteModelArrayList(noteList);
                 notesAdapter.notifyDataSetChanged();
                 break;
@@ -552,6 +569,7 @@ public class DashboardActivity extends AppCompatActivity implements
                 noteViewModel.addListOfNote(noteList);
                 notesAdapter.setNoteModelArrayList(noteViewModel.getAllNoteData());
                 Log.e(TAG, "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!: " + noteList);
+                Log.e(TAG, "onReceive notes count" + noteList.size());
                 notesAdapter.notifyDataSetChanged();
             }
         }
@@ -566,6 +584,21 @@ public class DashboardActivity extends AppCompatActivity implements
                         intent.getSerializableExtra("reminderNotesList");
                 notesAdapter.setNoteModelArrayList(noteList);
                 notesAdapter.notifyDataSetChanged();
+            }
+
+        }
+    };
+    private BroadcastReceiver trashNotesBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.hasExtra("isTrashed")) {
+                boolean trashNotes = intent.getBooleanExtra("isTrashed", false);
+                Log.e(TAG, "onReceive: we got the data of trashNotes " + trashNotes);
+                if (trashNotes) {
+//                                    notesAdapter.notifyItemRemoved(adapterPosition);
+//                    Toast.makeText(DashboardActivity.this, "Item Deleted",
+//                            Toast.LENGTH_SHORT).show();
+                }
             }
 
         }

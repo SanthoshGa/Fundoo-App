@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static android.icu.text.MessagePattern.ArgType.SELECT;
 import static com.bridgelabz.fundoo.DatabaseHelpers.SQLiteDatabaseHelper.NOTE_TABLE_COL_ARCHIVE;
 import static com.bridgelabz.fundoo.DatabaseHelpers.SQLiteDatabaseHelper.NOTE_TABLE_COL_COLOR;
 import static com.bridgelabz.fundoo.DatabaseHelpers.SQLiteDatabaseHelper.NOTE_TABLE_COL_DESCRIPTION;
@@ -64,7 +65,7 @@ public class NoteDatabaseManager {
         Log.e(TAG, "addListOfNote: loop" + noteList.toString());
 
         db.close();
-        Log.e(TAG, "res is " + res);
+        Log.e(TAG, "res is!!!!!!!!! " + res);
         return res > 0;
 
     }
@@ -276,6 +277,11 @@ public class NoteDatabaseManager {
 
         return isDeleted;
     }
+
+    //    public boolean showNotes() {
+    SQLiteDatabase db = databaseHelper.openDb();
+//        Cursor cursor = db.rawQuery("SELECT * FROM " + NOTE_TABLE_NAME + "LIMIT" + " =10 " + "OFFSET" + " =0 ", null )
+//    }
 
 //    public Observable<List<Note>> getAllObservableNotes() {
 //        return new ObservableNotes(getAllNoteData());

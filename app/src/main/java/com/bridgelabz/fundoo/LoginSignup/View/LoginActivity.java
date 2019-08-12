@@ -157,7 +157,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                         Log.e(TAG, "onResponse: " + userModel.toString());
                         String token = userModel.getId();
                         sharedPreferencesManager.setAccessToken(token);
-                        openDashBoardActivity(email,null);
+                        openDashBoardActivity(email, null);
                     }
 
                     @Override

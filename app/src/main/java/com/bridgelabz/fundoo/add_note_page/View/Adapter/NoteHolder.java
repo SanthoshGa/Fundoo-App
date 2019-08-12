@@ -64,14 +64,16 @@ public class NoteHolder extends RecyclerView.ViewHolder {
             mReminder.setText(note.getReminder().get(0));
             reminderCard.setVisibility(View.VISIBLE);
         } else {
-             // hide the card
+            // hide the card
+            Log.e(TAG, "bindNoteToCard: hide the card");
             reminderCard.setVisibility(View.GONE);
         }
-        if (note.getColor() != null && !note.getColor().isEmpty()) {
-            noteCard.setCardBackgroundColor(Color.parseColor(note.getColor()));
-        } else {
-            noteCard.setCardBackgroundColor(Color.WHITE);
-        }
+
+            if (note.getColor() != null && !note.getColor().isEmpty()) {
+                noteCard.setCardBackgroundColor(Color.parseColor(note.getColor()));
+            } else {
+                noteCard.setCardBackgroundColor(Color.WHITE);
+            }
     }
 
 //    private void setReminderView(NoteResponseModel note) {

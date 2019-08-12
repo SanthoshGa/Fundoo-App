@@ -26,7 +26,7 @@ public interface UserRestApiService {
     @POST("user/login")
     Call<UserModel> logInUser(@Body UserLoginModel loginModel);
 
-    @Multipart
-    @POST("user/uploadProfileImage")
-    Call<UserModel> uploadImage(@Body File file);
+//    @Multipart
+//    @POST("user/uploadProfileImage")
+//    Call<UserModel> uploadImage(@Body File file);
 }
