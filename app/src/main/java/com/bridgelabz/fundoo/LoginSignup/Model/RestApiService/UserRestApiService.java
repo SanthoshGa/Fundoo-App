@@ -14,6 +14,7 @@ import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
+import retrofit2.http.Part;
 
 public interface UserRestApiService {
 
@@ -26,7 +27,7 @@ public interface UserRestApiService {
     @POST("user/login")
     Call<UserModel> logInUser(@Body UserLoginModel loginModel);
 
-//    @Multipart
-//    @POST("user/uploadProfileImage")
-//    Call<UserModel> uploadImage(@Body File file);
+    @Multipart
+    @POST("user/uploadProfileImage")
+    Call<Map<String, ResponseData>> uploadImage(@Part MultipartBody.Part file);
 }

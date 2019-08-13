@@ -19,9 +19,21 @@ public class ResponseData extends ResponseModel {
     @SerializedName("data")
     private List<NoteResponseModel> noteModelList;
 
-    public ResponseData(boolean success, String message) {
+    @SerializedName("imageUrl")
+    private String imageUrl;
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
+    public ResponseData(boolean success, String message, String imageUrl) {
         this.success = success;
         this.message = message;
+        this.imageUrl = imageUrl;
     }
 
     public boolean getSuccess() {
@@ -43,7 +55,8 @@ public class ResponseData extends ResponseModel {
     public String toString() {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("success :").append(success).append("\n")
-                     .append("message :").append(message).append("\n\n");
+                     .append("message :").append(message).append("\n")
+                     .append("imageUrl :").append(imageUrl).append("\n\n");
         return stringBuilder.toString();
 
     }

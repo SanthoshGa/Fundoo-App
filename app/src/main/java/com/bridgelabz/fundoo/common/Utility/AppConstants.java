@@ -13,6 +13,7 @@ public class AppConstants {
     public static final String GET_TRASH_NOTES_LIST_ACTION = "com.bridgelabz.fundoo.get.trash_notes_list_action";
     public static final String ADD_REMINDER_TO_NOTES_ACTION = "com.bridgelabz.fundoo.add_reminder_to_notes_action";
     public static final String GET_REMINDER_NOTES_LIST_ACTION = "com.bridgelabz.fundoo.get.reminder_notes_list_action";
+    public static final String UPLOAD_PROFILE_PICTURE = "com.bridgelabz.fundoo.update_profile_picture";
 
     public static final String EMAIL = "Email";
     public static final String PASSWORD = "Password";

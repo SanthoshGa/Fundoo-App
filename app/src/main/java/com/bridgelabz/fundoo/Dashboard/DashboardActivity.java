@@ -5,7 +5,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -18,7 +17,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.animation.Animation;
 import android.widget.AbsListView;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -35,17 +33,14 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.loader.content.CursorLoader;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
-import com.bridgelabz.fundoo.LoginSignup.Model.Response.ResponseError;
 import com.bridgelabz.fundoo.LoginSignup.Model.RestApiUserDataManager;
-import com.bridgelabz.fundoo.LoginSignup.Model.UserModel;
+import com.bridgelabz.fundoo.LoginSignup.ViewModel.RestApiUserViewModel;
 import com.bridgelabz.fundoo.add_note_page.View.AddNoteActivity;
 import com.bridgelabz.fundoo.add_note_page.Model.BaseNoteModel;
 import com.bridgelabz.fundoo.add_note_page.Model.NoteResponseModel;
@@ -73,6 +68,7 @@ import static com.bridgelabz.fundoo.common.Utility.AppConstants.GET_ARCHIVE_NOTE
 import static com.bridgelabz.fundoo.common.Utility.AppConstants.GET_REMINDER_NOTES_LIST_ACTION;
 import static com.bridgelabz.fundoo.common.Utility.AppConstants.GET_TRASH_NOTES_LIST_ACTION;
 import static com.bridgelabz.fundoo.common.Utility.AppConstants.TRASH_NOTE_ACTION;
+import static com.bridgelabz.fundoo.common.Utility.AppConstants.UPLOAD_PROFILE_PICTURE;
 
 public class DashboardActivity extends AppCompatActivity implements
         NavigationView.OnNavigationItemSelectedListener {
@@ -91,16 +87,17 @@ public class DashboardActivity extends AppCompatActivity implements
     RecyclerView mRecyclerView;
     LinearLayoutManager manager;
     Boolean isScrolling = false;
-    private  int OFFSET = 0;
-    private  int LIMIT = 10;
-
-
-    int currentItems, totalItems,  scrollOutItems;
+    private int offset = 0;
+    private int LIMIT = 10;
+    List<NoteResponseModel> localNotes;
+    List<NoteResponseModel> localNotes1;
+    int currentItems, totalItems, scrollOutItems;
     ProgressBar progressBar;
     NavigationView navigationView;
     NoteResponseModel noteToDelete;
     private SharedPreferencesManager sharedPreferencesManager;
     RestApiUserDataManager apiUserDataManager;
+    RestApiUserViewModel restApiUserViewModel;
 
     public String imagePath;
 //    Observable<List<BaseNoteModel>> observableNotes = new ObservableNotes(noteList);
@@ -112,6 +109,7 @@ public class DashboardActivity extends AppCompatActivity implements
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         noteViewModel = new NoteViewModel(this);
         restApiNoteViewModel = new RestApiNoteViewModel(this);
+        restApiUserViewModel = new RestApiUserViewModel(this);
         sharedPreferencesManager = new SharedPreferencesManager(this);
         apiUserDataManager = new RestApiUserDataManager();
         manager = new LinearLayoutManager(this);
@@ -146,27 +144,15 @@ public class DashboardActivity extends AppCompatActivity implements
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        MultipartBody.Part imageProfile = null;
         if (requestCode == PICK_REQUEST_CODE) {
             Uri imageUri = data.getData();
-//            imagePath = getRealPathFromUri(imageUri);
-//            File file = new File(imagePath);
-//            RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form_data"), file);
-//            MultipartBody.Part body = MultipartBody.Part.createFormData("file", file.getName(), requestBody);
-//            apiUserDataManager.uploadImage(file, new RestApiUserDataManager.UploadImageCallback() {
-//                @Override
-//                public void onResponse(UserModel userModel, ResponseError responseError) {
-//                    Toast.makeText(DashboardActivity.this, "Image Uploaded Successfully",
-//                            Toast.LENGTH_SHORT).show();
-//                }
-//
-//                @Override
-//                public void onFailure(Throwable throwable) {
-//                    Toast.makeText(DashboardActivity.this, "Error" +throwable.getMessage(), Toast.LENGTH_SHORT).show();
-//
-//                }
-//            });
+            File file = new File(imageUri.getPath());
+            RequestBody requestFile = RequestBody.create(MediaType.parse("image/jpeg"), file);
+            imageProfile = MultipartBody.Part.createFormData("imagenprofile", file.getName(), requestFile);
+            restApiUserViewModel.uploadImage(imageProfile);
             Log.e(TAG, "onActivityResult: " + imageUri.toString());
-            Glide.with(this).load(imageUri).circleCrop().into(imageProfile);
+            Glide.with(this).load(imageUri).circleCrop().into(this.imageProfile);
         }
     }
 //    public String getRealPathFromUri(Uri uri){
@@ -192,8 +178,8 @@ public class DashboardActivity extends AppCompatActivity implements
                 new IntentFilter(GET_TRASH_NOTES_LIST_ACTION));
         LocalBroadcastManager.getInstance(this).registerReceiver(getReminderNotesListBroadcastReceiver,
                 new IntentFilter(GET_REMINDER_NOTES_LIST_ACTION));
-
-
+        LocalBroadcastManager.getInstance(this).registerReceiver(uploadImageBroadcastReceiver,
+                new IntentFilter(UPLOAD_PROFILE_PICTURE));
     }
 
     private void setUpDrawer() {
@@ -247,7 +233,7 @@ public class DashboardActivity extends AppCompatActivity implements
             @Override
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
-                if(newState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL){
+                if (newState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL) {
                     isScrolling = true;
                 }
             }
@@ -259,7 +245,7 @@ public class DashboardActivity extends AppCompatActivity implements
                 totalItems = manager.getItemCount();
                 scrollOutItems = manager.findFirstVisibleItemPosition();
 
-                if(isScrolling && (currentItems + scrollOutItems == totalItems)){
+                if (isScrolling && (currentItems + scrollOutItems == totalItems)) {
                     //fetch data.......
                     isScrolling = false;
                     fetchData();
@@ -274,13 +260,16 @@ public class DashboardActivity extends AppCompatActivity implements
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                for(int i = 0; i < 6 ; i++ ){
-                   noteList.add(noteViewModel.getAllNoteData().get(0));
-                   notesAdapter.notifyDataSetChanged();
-                }
+                offset = offset + LIMIT;
+                List<NoteResponseModel> noteList1 = noteViewModel.showPagerNotes(offset);
+                localNotes.addAll(noteList1);
+//                notesAdapter.setNoteModelArrayList(noteList1);
+                notesAdapter.notifyItemRangeInserted(localNotes.size(), noteList1.size() - 1);
+                progressBar.setVisibility(View.GONE);
+//                notesAdapter.notifyDataSetChanged();
 
             }
-        }, 5000);
+        }, 3000);
     }
 
     private void showList() {
@@ -291,15 +280,19 @@ public class DashboardActivity extends AppCompatActivity implements
                 activeNetwork.isConnectedOrConnecting();
         if (isConnected) {
             restApiNoteViewModel.fetchNoteList();
-            noteViewModel.deleteAllNotes();
-            Log.e(TAG, "showList: " + noteList);
         } else {
             Log.e(TAG, "showList: Not connected!!!!!");
+            if(noteViewModel.getAllNoteData().isEmpty()){
+                Toast.makeText(this, "NO INTERNET CONNECTION", Toast.LENGTH_LONG).show();
+            }
+            else{
+                Log.e(TAG, "show notes which are present in local database");
+//                localNotes1 = noteViewModel.getAllNoteData();
+//                notesAdapter.setNoteModelArrayList(localNotes1);
+//                notesAdapter.notifyDataSetChanged();
+            }
         }
     }
-
-
-
     private ItemTouchHelper noteItemTouchHelper = new ItemTouchHelper
             (new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP | ItemTouchHelper.DOWN |
                     ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT,
@@ -314,7 +307,7 @@ public class DashboardActivity extends AppCompatActivity implements
                     notesAdapter.onItemMove(draggedPosition, targetPosition);
                     Collections.swap(noteList, draggedPosition, targetPosition);
                     Log.e(TAG, "dragged and moved");
-                    return false;
+                    return true;
                 }
 
 
@@ -344,6 +337,11 @@ public class DashboardActivity extends AppCompatActivity implements
 //                        Toast.makeText(DashboardActivity.this, "Item could not be deleted",
 //                                Toast.LENGTH_SHORT).show();
 //                    }
+                }
+
+                @Override
+                public void onMoved(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, int fromPos, @NonNull RecyclerView.ViewHolder target, int toPos, int x, int y) {
+                    super.onMoved(recyclerView, viewHolder, fromPos, target, toPos, x, y);
                 }
             });
 
@@ -564,12 +562,17 @@ public class DashboardActivity extends AppCompatActivity implements
         public void onReceive(Context context, Intent intent) {
             Log.e(TAG, "Local Broadcast is working in dashboard");
             if (intent.hasExtra("noteList")) {
+                noteViewModel.deleteAllNotes();
                 noteList = (List<NoteResponseModel>)
                         intent.getSerializableExtra("noteList");
-                noteViewModel.addListOfNote(noteList);
-                notesAdapter.setNoteModelArrayList(noteViewModel.getAllNoteData());
-                Log.e(TAG, "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!: " + noteList);
-                Log.e(TAG, "onReceive notes count" + noteList.size());
+                noteViewModel.addListOfNotesToDb(noteList);
+                localNotes = noteViewModel.showPagerNotes(offset);
+                notesAdapter.setNoteModelArrayList(localNotes);
+
+                Toast.makeText(context, "THESE ARE THE NOTES PRESENT IN SQLITE DATABASE",
+                        Toast.LENGTH_SHORT).show();
+                Log.e(TAG, "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!: " + noteViewModel.getAllNoteData());
+//                Log.e(TAG, "onReceive notes count" + noteViewModel.getAllNoteData().size());
                 notesAdapter.notifyDataSetChanged();
             }
         }
@@ -603,4 +606,19 @@ public class DashboardActivity extends AppCompatActivity implements
 
         }
     };
+    private BroadcastReceiver uploadImageBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.hasExtra("isImageAdded")) {
+                boolean addImage = intent.getBooleanExtra("isImageAdded", false);
+                Log.e(TAG, "onReceive: we got the image " + addImage);
+                if (addImage) {
+
+                }
+
+            }
+        }
+    };
+
+
 }

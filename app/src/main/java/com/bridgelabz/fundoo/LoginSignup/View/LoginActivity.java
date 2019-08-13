@@ -1,6 +1,9 @@
 package com.bridgelabz.fundoo.LoginSignup.View;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -12,6 +15,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.bridgelabz.fundoo.Dashboard.DashboardActivity;
 import com.bridgelabz.fundoo.LoginSignup.Model.Response.ResponseError;
@@ -44,6 +48,8 @@ import org.json.JSONObject;
 
 import java.util.Arrays;
 
+import static com.bridgelabz.fundoo.common.Utility.AppConstants.UPLOAD_PROFILE_PICTURE;
+
 public class LoginActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
 
     private static final String TAG = "LoginActivity.class";
@@ -72,6 +78,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
         onClickRegister();
         onClickLogin();
         setClickOnGoogleSignIn();
+        registerLocalBroadcasts();
 
         //Google SignIn
         GoogleSignInOptions googleSignInOptions = new GoogleSignInOptions.Builder
@@ -103,6 +110,10 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
 
             }
         });
+
+    }
+
+    private void registerLocalBroadcasts() {
 
     }
 
@@ -167,7 +178,8 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                     }
                 });
             }
-            void openDashBoardActivity(String email, String image_url){
+
+            void openDashBoardActivity(String email, String image_url) {
                 Intent intent = new Intent(LoginActivity.this, DashboardActivity.class);
                 intent.putExtra("email", email);
                 intent.putExtra("imageUrl", image_url);
@@ -268,6 +280,10 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
         request.executeAsync();
 
     }
+    //BROADCAST RECEIVERS
+
+
+
 }
 
 
@@ -306,3 +322,4 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
 //                    Toast.makeText(LoginActivity.this, "login error", Toast.LENGTH_SHORT).show();
 //
 //                }
+

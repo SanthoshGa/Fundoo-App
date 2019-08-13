@@ -24,8 +24,8 @@ public class NoteViewModel
     public  boolean addNote(NoteResponseModel note){
         return noteDbManager.addNote(note);
     }
-    public boolean addListOfNote(List<NoteResponseModel> noteList){
-        return noteDbManager.addListOfNote(noteList);
+    public boolean addListOfNotesToDb(List<NoteResponseModel> noteList){
+        return noteDbManager.addListOfNotesToDb(noteList);
     }
     public boolean deleteNote(Note note)
     {
@@ -53,6 +53,9 @@ public class NoteViewModel
     }
     public boolean updateNote(AddNoteModel noteToEdit){
         return noteDbManager.updateNote(noteToEdit);
+    }
+    public List<NoteResponseModel> showPagerNotes(int offset){
+        return noteDbManager.showNotes(offset);
     }
 
     public Observable<List<Note>> fetchAllNotes() {

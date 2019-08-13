@@ -9,15 +9,12 @@ import android.util.Log;
 import com.bridgelabz.fundoo.add_note_page.Model.AddNoteModel;
 import com.bridgelabz.fundoo.add_note_page.Model.Note;
 import com.bridgelabz.fundoo.DatabaseHelpers.SQLiteDatabaseHelper;
-import com.bridgelabz.fundoo.ObserverPattern.Observable;
-import com.bridgelabz.fundoo.ObserverPattern.ObservableNotes;
 import com.bridgelabz.fundoo.add_note_page.Model.NoteResponseModel;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static android.icu.text.MessagePattern.ArgType.SELECT;
 import static com.bridgelabz.fundoo.DatabaseHelpers.SQLiteDatabaseHelper.NOTE_TABLE_COL_ARCHIVE;
 import static com.bridgelabz.fundoo.DatabaseHelpers.SQLiteDatabaseHelper.NOTE_TABLE_COL_COLOR;
 import static com.bridgelabz.fundoo.DatabaseHelpers.SQLiteDatabaseHelper.NOTE_TABLE_COL_DESCRIPTION;
@@ -52,7 +49,7 @@ public class NoteDatabaseManager {
 
     }
 
-    public boolean addListOfNote(List<NoteResponseModel> noteList) {
+    public boolean addListOfNotesToDb(List<NoteResponseModel> noteList) {
         SQLiteDatabase db = databaseHelper.openDb();
         long res = 0;
         for (NoteResponseModel model :
@@ -62,7 +59,7 @@ public class NoteDatabaseManager {
             res = db.insert(NOTE_TABLE_NAME, null, contentValues);
 
         }
-        Log.e(TAG, "addListOfNote: loop" + noteList.toString());
+        Log.e(TAG, "addListOfNotesToDb: loop" + noteList.toString());
 
         db.close();
         Log.e(TAG, "res is!!!!!!!!! " + res);
@@ -278,12 +275,26 @@ public class NoteDatabaseManager {
         return isDeleted;
     }
 
-    //    public boolean showNotes() {
-    SQLiteDatabase db = databaseHelper.openDb();
-//        Cursor cursor = db.rawQuery("SELECT * FROM " + NOTE_TABLE_NAME + "LIMIT" + " =10 " + "OFFSET" + " =0 ", null )
-//    }
+    public List<NoteResponseModel> showNotes(int offset) {
+
+//        "SELECT id,name,birthday FROM " + TABLENAME
+//                + " WHERE (name LIKE ? OR birthday LIKE ?)"
+//                + " LIMIT ?,? " ;
+        SQLiteDatabase db = databaseHelper.openDb();
+        List<NoteResponseModel> noteList = new ArrayList<>();
+        Cursor cursor = db.rawQuery("SELECT * FROM " + NOTE_TABLE_NAME + " ORDER BY " + NOTE_TABLE_COL_ID +
+                " ASC " + " LIMIT ?, ?", new String[]{String.valueOf(offset), String.valueOf(10)});
+        while (cursor.moveToNext()) {
+            noteList = getNoteListFromCursor(cursor, noteList);
+        }
+        cursor.close();
+        return noteList;
+    }
 
 //    public Observable<List<Note>> getAllObservableNotes() {
 //        return new ObservableNotes(getAllNoteData());
 //    }
 }
+
+
+//
