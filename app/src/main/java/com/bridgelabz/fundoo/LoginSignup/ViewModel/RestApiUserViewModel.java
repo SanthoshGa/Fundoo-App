@@ -29,8 +29,8 @@ public class RestApiUserViewModel{
     }
 
 
-    public void uploadImage(MultipartBody.Part file){
-        restApiUserDataManager.uploadImage(file, new RestApiUserDataManager.UploadImageCallBack() {
+    public void uploadImage(MultipartBody.Part file, String authKey){
+        restApiUserDataManager.uploadImage(file, authKey,new RestApiUserDataManager.UploadImageCallBack() {
             Intent localIntent = new Intent(UPLOAD_PROFILE_PICTURE);
             @Override
             public void onResponse(ResponseData responseData, ResponseError responseError) {

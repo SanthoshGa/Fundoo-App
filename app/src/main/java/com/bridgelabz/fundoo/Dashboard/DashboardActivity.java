@@ -1,15 +1,18 @@
 package com.bridgelabz.fundoo.Dashboard;
 
+import android.Manifest;
 import android.app.ActivityOptions;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.provider.MediaStore;
 import android.util.Log;
@@ -28,6 +31,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
@@ -51,10 +56,14 @@ import com.bridgelabz.fundoo.LoginSignup.View.LoginActivity;
 import com.bridgelabz.fundoo.R;
 import com.bridgelabz.fundoo.add_label_page.view.AddLabelFragment;
 import com.bridgelabz.fundoo.common.SharedPreferencesManager;
+import com.bridgelabz.fundoo.common.Utility.AppConstants;
 import com.bumptech.glide.Glide;
 import com.google.android.material.navigation.NavigationView;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -132,10 +141,22 @@ public class DashboardActivity extends AppCompatActivity implements
             @Override
             public void onClick(View view) {
                 Toast.makeText(DashboardActivity.this, "profile clicked", Toast.LENGTH_SHORT).show();
+//                int permissionCheck = ContextCompat.checkSelfPermission(DashboardActivity.this,
+//                        Manifest.permission.READ_EXTERNAL_STORAGE);
+                int writePermissionCheck = ContextCompat.checkSelfPermission(DashboardActivity.this,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE);
+                if(writePermissionCheck !=
+                        PackageManager.PERMISSION_GRANTED){
+                    ActivityCompat.requestPermissions(DashboardActivity.this,
+                            new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                                   }, 10012);
+                }
+                else{
                 Intent galleryIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI);
                 galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
                 galleryIntent.setType("image/*");
                 startActivityForResult(galleryIntent, PICK_REQUEST_CODE);
+                }
 
             }
         });
@@ -144,18 +165,53 @@ public class DashboardActivity extends AppCompatActivity implements
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        MultipartBody.Part imageProfile = null;
+        MultipartBody.Part imageFormData = null;
         if (requestCode == PICK_REQUEST_CODE) {
             Uri imageUri = data.getData();
-            File file = new File(imageUri.getPath());
-            RequestBody requestFile = RequestBody.create(MediaType.parse("image/jpeg"), file);
-            imageProfile = MultipartBody.Part.createFormData("imagenprofile", file.getName(), requestFile);
-            restApiUserViewModel.uploadImage(imageProfile);
+
+
+//            String path = getFilesDir().getPath();
+//            Log.e(TAG, "onActivityResult: " + path);
+//            File file = new File(getFilesDir(), "/file.jpg");
+//            boolean isDirectoryAdded = file.mkdir();
+//            Log.e(TAG, "onActivityResult: File exists - " + file.exists());
+//            Log.e(TAG, "onActivityResult: IsDirectoryAdded exists - " + isDirectoryAdded);
+//            File file = new File(path);
+            try {
+//                file.createNewFile();
+                InputStream inputStream = getContentResolver().openInputStream(data.getData());
+                RequestBody requestFile = RequestBody.create(MediaType.parse("image/jpeg"),
+                        getBytes(inputStream));
+                imageFormData = MultipartBody.Part.createFormData("file", "file.jpeg",
+                        requestFile);
+
+                SharedPreferencesManager manager = new SharedPreferencesManager(this);
+                restApiUserViewModel.uploadImage(imageFormData, manager.getAccessToken());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+//            Log.e(TAG, "onActivityResult: " + file);
+
             Log.e(TAG, "onActivityResult: " + imageUri.toString());
             Glide.with(this).load(imageUri).circleCrop().into(this.imageProfile);
         }
     }
-//    public String getRealPathFromUri(Uri uri){
+
+    public byte[] getBytes(InputStream is) throws IOException {
+        ByteArrayOutputStream byteBuff = new ByteArrayOutputStream();
+
+        int buffSize = 1024;
+        byte[] buff = new byte[buffSize];
+
+        int len = 0;
+        while ((len = is.read(buff)) != -1) {
+            byteBuff.write(buff, 0, len);
+        }
+
+        return byteBuff.toByteArray();
+    }
+
+    //    public String getRealPathFromUri(Uri uri){
 //        String[] projection = {MediaStore.Images.Media.DATA};
 //        CursorLoader loader = new CursorLoader(getApplicationContext(), uri, projection,
 //                null, null, null);
@@ -309,8 +365,6 @@ public class DashboardActivity extends AppCompatActivity implements
                     Log.e(TAG, "dragged and moved");
                     return true;
                 }
-
-
                 @Override
                 public void onSwiped(@NonNull RecyclerView.ViewHolder swipedViewHolder, int direction) {
                     final int adapterPosition = swipedViewHolder.getAdapterPosition();
@@ -610,9 +664,9 @@ public class DashboardActivity extends AppCompatActivity implements
         @Override
         public void onReceive(Context context, Intent intent) {
             if (intent.hasExtra("isImageAdded")) {
-                boolean addImage = intent.getBooleanExtra("isImageAdded", false);
-                Log.e(TAG, "onReceive: we got the image " + addImage);
-                if (addImage) {
+                boolean isAddImage = intent.getBooleanExtra("isImageAdded", false);
+                Log.e(TAG, "onReceive: we got the image " + isAddImage);
+                if (isAddImage) {
 
                 }
 

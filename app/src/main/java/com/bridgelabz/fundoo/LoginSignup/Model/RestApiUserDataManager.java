@@ -95,10 +95,11 @@ public class RestApiUserDataManager {
         });
 
     }
-    public void uploadImage(MultipartBody.Part file, final UploadImageCallBack uploadImageCallBack){
+    public void uploadImage(MultipartBody.Part file, String authKey, final UploadImageCallBack uploadImageCallBack){
         Retrofit retrofit = RetrofitRestApiConnection.openRetrofitConnection();
         UserRestApiService apiService = retrofit.create(UserRestApiService.class);
-        Call<Map<String, ResponseData>> responseDataCall = apiService.uploadImage(file);
+        Call<Map<String, ResponseData>> responseDataCall = apiService.uploadImage(file, authKey);
+        Log.e(TAG, "uploadImage: " + file);
 
         responseDataCall.enqueue(new Callback<Map<String, ResponseData>>() {
             @Override
