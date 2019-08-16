@@ -170,6 +170,9 @@ public class DashboardActivity extends AppCompatActivity implements
             Uri imageUri = data.getData();
 
 
+//            uploadImage(imageUri);
+            uploadImageViaInputStream(imageUri);
+
 //            String path = getFilesDir().getPath();
 //            Log.e(TAG, "onActivityResult: " + path);
 //            File file = new File(getFilesDir(), "/file.jpg");
@@ -177,12 +180,40 @@ public class DashboardActivity extends AppCompatActivity implements
 //            Log.e(TAG, "onActivityResult: File exists - " + file.exists());
 //            Log.e(TAG, "onActivityResult: IsDirectoryAdded exists - " + isDirectoryAdded);
 //            File file = new File(path);
+//            try {
+////                file.createNewFile();
+//                InputStream inputStream = getContentResolver().openInputStream(data.getData());
+//                RequestBody requestFile = RequestBody.create(MediaType.parse("image/jpeg"),
+//                        getBytes(inputStream));
+//                imageFormData = MultipartBody.Part.createFormData("file", "file.jpeg",
+//                        requestFile);
+//
+//                SharedPreferencesManager manager = new SharedPreferencesManager(this);
+//                restApiUserViewModel.uploadImage(imageFormData, manager.getAccessToken());
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//            Log.e(TAG, "onActivityResult: " + file);
+
+            Log.e(TAG, "onActivityResult: " + imageUri.toString());
+            Glide.with(this).load(imageUri).circleCrop().into(this.imageProfile);
+        }
+    }
+
+    private void uploadImageViaInputStream(Uri imageUri) {
+        String path = getFilesDir().getPath();
+            Log.e(TAG, "onActivityResult: " + path);
+//            File file = new File(getFilesDir(), "/file.jpg");
+//            boolean isDirectoryAdded = file.mkdir();
+//            Log.e(TAG, "onActivityResult: File exists - " + file.exists());
+//            Log.e(TAG, "onActivityResult: IsDirectoryAdded exists - " + isDirectoryAdded);
+//            File file = new File(path);
             try {
 //                file.createNewFile();
-                InputStream inputStream = getContentResolver().openInputStream(data.getData());
+                InputStream inputStream = getContentResolver().openInputStream(imageUri);
                 RequestBody requestFile = RequestBody.create(MediaType.parse("image/jpeg"),
                         getBytes(inputStream));
-                imageFormData = MultipartBody.Part.createFormData("file", "file.jpeg",
+                MultipartBody.Part imageFormData = MultipartBody.Part.createFormData("file", "file.jpeg",
                         requestFile);
 
                 SharedPreferencesManager manager = new SharedPreferencesManager(this);
@@ -190,11 +221,17 @@ public class DashboardActivity extends AppCompatActivity implements
             } catch (IOException e) {
                 e.printStackTrace();
             }
-//            Log.e(TAG, "onActivityResult: " + file);
+    }
 
-            Log.e(TAG, "onActivityResult: " + imageUri.toString());
-            Glide.with(this).load(imageUri).circleCrop().into(this.imageProfile);
-        }
+    private void uploadImage(Uri imageUri) {
+            Log.e(TAG, "uploadImage: " + "image being uploaded" );
+            File file = new File(imageUri.getPath());
+        RequestBody fileReqBody = RequestBody.create(MediaType.parse("image/*"), file);
+        MultipartBody.Part part = MultipartBody.Part.createFormData("file", file.getName(), fileReqBody);
+        RequestBody description = RequestBody.create(MediaType.parse("text/plain"), "image-type");
+
+        SharedPreferencesManager manager = new SharedPreferencesManager(this);
+        restApiUserViewModel.uploadImage(part, manager.getAccessToken());
     }
 
     public byte[] getBytes(InputStream is) throws IOException {
